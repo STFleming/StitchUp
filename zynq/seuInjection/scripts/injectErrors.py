@@ -26,21 +26,21 @@ def main(argv):
     inputfile.close()
 
     reconfig_cmd = 'cat ' + bitfile + ' > /dev/xdevcfg'
-    exec_cmd = '../sw_driver/bin/hlsKicker >> res.csv'
-    init_cmd = '../sw_driver/bin/injectSetup'
-    rep_cmd = '../sw_driver/bin/repairErrors'
-    fin_cmd = '../sw_driver/bin/injectFinish'
-    check_cmd = '../sw_driver/bin/checkINITLED'
-    reset_pl_cmd ='../sw_driver/bin/reset_pl'
+    exec_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/hlsKicker >> res.csv'
+    init_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/injectSetup'
+    rep_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/repairErrors'
+    fin_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/injectFinish'
+    check_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/checkINITLED'
+    reset_pl_cmd ='~/StitchUp/zynq/seuInjection/sw_driver/bin/reset_pl'
 
     os.system(reset_pl_cmd)
     os.system(reconfig_cmd)
     os.system(init_cmd)
 
     for addr in addrLines:
-        inject_cmd = '../sw_driver/bin/injectOnly ' + str(addr)
+        inject_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/injectOnly ' + str(addr)
         os.system(inject_cmd)
-    	exec_cmd = 'timeout 1 ../sw_driver/bin/hlsKicker {}'.format(addr)
+    	exec_cmd = 'timeout 1 ~/StitchUp/zynq/seuInjection/sw_driver/bin/hlsKicker {}'.format(addr)
         if os.system(exec_cmd) == 31744: #The command has timed out
 		tmp_addr = addr.replace("\n","")
 		timeout_string = 'echo \"'+ tmp_addr + ',0,0,0,0,0,0,0,0,TIMEOUT\" >> res.csv'
