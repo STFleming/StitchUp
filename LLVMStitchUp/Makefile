@@ -1,3 +1,4 @@
+LEVEL=/home/vagrant/legup/llvm
 ##===- lib/Transforms/Hello/Makefile -----------------------*- Makefile -*-===##
 #
 #                     The LLVM Compiler Infrastructure
@@ -7,7 +8,6 @@
 #
 ##===----------------------------------------------------------------------===##
 
-LEVEL = ../../..
 LIBRARYNAME = LLVMStitchUp
 LOADABLE_MODULE = 1
 USEDLIBS =
@@ -21,4 +21,3 @@ endif
 endif
 
 include $(LEVEL)/Makefile.common
-
