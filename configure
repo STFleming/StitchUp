@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#StitchUp configuration script
+#LEGUP_DIR needs to be set to the root directory of the LegUp tool
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage ./configure <LegUp Directory>"
+    exit 126
+fi
+
+#Get the home directory for the legup installation.
+echo "LegUp is installed at $1";
+LEGUP_HOME=$1
+#For now I will just assume that the LegUp directory looks sane
+#Checks should be implemented here in the future though
+
+LLVM_DIR=$LEGUP_HOME/llvm
+LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
+STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
+
+LLVMStitchUp=$(pwd)/LLVMStitchUp
+
+#Making the StitchUp LLVM library directory and creating a symbolic link to it
+if [ ! -L $STITCH_UP_DIR ]; then
+    ln -s LLVMStitchUp $STITCH_UP_DIR
+fi
+
+#Include StitchUp to the library makefile lists.
+if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
+    echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
+else
+    echo "PARALLEL_DIRS := \$(PARALLEL_DIRS) StitchUp" >> $LLVM_LIB_DIR/Makefile
+fi
+
+
