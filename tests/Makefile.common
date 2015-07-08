@@ -1,0 +1,18 @@
+include $(LEVEL)/Makefile.config
+LEVEL=..
+CFLAG += -fno-builtin -m32
+LLVM_BIN = $(LLVM_DIR)/Release+Asserts/bin/
+LLVM_LIB = $(LLVM_DIR)/Release+Asserts/lib/
+FRONT_END = clang-3.5
+
+%.stichedup.bc: %.bc
+	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMStitchUp.so -StitchUp < $< > $@
+
+%.ll: %.bc
+	$(LLVM_BIN)llvm-dis $<
+
+%.bc: %.c
+	$(FRONT_END) $< -emit-llvm -c $(CFLAG) -o $@
+
+clean:
+	rm -f *.ll *.bc *.rpt *.dot *.v *.tex

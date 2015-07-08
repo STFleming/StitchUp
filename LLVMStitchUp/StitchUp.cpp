@@ -16,6 +16,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/Pass.h"
 #include "llvm/Support/raw_ostream.h"
+#include "ControlFlowAnalysis.h"
 using namespace llvm;
 
 #define DEBUG_TYPE "StitchUp"
@@ -28,6 +29,8 @@ namespace {
     StitchUp() : FunctionPass(ID) {}
 
     bool runOnFunction(Function &F) override {
+	StchUp::ControlFlowAnalysis funcCFG (&F);	
+	funcCFG.findExitBlocks();
       errs() << "I think we had better StitchUp this function: " << F.getName() << "\n";
       return false;
     }
