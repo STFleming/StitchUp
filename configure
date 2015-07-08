@@ -22,22 +22,27 @@ LLVMStitchUp=$(pwd)/LLVMStitchUp
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
-    ln -s $(pwd)/LLVMStitchUp $STITCH_UP_DIR
+    cp -rs $(pwd)/LLVMStitchUp/ $STITCH_UP_DIR
 fi
 
 #Include StitchUp to the library makefile lists.
 if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
     echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
 else
-    echo "PARALLEL_DIRS := \$(PARALLEL_DIRS) StitchUp" >> $LLVM_LIB_DIR/Makefile
+    sed -i '/^PARALLEL_DIRS = .*/ s/$/ StitchUp/' $LLVM_LIB_DIR/Makefile
 fi
 
+echo "LLVM_DIR=$LLVM_DIR" > Makefile.config
+echo "LLVM_LIB_DIR=$LLVM_LIB_DIR" >> Makefile.config
+echo "STITCH_UP_DIR=$STITCH_UP_DIR" >>Makefile.config
+
 #Generate the Makfile in the local StitchUp directory
-if grep -q "LEVEL" $LLVMStitchUp; then
-	echo "StitchUp library makefile has already been configured"
-else
-	echo -e "LEVEL=$LLVM_DIR\n$(cat $LLVMStitchUp/Makefile)" > $LLVMStitchUp/Makefile 
-fi
+#if grep -q "LEVEL" $LLVMStitchUp/Makefile; then
+#	echo "StitchUp library makefile has already been configured"
+#else
+#	#echo -e "LEVEL=$LLVM_DIR\n$(cat $LLVMStitchUp/Makefile)" > $LLVMStitchUp/Makefile 
+#	echo -e "LEVEL=../../.." > $LLVMStitchUp/Makefile
+#fi
 
 echo "Reconfiguring the LLVM base"
 CURR_DIR=$(pwd)
