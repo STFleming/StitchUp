@@ -36,10 +36,13 @@ namespace StchUp {
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		bool BuildCDSVisitedBB(BasicBlock *blk); //Returns if the BasicBlock has already been visited
 		void printCDS(); //Temporary debug, prints the CDS
+		void extractControlSkeleton(void); //Strips all instructions that do not effect control
+		bool extractControlSkeletonVisitedBB(BasicBlock *blk); //Returns true if this BasicBlock has already been processed
 	private:
-		std::vector<Value *> *CDS = new std::vector<Value *>; //CDS = Control Dependancy Set, the set of instructions which influence control 
-		std::vector<BasicBlock *> *exits = new std::vector<BasicBlock *>;//Determine all the exit blocks for the input function 	
-		std::vector<BasicBlock *> *visited = new std::vector<BasicBlock *>;
+		std::vector<Value *> *CDS; //CDS = Control Dependancy Set, the set of instructions which influence control 
+		std::vector<BasicBlock *> *exits;//Determine all the exit blocks for the input function 	
+		std::vector<BasicBlock *> *visited;
+		std::vector<BasicBlock *> *CFGSkeleton_visited;
 		Function *F; //function that is being analysed
 
 	}; //class ControlFlowAnalysis 
@@ -49,6 +52,10 @@ namespace StchUp {
 	//---------------------------------------------------------------------------------------------------------------------
 	ControlFlowAnalysis::ControlFlowAnalysis(Function *iF)	
 	{
+		CDS = new std::vector<Value *>;  
+		exits = new std::vector<BasicBlock *>; 	
+		visited = new std::vector<BasicBlock *>;
+		CFGSkeleton_visited = new std::vector<BasicBlock *>;
 		F = iF;
 		findExitBlocks();
 		BuildCDS();
@@ -62,8 +69,51 @@ namespace StchUp {
 		delete CDS;
 		delete exits;
 		delete visited;
+		delete CFGSkeleton_visited;
 	}
 
+	//---------------------------------------------------------------------------------------------------------------------
+	// Checks to see if a BasicBlock has already been analysed and added to the visited list.
+	//---------------------------------------------------------------------------------------------------------------------
+	bool ControlFlowAnalysis::extractControlSkeletonVisitedBB(BasicBlock *blk)
+	{ 
+	    for(std::vector<BasicBlock *>::iterator it = CFGSkeleton_visited->begin(); it != CFGSkeleton_visited->end(); ++it){
+	        BasicBlock *curr = *it;
+	        if(blk == curr){return true;} //Yes, we have already seen this node and these branches are related to a loop
+	    }
+	    return false;
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------
+	// Strips all instructions that are not present in the CDS
+	//---------------------------------------------------------------------------------------------------------------------
+	void ControlFlowAnalysis::extractControlSkeleton()
+	{
+	    if(exits->size() != 1) { errs() << " Error currently the CFG skeleton can only be extracted for functions with 1 exitpoint\n"; return; }	
+	    for(pred_iterator PI=pred_begin(exits->front()), E=pred_end(exits->front()); PI != E; ++PI){
+	        BasicBlock *Pred = *PI;
+	        if(!extractControlSkeletonVisitedBB(Pred))
+		{
+			for(BasicBlock::reverse_iterator bs=Pred->rbegin(), be=Pred->rend(); bs != be; ++bs)
+			{
+				Instruction *inst = &*bs;
+				if(!isa<TerminatorInst>(inst))
+				{
+					if(!BuildCDSHelperCheckIfExists(inst))
+					{
+						errs() << "Removing Instruction " << *inst << "\t from program\n";
+						inst->eraseFromParent();	
+					}
+					else
+					{
+						errs() << "Instruction " << *inst << "\t is in the CDS\n";
+					}
+				}
+			}
+			CFGSkeleton_visited->push_back(Pred);
+		}
+	    }
+	}
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//TODO: Remove, used for debugging purposes
@@ -80,7 +130,6 @@ namespace StchUp {
 
 	//---------------------------------------------------------------------------------------------------------------------
 	// Checks to see if a BasicBlock has already been analysed and added to the visited list.
-	// (TODO: Change the way that blocks are comapred, this relies on names again...)
 	//---------------------------------------------------------------------------------------------------------------------
 	bool ControlFlowAnalysis::BuildCDSVisitedBB(BasicBlock *blk)
 	{ 
@@ -94,7 +143,6 @@ namespace StchUp {
 
 	//---------------------------------------------------------------------------------------------------------------------
 	// Helper function for building the CDS, checks to see if an item exists in the CDS
-	// (TODO: This should be changed so that if does not check the name of the Instruction, but compares the objects directly)
 	//---------------------------------------------------------------------------------------------------------------------
 	bool ControlFlowAnalysis::BuildCDSHelperCheckIfExists(Value *item)
 	{

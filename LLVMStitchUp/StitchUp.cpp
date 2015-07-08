@@ -29,8 +29,9 @@ namespace {
     StitchUp() : FunctionPass(ID) {}
 
     bool runOnFunction(Function &F) override {
-	StchUp::ControlFlowAnalysis funcCFG (&F);	
-	funcCFG.printCDS();
+	StchUp::ControlFlowAnalysis CFGbones (&F);	
+	CFGbones.printCDS();
+	CFGbones.extractControlSkeleton();
       return false;
     }
   };
