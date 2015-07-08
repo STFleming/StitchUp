@@ -17,7 +17,6 @@ LEGUP_HOME=$1
 LLVM_DIR=$LEGUP_HOME/llvm
 LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
 STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
-
 LLVMStitchUp=$(pwd)/LLVMStitchUp
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
@@ -36,13 +35,8 @@ echo "LLVM_DIR=$LLVM_DIR" > Makefile.config
 echo "LLVM_LIB_DIR=$LLVM_LIB_DIR" >> Makefile.config
 echo "STITCH_UP_DIR=$STITCH_UP_DIR" >>Makefile.config
 
-#Generate the Makfile in the local StitchUp directory
-#if grep -q "LEVEL" $LLVMStitchUp/Makefile; then
-#	echo "StitchUp library makefile has already been configured"
-#else
-#	#echo -e "LEVEL=$LLVM_DIR\n$(cat $LLVMStitchUp/Makefile)" > $LLVMStitchUp/Makefile 
-#	echo -e "LEVEL=../../.." > $LLVMStitchUp/Makefile
-#fi
+echo "(cd $STITCH_UP_DIR; make)" > $(pwd)/build
+chmod u+x build
 
 echo "Reconfiguring the LLVM base"
 CURR_DIR=$(pwd)

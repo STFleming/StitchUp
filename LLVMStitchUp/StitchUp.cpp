@@ -30,8 +30,7 @@ namespace {
 
     bool runOnFunction(Function &F) override {
 	StchUp::ControlFlowAnalysis funcCFG (&F);	
-	funcCFG.findExitBlocks();
-      errs() << "I think we had better StitchUp this function: " << F.getName() << "\n";
+	funcCFG.printCDS();
       return false;
     }
   };
