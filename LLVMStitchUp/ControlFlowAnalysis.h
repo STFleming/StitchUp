@@ -33,8 +33,10 @@ namespace StchUp {
 		~ControlFlowAnalysis();
 		void findExitBlocks(void); //populates the exits vector
 		void BuildCDS(void);//builds the CDS, the set of instructions that effect control
+		void BuildCDSHelperAddOperands(bool &fixedpoint); //iterates over the operands of CDS instructions and adds them to the CDS
+		void BuildCDSHelperSearchLoadStoreOperands(bool &fixedpoint); //iterates over all Load instructions and adds them to the CDS if their operands are in the CDS 
 		void BuildCDSHelperDependencyFillIn(BasicBlock *blk, bool &fixedpoint); //Helper function which adds updates the CDS deps with new deps
-		void BuildCDSHelperBranchCondition(BasicBlock *blk, bool &fixedpoint);   
+		void BuildCDSHelperBranchCondition(BasicBlock *blk);   
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
 		//Debug below
@@ -140,7 +142,7 @@ namespace StchUp {
 	// Tests to see if the exit from a basic block is a branch, if it is a conditional branch it determines the
 	// instructions that imapct on the condition and adds them to the CDS.
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk, bool &fixedpoint)   
+	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk)   
 	{
 	    TerminatorInst *TInst = blk->getTerminator();
 	    if(BranchInst *BInst = dyn_cast<BranchInst>(TInst))
@@ -154,7 +156,6 @@ namespace StchUp {
 	                if(!BuildCDSHelperCheckIfExists(ICond))
 			{	
 	                	CDS->push_back(ICond);
-				fixedpoint=false;
 			}
 	            }
 	            for(unsigned i=0; i<ICond->getNumOperands(); i++)
@@ -165,7 +166,6 @@ namespace StchUp {
 	                   if(!BuildCDSHelperCheckIfExists(o))
 	                    {
 				CDS->push_back(o);
-			    	fixedpoint=false;
 			    }
 	                }
 	            }
@@ -206,6 +206,10 @@ namespace StchUp {
 	                        }
 	                    }
 	                }
+			else
+			{
+				errs() << *d << " /=" << *c <<"\n";
+			}
 	            }
 	    }
 	    return;
@@ -217,19 +221,74 @@ namespace StchUp {
 	//---------------------------------------------------------------------------------------------------------------------
 	void ControlFlowAnalysis::BuildCDS()
 	{
-		bool fixedpoint = false;
-		while(!fixedpoint)
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
 		{
-			fixedpoint = true;
-			for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
-			{
-				BasicBlock *blk = fs; 	
-				BuildCDSHelperBranchCondition(blk, fixedpoint);
-				BuildCDSHelperDependencyFillIn(blk, fixedpoint);
-			}
+			BasicBlock *blk = fs; 	
+			BuildCDSHelperBranchCondition(blk);
+		} //Populate the CDS with every conditional branch
+
+		bool fixedpoint = false;
+		while(!fixedpoint){
+			fixedpoint=true;
+			BuildCDSHelperAddOperands(fixedpoint); 
+			BuildCDSHelperSearchLoadStoreOperands(fixedpoint);
 		}
+		return;
 	}   
 
+	//---------------------------------------------------------------------------------------------------------------------
+	// iterates over all Load instructions, detects if their operands are present in the CDS and adds them if they are 
+	//---------------------------------------------------------------------------------------------------------------------
+	void ControlFlowAnalysis::BuildCDSHelperSearchLoadStoreOperands(bool &fixedpoint)
+	{
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
+		{
+			BasicBlock *blk = fs;
+			for(BasicBlock::iterator bs = blk->begin(), be = blk->end(); bs != be; ++bs)
+			{
+				Instruction *inst = bs;
+				if(isa<LoadInst>(inst) || isa<StoreInst>(inst))
+				{
+					for(User::op_iterator os = inst->op_begin(), oe=inst->op_end(); os != oe; ++os)
+					{
+						Value *operand = *os;
+						if(BuildCDSHelperCheckIfExists(operand))
+						{
+							if(!BuildCDSHelperCheckIfExists(inst) && !isa<TerminatorInst>(inst))
+							{
+								CDS->push_back(inst);
+								fixedpoint = false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------
+	// iterates across the CDS and adds operands that depend on instructions in the CDS 
+	//---------------------------------------------------------------------------------------------------------------------
+	void ControlFlowAnalysis::BuildCDSHelperAddOperands(bool &fixedpoint)
+	{
+	    for(std::vector<Value *>::iterator s=CDS->begin(), e=CDS->end(); s != e; ++s)
+	    {
+	        Value * curr = *s;
+		if(Instruction * inst = dyn_cast<Instruction>(curr))
+		{
+			for(User::op_iterator os = inst->op_begin(), oe = inst->op_end(); os != oe; ++os)
+			{	
+				Value *operand = *os;
+				if(!BuildCDSHelperCheckIfExists(operand))
+				{
+					CDS->push_back(operand);
+					fixedpoint=false;
+				}
+			}
+		}	
+	    }	
+	}
+	
 	//---------------------------------------------------------------------------------------------------------------------
 	//Adds every BasicBlock that has a return instruction as it TerminatorInst
 	//to the exits vector.
