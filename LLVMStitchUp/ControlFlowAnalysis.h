@@ -17,8 +17,11 @@
 #include <vector>
 #include <sstream>
 #include "llvm/IR/InstrTypes.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Instructions.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/IR/CFG.h"
 
 using namespace llvm;
@@ -36,84 +39,70 @@ namespace StchUp {
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		bool BuildCDSVisitedBB(BasicBlock *blk); //Returns if the BasicBlock has already been visited
 		void printCDS(); //Temporary debug, prints the CDS
-		void extractControlSkeleton(void); //Strips all instructions that do not effect control
-		bool extractControlSkeletonVisitedBB(BasicBlock *blk); //Returns true if this BasicBlock has already been processed
+		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
 	private:
 		std::vector<Value *> *CDS; //CDS = Control Dependancy Set, the set of instructions which influence control 
 		std::vector<BasicBlock *> *exits;//Determine all the exit blocks for the input function 	
 		std::vector<BasicBlock *> *visited;
-		std::vector<BasicBlock *> *CFGSkeleton_visited;
-		Function *F; //function that is being analysed
+		Function *F; //LLVMfunction that is being analysed
 
 	}; //class ControlFlowAnalysis 
 
-	//---------------------------------------------------------------------------------------------------------------------
 	//Constructor
-	//---------------------------------------------------------------------------------------------------------------------
 	ControlFlowAnalysis::ControlFlowAnalysis(Function *iF)	
 	{
 		CDS = new std::vector<Value *>;  
 		exits = new std::vector<BasicBlock *>; 	
 		visited = new std::vector<BasicBlock *>;
-		CFGSkeleton_visited = new std::vector<BasicBlock *>;
 		F = iF;
 		findExitBlocks();
 		BuildCDS();
-	} //ControlFlowAnalysis
+	}
 
-	//---------------------------------------------------------------------------------------------------------------------
 	//Destructor
-	//---------------------------------------------------------------------------------------------------------------------
 	ControlFlowAnalysis::~ControlFlowAnalysis()
 	{
 		delete CDS;
 		delete exits;
 		delete visited;
-		delete CFGSkeleton_visited;
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------
-	// Checks to see if a BasicBlock has already been analysed and added to the visited list.
+	// Keeps iterating over the Basic Blocks in the program removing instructions that are 
+	// not present in the CDS, it is a fixed point algorithm due to the restriction that
+	// to remove instructions safely they must not be used anywhere. 
 	//---------------------------------------------------------------------------------------------------------------------
-	bool ControlFlowAnalysis::extractControlSkeletonVisitedBB(BasicBlock *blk)
-	{ 
-	    for(std::vector<BasicBlock *>::iterator it = CFGSkeleton_visited->begin(); it != CFGSkeleton_visited->end(); ++it){
-	        BasicBlock *curr = *it;
-	        if(blk == curr){return true;} //Yes, we have already seen this node and these branches are related to a loop
-	    }
-	    return false;
-	}
+	void ControlFlowAnalysis::createControlShadow(){
 
-	//---------------------------------------------------------------------------------------------------------------------
-	// Strips all instructions that are not present in the CDS
-	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::extractControlSkeleton()
-	{
-	    if(exits->size() != 1) { errs() << " Error currently the CFG skeleton can only be extracted for functions with 1 exitpoint\n"; return; }	
-	    for(pred_iterator PI=pred_begin(exits->front()), E=pred_end(exits->front()); PI != E; ++PI){
-	        BasicBlock *Pred = *PI;
-	        if(!extractControlSkeletonVisitedBB(Pred))
-		{
-			for(BasicBlock::reverse_iterator bs=Pred->rbegin(), be=Pred->rend(); bs != be; ++bs)
-			{
-				Instruction *inst = &*bs;
+		std::vector<Value *>* nonCDS = new std::vector<Value *>;
+
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs){
+			BasicBlock *blk = fs;
+			for(BasicBlock::iterator bs=blk->begin(), be=blk->end(); bs != be; ++bs) {
+				Instruction *inst = bs;	
 				if(!isa<TerminatorInst>(inst))
 				{
 					if(!BuildCDSHelperCheckIfExists(inst))
 					{
-						errs() << "Removing Instruction " << *inst << "\t from program\n";
-						inst->eraseFromParent();	
-					}
-					else
-					{
-						errs() << "Instruction " << *inst << "\t is in the CDS\n";
+						nonCDS->push_back(inst);
 					}
 				}
 			}
-			CFGSkeleton_visited->push_back(Pred);
 		}
-	    }
+		
+		//Now iterate through and delete the nonCDS instrustions, make use we do it from the end of the use_def chain
+		for(std::vector<Value *>::iterator item = nonCDS->begin(), end=nonCDS->end();
+			item != end; ++item)
+		{
+			Value *curr = *item;
+			Value *blank = UndefValue::get(curr->getType());
+			curr->replaceAllUsesWith(blank);
+			if(Instruction *inst = dyn_cast<Instruction>(curr))
+				inst->eraseFromParent();
+		}
 	}
+
+
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//TODO: Remove, used for debugging purposes
@@ -157,8 +146,7 @@ namespace StchUp {
 	//---------------------------------------------------------------------------------------------------------------------
 	// Helper function for building the CDS
 	// Tests to see if the exit from a basic block is a branch, if it is a conditional branch it determines the
-	// instructions that imapct on the condition and adds them to the CDS. (This needs to be upgraded so that it
-	// actually adds the branch instructions to the CDS as well)
+	// instructions that imapct on the condition and adds them to the CDS.
 	//---------------------------------------------------------------------------------------------------------------------
 	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk)   
 	{
@@ -253,7 +241,7 @@ namespace StchUp {
 	//---------------------------------------------------------------------------------------------------------------------
 	//Builds the control dependency sets (CDS)
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDS()                                                                                                                                                                  
+	void ControlFlowAnalysis::BuildCDS()   
 	{
 	    for(std::vector<BasicBlock *>::iterator it = exits->begin(); it != exits->end(); ++it){
 	        BasicBlock *curr = *it;

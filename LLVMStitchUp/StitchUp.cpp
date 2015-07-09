@@ -31,8 +31,8 @@ namespace {
     bool runOnFunction(Function &F) override {
 	StchUp::ControlFlowAnalysis CFGbones (&F);	
 	CFGbones.printCDS();
-	CFGbones.extractControlSkeleton();
-      return false;
+	CFGbones.createControlShadow();
+      return true;
     }
   };
 }
