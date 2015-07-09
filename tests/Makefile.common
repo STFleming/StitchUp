@@ -5,7 +5,7 @@ LLVM_BIN = $(LLVM_DIR)/Release+Asserts/bin/
 LLVM_LIB = $(LLVM_DIR)/Release+Asserts/lib/
 FRONT_END = clang-3.5
 
-%.stichedup.bc: %.bc
+%.stitchedup.bc: %.bc
 	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMStitchUp.so -StitchUp < $< > $@
 
 %.ll: %.bc

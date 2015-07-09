@@ -33,17 +33,16 @@ namespace StchUp {
 		~ControlFlowAnalysis();
 		void findExitBlocks(void); //populates the exits vector
 		void BuildCDS(void);//builds the CDS, the set of instructions that effect control
-		void BuildCDSHelper(BasicBlock * blk); //Main helper function for building the CDS 
-		void BuildCDSHelperDependancyFillIn(BasicBlock *blk); //Helper function which adds updates the CDS deps with new deps
-		void BuildCDSHelperBranchCondition(BasicBlock *blk);   
+		void BuildCDSHelperDependencyFillIn(BasicBlock *blk, bool &fixedpoint); //Helper function which adds updates the CDS deps with new deps
+		void BuildCDSHelperBranchCondition(BasicBlock *blk, bool &fixedpoint);   
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
-		bool BuildCDSVisitedBB(BasicBlock *blk); //Returns if the BasicBlock has already been visited
-		void printCDS(); //Temporary debug, prints the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
+		//Debug below
+		void printCDS(); //Temporary debug, prints the CDS
+		void labelBasicBlocks(); //Label all the BasicBLocks with a name
 	private:
-		std::vector<Value *> *CDS; //CDS = Control Dependancy Set, the set of instructions which influence control 
+		std::vector<Value *> *CDS; //CDS = Control Dependency Set, the set of instructions which influence control 
 		std::vector<BasicBlock *> *exits;//Determine all the exit blocks for the input function 	
-		std::vector<BasicBlock *> *visited;
 		Function *F; //LLVMfunction that is being analysed
 
 	}; //class ControlFlowAnalysis 
@@ -53,7 +52,6 @@ namespace StchUp {
 	{
 		CDS = new std::vector<Value *>;  
 		exits = new std::vector<BasicBlock *>; 	
-		visited = new std::vector<BasicBlock *>;
 		F = iF;
 		findExitBlocks();
 		BuildCDS();
@@ -64,7 +62,6 @@ namespace StchUp {
 	{
 		delete CDS;
 		delete exits;
-		delete visited;
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------
@@ -116,19 +113,14 @@ namespace StchUp {
 		}
 		errs() << "}\n";	
 	}
-
-	//---------------------------------------------------------------------------------------------------------------------
-	// Checks to see if a BasicBlock has already been analysed and added to the visited list.
-	//---------------------------------------------------------------------------------------------------------------------
-	bool ControlFlowAnalysis::BuildCDSVisitedBB(BasicBlock *blk)
-	{ 
-	    for(std::vector<BasicBlock *>::iterator it = visited->begin(); it != visited->end(); ++it){
-	        BasicBlock *curr = *it;
-	        if(blk == curr){return true;} //Yes, we have already seen this node and these branches are related to a loop
-	    }
-	    return false;
+	void ControlFlowAnalysis::labelBasicBlocks()
+	{
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
+		{
+			BasicBlock *blk = fs;
+			blk->setName("BB");
+		}
 	}
-
 
 	//---------------------------------------------------------------------------------------------------------------------
 	// Helper function for building the CDS, checks to see if an item exists in the CDS
@@ -148,7 +140,7 @@ namespace StchUp {
 	// Tests to see if the exit from a basic block is a branch, if it is a conditional branch it determines the
 	// instructions that imapct on the condition and adds them to the CDS.
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk)   
+	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk, bool &fixedpoint)   
 	{
 	    TerminatorInst *TInst = blk->getTerminator();
 	    if(BranchInst *BInst = dyn_cast<BranchInst>(TInst))
@@ -159,14 +151,22 @@ namespace StchUp {
 	            if(Instruction *ICond = dyn_cast<Instruction>(cond)) {
 	            if(!isa<Constant>(ICond))
 	            {
-	                CDS->push_back(ICond);
+	                if(!BuildCDSHelperCheckIfExists(ICond))
+			{	
+	                	CDS->push_back(ICond);
+				fixedpoint=false;
+			}
 	            }
 	            for(unsigned i=0; i<ICond->getNumOperands(); i++)
 	            {
 	                Value *o = ICond->getOperand(i);
 	                if(!(isa<Constant>(o))) 
 	                {
-	                    CDS->push_back(o);
+	                   if(!BuildCDSHelperCheckIfExists(o))
+	                    {
+				CDS->push_back(o);
+			    	fixedpoint=false;
+			    }
 	                }
 	            }
 	            }
@@ -182,15 +182,11 @@ namespace StchUp {
 	// Helper function which iterates through the CDS and adds any instructions that
 	// is dependent on an instruction already present in the CDS
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelperDependancyFillIn(BasicBlock *blk)
+	void ControlFlowAnalysis::BuildCDSHelperDependencyFillIn(BasicBlock *blk, bool &fixedpoint)
 	{
 	    for(BasicBlock::iterator bs=blk->begin(), be=blk->end(); bs != be; ++bs)
 	    {
 	        Instruction *c = bs;
-	        bool fp=false;
-	        while(!fp)
-	        {
-	            fp=true;
 	            for(std::vector<Value *>::iterator cds_s=CDS->begin(), cds_e=CDS->end(); cds_s != cds_e; ++cds_s)
 	            {
 	                Value *d = *cds_s;
@@ -200,55 +196,39 @@ namespace StchUp {
 	                    for(unsigned i=0; i<c->getNumOperands(); i++)
 	                    {
 	                        Value *o = c->getOperand(i);
-	                        if(!(isa<Constant>(o))) //Make sure it is not a constant!
+	                        if(!(isa<Constant>(o))) 
 	                        {
 	                            if(!BuildCDSHelperCheckIfExists(o))
 	                            {
-	                                fp=false;
+	                                fixedpoint=false;
 	                                CDS->push_back(o);
 	                            }
 	                        }
 	                    }
 	                }
 	            }
-	        }
 	    }
 	    return;
 	}            
 
-	//---------------------------------------------------------------------------------------------------------------------
-	// Main helper function for building the CDS
-	// It automatically adds the branch condition of the current basic block to the set, then it 
-	// moves through all the instructions in the BB and finds any dependancies, adding them also to the set
-	// then it calls over all predecessor basic blocks. 
-	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelper(BasicBlock * blk) 
-	{
-	    visited->push_back(blk); //Mark that we have visited this location (infinite loop prevention)
-	    BuildCDSHelperBranchCondition(blk);
-	    BuildCDSHelperDependancyFillIn(blk);
-	    for(pred_iterator PI=pred_begin(blk), E=pred_end(blk); PI != E; ++PI)
-	    {
-	        BasicBlock *Pred = *PI;
-	        if(!BuildCDSVisitedBB(Pred))
-	        {
-	            BuildCDSHelper(Pred);
-	        }
-	    }
-	    return;
-	}
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//Builds the control dependency sets (CDS)
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDS()   
+	void ControlFlowAnalysis::BuildCDS()
 	{
-	    for(std::vector<BasicBlock *>::iterator it = exits->begin(); it != exits->end(); ++it){
-	        BasicBlock *curr = *it;
-	        BuildCDSHelper(curr);
-	        visited->clear();
-	    }
-	}
+		bool fixedpoint = false;
+		while(!fixedpoint)
+		{
+			fixedpoint = true;
+			for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
+			{
+				BasicBlock *blk = fs; 	
+				BuildCDSHelperBranchCondition(blk, fixedpoint);
+				BuildCDSHelperDependencyFillIn(blk, fixedpoint);
+			}
+		}
+	}   
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//Adds every BasicBlock that has a return instruction as it TerminatorInst

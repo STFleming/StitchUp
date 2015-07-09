@@ -1,4 +1,4 @@
 LEVEL=../..
 include ../Makefile.common
 
-all: MMM.stichedup.bc
+all: MMM.stitchedup.ll MMM.ll
