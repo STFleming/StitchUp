@@ -236,12 +236,12 @@ namespace StchUp {
 	void ControlFlowAnalysis::BuildCDS()
 	{
 		BuildCDSHelperAddBranchConditions();
-	//	bool fixedpoint = false;
-	//	while(!fixedpoint){
-	//		fixedpoint=true;
-	//		BuildCDSHelperAddOperands(fixedpoint); 
-	//		BuildCDSHelperSearchLoadStoreOperands(fixedpoint);
-	//	}
+		bool fixedpoint = false;
+		while(!fixedpoint){
+			fixedpoint=true;
+			BuildCDSHelperAddOperands(fixedpoint); 
+			BuildCDSHelperSearchLoadStoreOperands(fixedpoint);
+		}
 		return;
 	}   
 
@@ -256,19 +256,34 @@ namespace StchUp {
 			for(BasicBlock::iterator bs = blk->begin(), be = blk->end(); bs != be; ++bs)
 			{
 				Instruction *inst = bs;
-				if(isa<LoadInst>(inst) || isa<StoreInst>(inst))
+				if(!isa<TerminatorInst>(inst))
 				{
-					for(User::op_iterator os = inst->op_begin(), oe=inst->op_end(); os != oe; ++os)
+					if(isa<StoreInst>(inst)) //store value ptr, we need to add ptr if value \in CDS
 					{
-						Value *operand = *os;
-						if(BuildCDSHelperCheckIfExists(operand))
+						Value *op1 = inst->getOperand(0); //Get the value to be stored in the ptr
+						Value *op2 = inst->getOperand(1); 
+						if(BuildCDSHelperCheckIfExists(op1))
 						{
-							if(!BuildCDSHelperCheckIfExists(inst) && !isa<TerminatorInst>(inst))
+							if(!BuildCDSHelperCheckIfExists(inst))
+							{
+								CDS->push_back(op2); //add ptr
+								fixedpoint = false;
+							}
+							if(!BuildCDSHelperCheckIfExists(inst))
 							{
 								CDS->push_back(inst);
 								fixedpoint = false;
 							}
 						}
+					}
+					if(isa<LoadInst>(inst))
+					{
+					 Value *op1 = inst->getOperand(0); //Get the value to be stored in the ptr
+					 if(BuildCDSHelperCheckIfExists(op1))
+					  {
+					   if(!BuildCDSHelperCheckIfExists(op1)){CDS->push_back(op1); fixedpoint=false;}
+					   if(!BuildCDSHelperCheckIfExists(inst)){CDS->push_back(inst); fixedpoint=false;}
+					  }
 					}
 				}
 			}
