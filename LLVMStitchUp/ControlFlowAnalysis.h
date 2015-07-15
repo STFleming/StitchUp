@@ -36,8 +36,9 @@ namespace StchUp {
 		void BuildCDSHelperAddOperands(bool &fixedpoint); //iterates over the operands of CDS instructions and adds them to the CDS
 		void BuildCDSHelperSearchLoadStoreOperands(bool &fixedpoint); //iterates over all Load instructions and adds them to the CDS if their operands are in the CDS 
 		void BuildCDSHelperDependencyFillIn(BasicBlock *blk, bool &fixedpoint); //Helper function which adds updates the CDS deps with new deps
-		void BuildCDSHelperBranchCondition(BasicBlock *blk);   
-		void BuildCDSHelperAddBranchConditions(); //Adds all branch conditions to the CDS
+		void BuildCDSHelperProcessBranch(BasicBlock *blk); //adds branch conditions to the CDS via ProcessCondition   
+		void BuildCDSHelperProcessCondition(Value *cond);
+		void BuildCDSHelperAddProcessBranches(); //Adds all branch conditions to the CDS
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
 		//Debug below
@@ -138,12 +139,43 @@ namespace StchUp {
 	    return false;
 	}
 
+
+	//---------------------------------------------------------------------------------------------------------------------
+	//Helper function which process the conditional instruction from a
+	//branch or select instruction and adds it to the CDS
+	//---------------------------------------------------------------------------------------------------------------------
+	void ControlFlowAnalysis::BuildCDSHelperProcessCondition(Value *cond)
+	{
+		if(Instruction *ICond = dyn_cast<Instruction>(cond)) {
+		if(!isa<Constant>(ICond))
+		{
+		    if(!BuildCDSHelperCheckIfExists(ICond))
+		    {	
+		    	CDS->push_back(ICond);
+		    }
+		}
+		for(unsigned i=0; i<ICond->getNumOperands(); i++)
+		{
+		    Value *o = ICond->getOperand(i);
+		    if(!(isa<Constant>(o))) 
+		    {
+		       if(!BuildCDSHelperCheckIfExists(o))
+		        {
+		    	CDS->push_back(o);
+		        }
+		    }
+		}
+		}
+		else {
+		    errs() << "Error: Condition casting to instruction failed!\n";
+		}   
+	}
+
 	//---------------------------------------------------------------------------------------------------------------------
 	// Helper function for building the CDS
 	// Tests to see if the exit from a basic block is a branch, if it is a conditional branch it determines the
-	// instructions that imapct on the condition and adds them to the CDS.
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelperBranchCondition(BasicBlock *blk)   
+	void ControlFlowAnalysis::BuildCDSHelperProcessBranch(BasicBlock *blk)   
 	{
 	    TerminatorInst *TInst = blk->getTerminator();
 	    if(BranchInst *BInst = dyn_cast<BranchInst>(TInst))
@@ -151,31 +183,17 @@ namespace StchUp {
 	        if(BInst->isConditional())
 	        {
 	            Value * cond = BInst->getCondition();
-	            if(Instruction *ICond = dyn_cast<Instruction>(cond)) {
-	            if(!isa<Constant>(ICond))
-	            {
-	                if(!BuildCDSHelperCheckIfExists(ICond))
-			{	
-	                	CDS->push_back(ICond);
-			}
-	            }
-	            for(unsigned i=0; i<ICond->getNumOperands(); i++)
-	            {
-	                Value *o = ICond->getOperand(i);
-	                if(!(isa<Constant>(o))) 
-	                {
-	                   if(!BuildCDSHelperCheckIfExists(o))
-	                    {
-				CDS->push_back(o);
-			    }
-	                }
-	            }
-	            }
-	            else {
-	                errs() << "Error: Condition casting to instruction failed!\n";
-	            }   
+		    BuildCDSHelperProcessCondition(cond);
 	        }   
 	    }   
+	    else
+	    {
+		if(SwitchInst *SInst = dyn_cast<SwitchInst>(TInst))
+		{
+		   Value *cond = SInst->getCondition();
+		   BuildCDSHelperProcessCondition(cond);
+		}
+	    }
 	    return;
 	} 
 
@@ -220,12 +238,12 @@ namespace StchUp {
 	//Adds all SSA that branches are conditional on to the CDS
 	//this is typically the first step in the analysis.
 	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::BuildCDSHelperAddBranchConditions()
+	void ControlFlowAnalysis::BuildCDSHelperAddProcessBranches()
 	{
 		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
 		{
 			BasicBlock *blk = fs; 	
-			BuildCDSHelperBranchCondition(blk);
+			BuildCDSHelperProcessBranch(blk);
 		} 
 		return;
 	}
@@ -235,7 +253,7 @@ namespace StchUp {
 	//---------------------------------------------------------------------------------------------------------------------
 	void ControlFlowAnalysis::BuildCDS()
 	{
-		BuildCDSHelperAddBranchConditions();
+		BuildCDSHelperAddProcessBranches();
 		bool fixedpoint = false;
 		while(!fixedpoint){
 			fixedpoint=true;
