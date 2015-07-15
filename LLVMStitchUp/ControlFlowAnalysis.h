@@ -37,6 +37,7 @@ namespace StchUp {
 		void BuildCDSHelperSearchLoadStoreOperands(bool &fixedpoint); //iterates over all Load instructions and adds them to the CDS if their operands are in the CDS 
 		void BuildCDSHelperDependencyFillIn(BasicBlock *blk, bool &fixedpoint); //Helper function which adds updates the CDS deps with new deps
 		void BuildCDSHelperBranchCondition(BasicBlock *blk);   
+		void BuildCDSHelperAddBranchConditions(); //Adds all branch conditions to the CDS
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
 		//Debug below
@@ -214,25 +215,33 @@ namespace StchUp {
 	    }
 	    return;
 	}            
-
+	
+	//---------------------------------------------------------------------------------------------------------------------
+	//Adds all SSA that branches are conditional on to the CDS
+	//this is typically the first step in the analysis.
+	//---------------------------------------------------------------------------------------------------------------------
+	void ControlFlowAnalysis::BuildCDSHelperAddBranchConditions()
+	{
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
+		{
+			BasicBlock *blk = fs; 	
+			BuildCDSHelperBranchCondition(blk);
+		} 
+		return;
+	}
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//Builds the control dependency sets (CDS)
 	//---------------------------------------------------------------------------------------------------------------------
 	void ControlFlowAnalysis::BuildCDS()
 	{
-		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
-		{
-			BasicBlock *blk = fs; 	
-			BuildCDSHelperBranchCondition(blk);
-		} //Populate the CDS with every conditional branch
-
-		bool fixedpoint = false;
-		while(!fixedpoint){
-			fixedpoint=true;
-			BuildCDSHelperAddOperands(fixedpoint); 
-			BuildCDSHelperSearchLoadStoreOperands(fixedpoint);
-		}
+		BuildCDSHelperAddBranchConditions();
+	//	bool fixedpoint = false;
+	//	while(!fixedpoint){
+	//		fixedpoint=true;
+	//		BuildCDSHelperAddOperands(fixedpoint); 
+	//		BuildCDSHelperSearchLoadStoreOperands(fixedpoint);
+	//	}
 		return;
 	}   
 
