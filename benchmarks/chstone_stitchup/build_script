@@ -1,0 +1,35 @@
+#!/bin/bash
+source ./build.config
+DIRS="adpcm aes blowfish dfadd dfdiv dfmul dfsin gsm jpeg mips motion sha"
+CURR_DIR=$(pwd)
+
+rm -r -f ./results/su_proportion.csv
+
+for dir in $DIRS;
+do
+	cd $BUILD_DIR/$dir; 
+
+	#First build the full circuit
+	rm -r -f db/ incremental_db/;
+	rm top*;
+	make; 
+	make p; 
+	make q;
+	cp top.map.rpt $CURR_DIR/results/$dir.full.rpt
+
+	#Now build the StitchUp circuit	 
+	rm -r -f db/ incremental_db/;
+	rm top*;
+	make STITCHUP=1; 
+	make p; 
+	make q;
+	cp top.map.rpt $CURR_DIR/results/$dir.stitchedup.rpt
+	
+	#Process the results into a csv file
+	cd $CURR_DIR;
+	python parseResources.py -i ./results/$dir.full.rpt -s ./results/$dir.stitchedup.rpt -n $dir >> ./results/su_proportion.csv
+		
+done 
+
+
+#echo "$BUILD_DIR"

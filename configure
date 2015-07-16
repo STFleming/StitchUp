@@ -17,12 +17,22 @@ LEGUP_HOME=$1
 LLVM_DIR=$LEGUP_HOME/llvm
 LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
 STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
-LLVMStitchUp=$(pwd)/LLVMStitchUp
+LLVMStitchUp=./LLVMStitchUp
+CHSTONE_DIR=$(pwd)/benchmarks/chstone_stitchup
+LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
-    cp -rs $(pwd)/LLVMStitchUp/ $STITCH_UP_DIR
+    cp -rs ./LLVMStitchUp/ $STITCH_UP_DIR
 fi
+
+#Create a symbolic link for the chstone_stitchup benchmarks
+if [ ! -L $LEGUP_EXAMPLES_DIR/chstone_stitchup ]; then
+	cp -rs $CHSTONE_DIR $LEGUP_EXAMPLES_DIR/chstone_stitchup
+fi
+#Create the chstone_stitchup build and run scripts
+echo "BUILD_DIR=$LEGUP_EXAMPLES_DIR/chstone_stitchup" > $CHSTONE_DIR/build.config
+chmod u+x $CHSTONE_DIR/build.config
 
 #Include StitchUp to the library makefile lists.
 if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
@@ -37,7 +47,7 @@ echo "STITCH_UP_DIR=$STITCH_UP_DIR" >>Makefile.config
 echo "LEGUP_HOME=$LEGUP_HOME" >> Makefile.config
 
 
-echo "(cd $STITCH_UP_DIR; make)" > $(pwd)/build
+echo "(cd $STITCH_UP_DIR; make)" > ./build
 chmod u+x build
 
 echo "Reconfiguring the LLVM base"

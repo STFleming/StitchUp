@@ -1,0 +1,59 @@
+import sys, getopt
+import re
+import os
+import csv
+
+def gatherResource(filename, resource):
+	p = open(filename, 'r')
+	plines = p.readlines()
+	amount=' '
+	search_expr = ";\s" + re.escape(resource) + "\s*;\s*(\d+)\s"
+	for line in plines:
+		m = re.search(search_expr, line)
+		if m:
+			return int(m.group(1)) 
+	return 0	
+
+def main(argv):
+	inputfile = ' '
+	stitchupfile=' '
+	name=' '
+	try:
+		opts, args = getopt.getopt(argv, "hi:n:s:",["ifile=","name=","stitchup="])
+	except getopt.GetoptError:
+		print "Usage -i full.rpt -s stitchup.rpt -n name"
+		sys.exit(2)
+	for opt, arg in opts:
+		if opt == "-h":
+			print "Usage -i full.rpt -su stitchup.rpt -n name"
+			sys.exit()	
+		elif opt in ("-i", "--ifile="):
+			inputfile = arg
+		elif opt in ("-s", "--stitchup="):
+			stitchupfile = arg
+		elif opt in ("-n", "--name="):
+			name = arg
+
+	ALM_f = gatherResource(inputfile, "Estimate of Logic utilization (ALMs needed)")
+	LUT_f = gatherResource(inputfile, "Combinational ALUT usage for logic")
+	REG_f = gatherResource(inputfile, "Dedicated logic registers")
+	BRAM_f = gatherResource(inputfile, "Total block memory bits")
+	DSP_f = gatherResource(inputfile, "Total DSP Blocks")
+	
+	ALM_su = gatherResource(stitchupfile, "Estimate of Logic utilization (ALMs needed)")
+	LUT_su = gatherResource(stitchupfile, "Combinational ALUT usage for logic")
+	REG_su = gatherResource(stitchupfile, "Dedicated logic registers")
+	BRAM_su = gatherResource(stitchupfile, "Total block memory bits")
+	DSP_su = gatherResource(stitchupfile, "Total DSP Blocks")
+
+	ALM = float(ALM_su)/float(ALM_f)
+	LUT = float(LUT_su)/float(LUT_f)
+	REG = float(REG_su)/float(REG_f)
+	BRAM = float(BRAM_su)/float(BRAM_f)
+	DSP = float(DSP_su)/float(DSP_f)	
+
+	#name, ALM, LUTS, REG, BRAM, DSP
+	print name + ","+ str(ALM) + ","+ str(LUT) + "," + str(REG) + "," + str(BRAM) + "," + str(DSP) 
+	
+if __name__ == "__main__":
+   main(sys.argv[1:])
