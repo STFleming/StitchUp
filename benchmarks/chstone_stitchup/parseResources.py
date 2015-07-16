@@ -46,11 +46,11 @@ def main(argv):
 	BRAM_su = gatherResource(stitchupfile, "Total block memory bits")
 	DSP_su = gatherResource(stitchupfile, "Total DSP Blocks")
 
-	ALM = float(ALM_su)/float(ALM_f)
-	LUT = float(LUT_su)/float(LUT_f)
-	REG = float(REG_su)/float(REG_f)
-	BRAM = float(BRAM_su)/float(BRAM_f)
-	DSP = float(DSP_su)/float(DSP_f)	
+	ALM = float(ALM_su)/float(ALM_f) if ALM_f > 0 else "inf" 
+	LUT = float(LUT_su)/float(LUT_f) if LUT_f > 0 else "inf" 
+	REG = float(REG_su)/float(REG_f) if REG_f > 0 else "inf" 
+	BRAM = float(BRAM_su)/float(BRAM_f) if BRAM_f > 0 else "inf" 
+	DSP = float(DSP_su)/float(DSP_f) if DSP_f > 0 else "inf" 	
 
 	#name, ALM, LUTS, REG, BRAM, DSP
 	print name + ","+ str(ALM) + ","+ str(LUT) + "," + str(REG) + "," + str(BRAM) + "," + str(DSP) 

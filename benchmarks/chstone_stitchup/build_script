@@ -3,33 +3,51 @@ source ./build.config
 DIRS="adpcm aes blowfish dfadd dfdiv dfmul dfsin gsm jpeg mips motion sha"
 CURR_DIR=$(pwd)
 
-rm -r -f ./results/su_proportion.csv
+#rm -r -f ./results/su_proportion.csv
+#echo "benchmark, ALM, ALUT, REG, BRAM, DSP" > ./results/su_proportion.csv
+#
+#for dir in $DIRS;
+#do
+#	cd $BUILD_DIR/$dir; 
+#
+#	#First build the full circuit
+#	rm -r -f db/ incremental_db/;
+#	rm top*;
+#	make; 
+#	make p; 
+#	make q;
+#	cp top.map.rpt $CURR_DIR/results/$dir.full.rpt
+#
+#	#Now build the StitchUp circuit	 
+#	rm -r -f db/ incremental_db/;
+#	rm top*;
+#	make STITCHUP=1; 
+#	make p; 
+#	make q;
+#	cp top.map.rpt $CURR_DIR/results/$dir.stitchedup.rpt
+#	
+#	#Process the results into a csv file
+#	cd $CURR_DIR;
+#	python parseResources.py -i ./results/$dir.full.rpt -s ./results/$dir.stitchedup.rpt -n $dir >> ./results/su_proportion.csv
+#		
+#done 
 
-for dir in $DIRS;
-do
-	cd $BUILD_DIR/$dir; 
+#Build the plotting script
+echo "set terminal pdf enhanced" > ./results/_temp.gnu
+echo "set datafile separator \",\"" >> ./results/_temp.gnu
+echo "set output \"su_proportion.pdf\"" >> ./results/_temp.gnu
+echo "set key left top" >> ./results/_temp.gnu
+echo "set style data histogram" >> ./results/_temp.gnu
+echo "set style histogram cluster gap 1" >> ./results/_temp.gnu
+echo "set style fill solid border rgb \"black\"" >> ./results/_temp.gnu
+echo "set auto x" >> ./results/_temp.gnu
+echo "set yrange [0:*]" >> ./results/_temp.gnu
+echo "set xtics font \"Verdana,10\"" >> ./results/_temp.gnu
+echo "set xtics rotate" >> ./results/_temp.gnu
+echo "plot 'su_proportion.csv' using 3:xtic(1) title col fs pattern 1 lc rgb \"black\", \\" >> ./results/_temp.gnu
+echo "        '' using 4:xtic(1) title col fs pattern 2 lc rgb \"black\", \\" >> ./results/_temp.gnu
 
-	#First build the full circuit
-	rm -r -f db/ incremental_db/;
-	rm top*;
-	make; 
-	make p; 
-	make q;
-	cp top.map.rpt $CURR_DIR/results/$dir.full.rpt
-
-	#Now build the StitchUp circuit	 
-	rm -r -f db/ incremental_db/;
-	rm top*;
-	make STITCHUP=1; 
-	make p; 
-	make q;
-	cp top.map.rpt $CURR_DIR/results/$dir.stitchedup.rpt
-	
-	#Process the results into a csv file
-	cd $CURR_DIR;
-	python parseResources.py -i ./results/$dir.full.rpt -s ./results/$dir.stitchedup.rpt -n $dir >> ./results/su_proportion.csv
-		
-done 
-
-
-#echo "$BUILD_DIR"
+#plot the graph
+cd ./results
+gnuplot _temp.gnu
+rm _temp.gnu
