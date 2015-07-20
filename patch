@@ -23,7 +23,7 @@ LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
-    cp -rs ./LLVMStitchUp/ $STITCH_UP_DIR
+    cp -rs $(pwd)/LLVMStitchUp $STITCH_UP_DIR
 fi
 
 #Create a symbolic link for the chstone_stitchup benchmarks
