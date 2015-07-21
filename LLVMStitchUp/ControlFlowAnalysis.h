@@ -48,7 +48,6 @@ namespace StchUp {
 		void testPrint();
 	private:
 		std::vector<Value *> *CDS; //CDS = Control Dependency Set, the set of instructions which influence control 
-		std::vector<BasicBlock *> *exits;//Determine all the exit blocks for the input function 	
 		Function *F; //LLVMfunction that is being analysed
 		ControlDependenceSet test;
 
@@ -70,9 +69,7 @@ namespace StchUp {
 	ControlFlowAnalysis::ControlFlowAnalysis(Function *iF)	
 	{
 		CDS = new std::vector<Value *>;  
-		exits = new std::vector<BasicBlock *>; 	
 		F = iF;
-		findExitBlocks();
 		BuildCDS();
 	}
 
@@ -80,7 +77,6 @@ namespace StchUp {
 	ControlFlowAnalysis::~ControlFlowAnalysis()
 	{
 		delete CDS;
-		delete exits;
 	}
 
 	//---------------------------------------------------------------------------------------------------------------------
@@ -335,28 +331,6 @@ namespace StchUp {
 		}	
 	    }	
 	}
-	
-	//---------------------------------------------------------------------------------------------------------------------
-	//Adds every BasicBlock that has a return instruction as it TerminatorInst
-	//to the exits vector.
-	//---------------------------------------------------------------------------------------------------------------------
-	void ControlFlowAnalysis::findExitBlocks(void)
-	{
-		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)  
-		{
-		    BasicBlock *blk = fs;
-		    TerminatorInst *TInst = blk->getTerminator();
-		    if(isa<llvm::ReturnInst>(*TInst))
-		    {
-		        for(std::vector<BasicBlock *>::iterator it = exits->begin(); it != exits->end(); ++it){
-		            BasicBlock *curr = *it;
-		            if(curr->getName() == blk->getName()) { return; } //This exit block is already in the list
-		        }
-		        exits->push_back(blk);
-		    }
-		}
-		return;		
-	} //findExitBlocks
 
 
 } //namespace StitchUp
