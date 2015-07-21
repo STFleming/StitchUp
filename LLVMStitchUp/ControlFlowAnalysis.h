@@ -24,6 +24,8 @@
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/IR/CFG.h"
 
+#include "ControlDependenceSet.h"
+
 using namespace llvm;
 
 namespace StchUp {
@@ -42,14 +44,27 @@ namespace StchUp {
 		bool BuildCDSHelperCheckIfExists(Value *item); //Checks if an Instruction is present in the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
 		//Debug below
-		void printCDS(); //Temporary debug, prints the CDS
 		void labelBasicBlocks(); //Label all the BasicBLocks with a name
+		void testPrint();
 	private:
 		std::vector<Value *> *CDS; //CDS = Control Dependency Set, the set of instructions which influence control 
 		std::vector<BasicBlock *> *exits;//Determine all the exit blocks for the input function 	
 		Function *F; //LLVMfunction that is being analysed
+		ControlDependenceSet test;
 
 	}; //class ControlFlowAnalysis 
+
+	void ControlFlowAnalysis::testPrint()
+	{
+		for(std::vector<Value *>::iterator cds_s = CDS->begin(), cds_e = CDS->end(); cds_s != cds_e; ++cds_s)
+		{
+			Value *item = *cds_s;
+			test.add(item); 
+		}
+		test.print();
+	}
+
+
 
 	//Constructor
 	ControlFlowAnalysis::ControlFlowAnalysis(Function *iF)	
@@ -107,16 +122,6 @@ namespace StchUp {
 
 	//---------------------------------------------------------------------------------------------------------------------
 	//TODO: Remove, used for debugging purposes
-	void ControlFlowAnalysis::printCDS()
-	{
-		errs() << "{";                                
-		for(std::vector<Value *>::iterator s = CDS->begin(), e=CDS->end(); s != e; ++s)
-		{
-		    Value *t = *s;
-		    errs() << *t << "  ";
-		}
-		errs() << "}\n";	
-	}
 	void ControlFlowAnalysis::labelBasicBlocks()
 	{
 		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)

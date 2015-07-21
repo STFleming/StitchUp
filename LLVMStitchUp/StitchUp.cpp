@@ -19,10 +19,6 @@
 #include "ControlFlowAnalysis.h"
 using namespace llvm;
 
-#define DEBUG_TYPE "StitchUp"
-
-STATISTIC(StitchUpCounter, "Counts number of functions greeted");
-
 namespace {
   struct StitchUp : public FunctionPass {
     static char ID; // Pass identification, replacement for typeid
@@ -30,10 +26,15 @@ namespace {
 
     bool runOnFunction(Function &F) override {
 	StchUp::ControlFlowAnalysis CFGbones (&F);	
-	CFGbones.printCDS();
+	CFGbones.testPrint();
 	CFGbones.createControlShadow();
       return true;
     }
+
+    bool doFinalization(Module &M) override {
+	return true;
+    } 
+
   };
 }
 
