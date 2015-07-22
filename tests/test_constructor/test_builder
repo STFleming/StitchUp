@@ -1,0 +1,11 @@
+
+make test.bc
+make test.ll
+make test.stitchedup.bc
+make test.stitchedup.ll
+
+cp test.stitchedup.bc ../ControlFlowAnalysis/$1/golden.bc
+cp test.stitchedup.ll ../ControlFlowAnalysis/$1/golden.ll
+cp test.bc ../ControlFlowAnalysis/$1/input.bc
+cp test.ll ../ControlFlowAnalysis/$1/input.ll
+
