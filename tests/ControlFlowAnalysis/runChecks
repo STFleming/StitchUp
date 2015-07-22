@@ -1,0 +1,15 @@
+#!/bin/bash
+
+for i in conditional_branch  loadandstore  straightline  unconditional_branch   
+do
+	make -C ./$i clean-check > /dev/null 
+	make  -C ./$i input.stitchedup.bc  > /dev/null
+	echo ""
+	cmp -s ./$i/input.stitchedup.bc ./$i/golden.bc
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then 
+	    echo  "$i ... PASS" 
+	else 
+	    echo -e "$i ... FAIL" 
+	fi
+done
