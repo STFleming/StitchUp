@@ -29,7 +29,7 @@ namespace StchUp{
 			~ControlDependenceSet(); //Default Deconstructor
 			bool checkIfExists(Value *v); //returns true if the Value is in the CDS
 			void add(Value* v); //Adds a value to the CDS
-			void addIfNotPresent(Value *v); //Checks if a value is in the CDS and adds it to the set
+			bool addIfNotPresent(Value *v); //Checks if a value is in the CDS and adds it to the set
 			void remove(Value *v); //Removes from CDS
 			void print(); //Prints the entire CDS, used for debugging	
 			cds_iterator begin(); //Returns the begining of a CDS iterator	
@@ -78,11 +78,14 @@ namespace StchUp{
 		CDS->push_back(v); 
 	}
 
-	void ControlDependenceSet::addIfNotPresent(Value *v)
+	//returns true if it could sucessfully add the item
+	bool ControlDependenceSet::addIfNotPresent(Value *v)
 	{
-		if(!checkIfExists(v))
+		if(!checkIfExists(v)){
 			add(v);
-		return;
+			return true;
+		}
+		return false;
 	}	
 
 	void ControlDependenceSet::remove(Value *v)
@@ -103,7 +106,7 @@ namespace StchUp{
 			Value *curr = *it;
 			errs() << *curr <<",";
 		}
-		errs() << "}";
+		errs() << "}\n";
 	}
 
 
