@@ -1,17 +1,21 @@
-; ModuleID = 'input.stitchedup.bc'
+; ModuleID = 'input.bc'
 target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
 target triple = "i386-pc-linux-gnu"
 
 ; Function Attrs: nounwind
 define i32 @conditional_branch(i32 %a, i32 %b, i32 %c) #0 {
+  %b1 = add nsw i32 4, %b
+  %c1 = add nsw i32 4, %c
   %cmp = icmp eq i32 %a, 1
   br i1 %cmp, label %if.then, label %if.else
 
 if.then:                                          ; preds = %0
-  ret i32 %b
+  %b2 = add nsw i32 2, %b1
+  ret i32 %b2
 
 if.else:                                          ; preds = %0
-  ret i32 %c
+  %c2 = add nsw i32 2, %c1
+  ret i32 %c2
 }
 
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }

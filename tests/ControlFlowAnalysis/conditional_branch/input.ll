@@ -1,27 +1,17 @@
-; ModuleID = 'test.bc'
+; ModuleID = 'input.bc'
 target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
 target triple = "i386-pc-linux-gnu"
 
 ; Function Attrs: nounwind
-define i32 @unconditional_branch(i32 %in) #0 {
-  %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
-  store i32 %in, i32* %2, align 4
-  %3 = load i32* %2, align 4
-  %4 = icmp ne i32 %3, 0
-  br i1 %4, label %5, label %6
+define i32 @conditional_branch(i32 %a, i32 %b, i32 %c) #0 {
+  %cmp = icmp eq i32 %a, 1 
+  br i1 %cmp, label %if.then, label %if.else
 
-; <label>:5                                       ; preds = %0
-  store i32 1, i32* %1
-  br label %7
+if.then:                                          ; preds = %0
+  ret i32 %b 
 
-; <label>:6                                       ; preds = %0
-  store i32 0, i32* %1
-  br label %7
-
-; <label>:7                                       ; preds = %6, %5
-  %8 = load i32* %1
-  ret i32 %8
+if.else:                                          ; preds = %0
+  ret i32 %c 
 }
 
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }

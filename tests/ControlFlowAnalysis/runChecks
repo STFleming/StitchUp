@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in conditional_branch  loadandstore loadandstore_withdata  straightline  unconditional_branch   
+for i in conditional_branch conditional_branch_withdata  loadandstore loadandstore_withdata  straightline  unconditional_branch   
 do
 	make -C ./$i clean-check > /dev/null 
 	make  -C ./$i input.stitchedup.bc  > /dev/null

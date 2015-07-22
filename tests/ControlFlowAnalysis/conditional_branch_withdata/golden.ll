@@ -8,10 +8,10 @@ define i32 @conditional_branch(i32 %a, i32 %b, i32 %c) #0 {
   br i1 %cmp, label %if.then, label %if.else
 
 if.then:                                          ; preds = %0
-  ret i32 %b
+  ret i32 undef
 
 if.else:                                          ; preds = %0
-  ret i32 %c
+  ret i32 undef
 }
 
 attributes #0 = { nounwind "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "unsafe-fp-math"="false" "use-soft-float"="false" }
