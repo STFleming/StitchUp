@@ -81,7 +81,10 @@ namespace StchUp {
 			for(BasicBlock::iterator bs=blk->begin(), be=blk->end(); bs != be; ++bs) {
 				Instruction *inst = bs;	
 				if(!isa<TerminatorInst>(inst))
-					nonCDS.addIfNotPresent(inst);
+				{
+					if(!CDS.checkIfExists(inst))
+						nonCDS.add(inst);
+				}
 			}
 		}
 		//Now iterate through and delete the nonCDS instrustions, make sure we do it from the end of use_def chain
@@ -118,7 +121,6 @@ namespace StchUp {
 		if(Instruction *ICond = dyn_cast<Instruction>(cond)) {
 			if(!isa<Constant>(ICond))
 			{
-				errs() << "Adding Branch Condition..\n";
 			    	CDS.addIfNotPresent(ICond);
 				for(unsigned i=0; i<ICond->getNumOperands(); i++)
 				{

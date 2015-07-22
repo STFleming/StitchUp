@@ -106,7 +106,7 @@ namespace StchUp{
 			Value *curr = *it;
 			errs() << *curr <<",";
 		}
-		errs() << "}";
+		errs() << "}\n";
 	}
 
 
