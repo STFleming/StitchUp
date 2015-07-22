@@ -47,7 +47,9 @@ echo "STITCH_UP_DIR=$STITCH_UP_DIR" >>Makefile.config
 echo "LEGUP_HOME=$LEGUP_HOME" >> Makefile.config
 
 
-echo "(cd $STITCH_UP_DIR; make)" > ./build
+echo "CURRDIR=$(pwd)" > ./build
+echo "(cd $STITCH_UP_DIR; make)" >> ./build
+echo "(cd \$CURRDIR/tests/ControlFlowAnalysis;./runChecks)" >> ./build
 chmod u+x build
 
 echo "Reconfiguring the LLVM base"
