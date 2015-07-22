@@ -1,9 +1,12 @@
-; ModuleID = 'test.stitchedup.bc'
+; ModuleID = 'input.stitchedup.bc'
 target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
 target triple = "i386-pc-linux-gnu"
 
 ; Function Attrs: nounwind
-define i32 @straightline(i32 %a) #0 {
+define i32 @unconditional_branch(i32 %a) #0 {
+  br label %return_point
+
+return_point:                                     ; preds = %0
   ret i32 undef
 }
 
