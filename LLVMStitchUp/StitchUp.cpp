@@ -26,7 +26,7 @@ namespace {
 
     bool runOnFunction(Function &F) override {
 	StchUp::ControlFlowAnalysis CFGbones (&F);	
-	CFGbones.testPrint();
+	//CFGbones.testPrint();
 	CFGbones.createControlShadow();
       return true;
     }
