@@ -34,16 +34,16 @@ def main(argv):
 		elif opt in ("-n", "--name="):
 			name = arg
 
-	ALM_f = gatherResource(inputfile, "Estimate of Logic utilization (ALMs needed)")
+	ALM_f = gatherResource(inputfile, "ALMs needed [=A-B+C]")
 	LUT_f = gatherResource(inputfile, "Combinational ALUT usage for logic")
-	REG_f = gatherResource(inputfile, "Dedicated logic registers")
-	BRAM_f = gatherResource(inputfile, "Total block memory bits")
+	REG_f = gatherResource(inputfile, "Total registers")
+	BRAM_f = gatherResource(inputfile, "M10K blocks")
 	DSP_f = gatherResource(inputfile, "Total DSP Blocks")
 	
-	ALM_su = gatherResource(stitchupfile, "Estimate of Logic utilization (ALMs needed)")
+	ALM_su = gatherResource(stitchupfile, "ALMs needed [=A-B+C]")
 	LUT_su = gatherResource(stitchupfile, "Combinational ALUT usage for logic")
-	REG_su = gatherResource(stitchupfile, "Dedicated logic registers")
-	BRAM_su = gatherResource(stitchupfile, "Total block memory bits")
+	REG_su = gatherResource(stitchupfile, "Total registers")
+	BRAM_su = gatherResource(stitchupfile, "M10K blocks")
 	DSP_su = gatherResource(stitchupfile, "Total DSP Blocks")
 
 	ALM = float(ALM_su)/float(ALM_f) if ALM_f > 0 else "inf" 
