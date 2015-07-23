@@ -7,11 +7,11 @@ def gatherResource(filename, resource):
 	p = open(filename, 'r')
 	plines = p.readlines()
 	amount=' '
-	search_expr = ";\s" + re.escape(resource) + "\s*;\s*(\d+)\s"
+	search_expr = ";\s" + re.escape(resource) + "\s*;\s*(\d+,?\d*)\s"
 	for line in plines:
 		m = re.search(search_expr, line)
 		if m:
-			return int(m.group(1)) 
+			return int(m.group(1).replace(",","")) 
 	return 0	
 
 def main(argv):
