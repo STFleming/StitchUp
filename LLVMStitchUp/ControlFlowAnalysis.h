@@ -41,6 +41,7 @@ namespace StchUp {
 		void BuildCDSHelperProcessCondition(Value *cond);
 		void BuildCDSHelperAddProcessBranches(); //Adds all branch conditions to the CDS
 		void createControlShadow(void); //Removes all non CDS instructions leaving just hte control shadow behind
+		void finalSanityCheck(void); //Performs final sanity checks on the produced code, called in the destructor
 		//Debug below
 		void labelBasicBlocks(); //Label all the BasicBLocks with a name
 		void testPrint();
@@ -65,7 +66,9 @@ namespace StchUp {
 	//Destructor
 	ControlFlowAnalysis::~ControlFlowAnalysis()
 	{
+		finalSanityCheck();
 	}
+
 
 //---------------------------------------------------------------------------------------------------------------------
 // Keeps iterating over the Basic Blocks in the program removing instructions that are 
@@ -215,7 +218,6 @@ namespace StchUp {
 								CDS.add(op2); //add ptr
 								fixedpoint = false;
 							}
-						//fixedpoint = !CDS.addIfNotPresent(op2); //Unsure about this refactor 
 							fixedpoint = !CDS.addIfNotPresent(inst);
 						}
 					}
@@ -252,5 +254,26 @@ namespace StchUp {
 	    }	
 	}
 
+//---------------------------------------------------------------------------------------------------------------------
+// Checks for Undefs in the operands and other signifiers that something has gone wrong
+//---------------------------------------------------------------------------------------------------------------------
+void ControlFlowAnalysis::finalSanityCheck()
+{
+	for(Function::iterator fiter=F->begin(), fend=F->end(); fiter != fend; ++fiter)
+	{
+		BasicBlock *blk = fiter;
+		for(BasicBlock::iterator bs=blk->begin(), be=blk->end(); bs != be; ++bs)
+		{
+			Instruction *inst = bs;
+			if(!isa<TerminatorInst>(inst)){
+				for(unsigned i=0; i<inst->getNumOperands(); i++)
+				{
+				    Value *o = inst->getOperand(i);
+				    assert(!isa<UndefValue>(o));
+				}
+			}	
+		}
+	}
+} 
 
 } //namespace StitchUp
