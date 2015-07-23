@@ -245,9 +245,9 @@ namespace StchUp {
 	        Value * curr = *s;
 		if(Instruction * inst = dyn_cast<Instruction>(curr))
 		{
-			for(User::op_iterator os = inst->op_begin(), oe = inst->op_end(); os != oe; ++os)
+			for(unsigned i=0; i<inst->getNumOperands(); i++)
 			{	
-				Value *operand = *os;
+				Value *operand = inst->getOperand(i);
 				fixedpoint = !CDS.addIfNotPresent(operand);
 			}
 		}	
@@ -269,7 +269,11 @@ void ControlFlowAnalysis::finalSanityCheck()
 				for(unsigned i=0; i<inst->getNumOperands(); i++)
 				{
 				    Value *o = inst->getOperand(i);
-				    assert(!isa<UndefValue>(o));
+				    if(isa<UndefValue>(o))
+				    {
+					errs() << "SANITY CHECK FAILURE: instruction  " << *inst << "   has an undef Op\n";
+				    	//assert(!isa<UndefValue>(o));
+				    }
 				}
 			}	
 		}
