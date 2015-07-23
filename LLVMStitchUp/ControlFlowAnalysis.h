@@ -95,9 +95,11 @@ namespace StchUp {
 		{
 			Value *curr = *item;
 			Value *blank = UndefValue::get(curr->getType());
-			curr->replaceAllUsesWith(blank);
 			if(Instruction *inst = dyn_cast<Instruction>(curr))
+			{
+				inst->replaceAllUsesWith(blank);
 				inst->eraseFromParent();
+			}
 		}
 	}
 
