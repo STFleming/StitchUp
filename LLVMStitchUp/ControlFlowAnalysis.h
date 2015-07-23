@@ -220,7 +220,7 @@ namespace StchUp {
 								CDS.add(op2); //add ptr
 								fixedpoint = false;
 							}
-							fixedpoint = !CDS.addIfNotPresent(inst);
+							if(CDS.addIfNotPresent(inst)){ fixedpoint = false; } 
 						}
 					}
 					if(isa<LoadInst>(inst))
@@ -228,8 +228,8 @@ namespace StchUp {
 					 Value *op1 = inst->getOperand(0); //Get the value to be stored in the ptr
 					 if(CDS.checkIfExists(op1))
 					  {
-						fixedpoint = !CDS.addIfNotPresent(op1);
-						fixedpoint = !CDS.addIfNotPresent(inst);
+						if(CDS.addIfNotPresent(op1)) { fixedpoint = false; }
+						if(CDS.addIfNotPresent(inst)) { fixedpoint = false; }
 					  }
 					}
 				}
@@ -250,7 +250,7 @@ namespace StchUp {
 			for(unsigned i=0; i<inst->getNumOperands(); i++)
 			{	
 				Value *operand = inst->getOperand(i);
-				fixedpoint = !CDS.addIfNotPresent(operand);
+				if(CDS.addIfNotPresent(operand)) { fixedpoint = false; }
 			}
 		}	
 	    }	
