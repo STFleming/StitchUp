@@ -1,7 +1,6 @@
 #!/bin/bash
 source ./build.config
-#DIRS="adpcm aes blowfish dfadd dfdiv dfmul dfsin gsm jpeg mips motion sha"
-DIRS="aes"
+DIRS="adpcm aes blowfish dfadd dfdiv dfmul dfsin gsm jpeg mips motion sha"
 CURR_DIR=$(pwd)
 
 rm -r -f ./results/su_proportion.csv
