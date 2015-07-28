@@ -7,7 +7,7 @@ target triple = "i386-pc-linux-gnu"
 ; Function Attrs: nounwind
 define i32 @straightline() #0 {
   store volatile i32 1, i32* getelementptr inbounds ([10 x i32]* @A, i32 0, i32 5), align 4
-  %array_load = load volatile i32* getelementptr inbounds ([10 x i32]* @A, i32 0, i32 1), align 4
+  %array_load = load volatile i32* getelementptr inbounds ([10 x i32]* @A, i32 0, i32 5), align 4
   %cond = icmp ne i32 %array_load, 0
   br i1 %cond, label %if.then, label %if.else
 
