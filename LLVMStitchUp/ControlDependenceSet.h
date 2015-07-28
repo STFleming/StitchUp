@@ -17,6 +17,7 @@
 #include <vector>
 #include <exception>
 #include "llvm/IR/InstrTypes.h"
+#include "llvm/IR/DerivedTypes.h"
 
 using namespace llvm;
 
@@ -36,7 +37,8 @@ namespace StchUp{
 			cds_iterator end(); //Returns the end of a CDS iterator
 		private:
 			std::vector<Value *>* CDS; //Set of LLVM values that influence control
-			
+			std::vector<PointerType *>* CMem; //Set of memory locations that influence control		
+	
 	}; //Class ControlDependenceSet
 
 	//constructor
