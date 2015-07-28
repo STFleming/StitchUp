@@ -274,7 +274,7 @@ void ControlFlowAnalysis::finalSanityCheck()
 				    if(isa<UndefValue>(o))
 				    {
 					errs() << "SANITY CHECK FAILURE: instruction  " << *inst << "   has an undef Op\n";
-				    	//assert(!isa<UndefValue>(o));
+				    	assert(!isa<UndefValue>(o));
 				    }
 				}
 			}	
