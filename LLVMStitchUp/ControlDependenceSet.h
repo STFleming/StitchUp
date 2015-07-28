@@ -17,7 +17,7 @@
 #include <vector>
 #include <exception>
 #include "llvm/IR/InstrTypes.h"
-#include "llvm/IR/DerivedTypes.h"
+#include "ControlMemorySet.h"
 
 using namespace llvm;
 
@@ -33,12 +33,14 @@ namespace StchUp{
 			bool addIfNotPresent(Value *v); //Checks if a value is in the CDS and adds it to the set
 			void remove(Value *v); //Removes from CDS
 			void print(); //Prints the entire CDS, used for debugging	
+			bool checkMemLocation(Value *p); //returns true if the memory location is tracked
+			void addMem(Value *p); //Adds the memory location to Cmem
+			bool addMemIfNotPresent(Value *p); //adds only if not present in Cmem
 			cds_iterator begin(); //Returns the begining of a CDS iterator	
 			cds_iterator end(); //Returns the end of a CDS iterator
 		private:
 			std::vector<Value *>* CDS; //Set of LLVM values that influence control
-			std::vector<PointerType *>* CMem; //Set of memory locations that influence control		
-	
+			ControlMemorySet Cmem; //Data structure of memory locations which influence the CFG 	
 	}; //Class ControlDependenceSet
 
 	//constructor
@@ -111,6 +113,14 @@ namespace StchUp{
 		errs() << "}\n";
 	}
 
+	//returns true if the memory location is tracked
+	bool ControlDependenceSet::checkMemLocation(Value *p){ return Cmem.checkIfExists(p); } 
+	
+	//Adds the memory location to Cmem
+	void ControlDependenceSet::addMem(Value *p){ Cmem.add(p); }
+
+	//adds only if not present in Cmem  
+	bool ControlDependenceSet::addMemIfNotPresent(Value *p){ return Cmem.addIfNotPresent(p); }
 
 } //namespace StchUp
 

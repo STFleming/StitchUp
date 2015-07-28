@@ -209,28 +209,31 @@ namespace StchUp {
 				Instruction *inst = bs;
 				if(!isa<TerminatorInst>(inst))
 				{
-					if(isa<StoreInst>(inst)) //store value ptr, we need to add ptr if value \in CDS
+					if(StoreInst * storei = dyn_cast<StoreInst>(inst)) //store value ptr, we need to add ptr if value \in CDS
 					{
-						Value *op1 = inst->getOperand(0); //Get the value to be stored in the ptr
-						Value *op2 = inst->getOperand(1); 
-						if(CDS.checkIfExists(op1))
+						Value *storeVal = storei->getValueOperand(); 
+						Value *storePtr = storei->getPointerOperand(); 
+						
+						//if the memory location has been tagged then inst and op1 should be added 
+						if(CDS.checkMemLocation(storePtr))
 						{
-							if(!CDS.checkIfExists(inst))
-							{
-								CDS.add(op2); //add ptr
-								fixedpoint = false;
-							}
-							if(CDS.addIfNotPresent(inst)){ fixedpoint = false; } 
+							if(CDS.addIfNotPresent(storeVal)) { fixedpoint = false; }
+							if(CDS.addIfNotPresent(storei)) { fixedpoint = false; }	
 						}
 					}
-					if(isa<LoadInst>(inst))
+					if(LoadInst * loadi= dyn_cast<LoadInst>(inst))
 					{
-					 Value *op1 = inst->getOperand(0); //Get the value to be stored in the ptr
-					 if(CDS.checkIfExists(op1))
-					  {
-						if(CDS.addIfNotPresent(op1)) { fixedpoint = false; }
-						if(CDS.addIfNotPresent(inst)) { fixedpoint = false; }
-					  }
+						if(CDS.checkIfExists(loadi))
+						 {
+						       if(CDS.addIfNotPresent(loadi)) { fixedpoint = false; }
+						       Value *loadPtr = loadi->getPointerOperand();
+						       //We need to tag the corresponding memory location
+						       if(CDS.addMemIfNotPresent(loadPtr))
+							{
+								if(CDS.addIfNotPresent(loadPtr)) { fixedpoint = false; }
+							  	fixedpoint = false;
+							}
+						 }
 					}
 				}
 			}
