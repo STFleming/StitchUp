@@ -220,6 +220,16 @@ namespace StchUp {
 							if(CDS.addIfNotPresent(storeVal)) { fixedpoint = false; }
 							if(CDS.addIfNotPresent(storei)) { fixedpoint = false; }	
 						}
+
+						//Check to see if the whole array has been flagged.
+						if(GetElementPtrInst *t = dyn_cast<GetElementPtrInst>(storePtr))
+						{
+							if(CDS.checkIfArrayExists(t))
+							{
+								if(CDS.addIfNotPresent(storeVal)) { fixedpoint = false; }
+								if(CDS.addIfNotPresent(storei)) { fixedpoint = false; }	
+							}	
+						}
 					}
 					if(LoadInst * loadi= dyn_cast<LoadInst>(inst))
 					{
@@ -230,6 +240,10 @@ namespace StchUp {
 						       //We need to tag the corresponding memory location
 						       if(CDS.addMemIfNotPresent(loadPtr))
 							{
+								if(GetElementPtrInst * t = dyn_cast<GetElementPtrInst>(loadPtr))
+								{
+									if(CDS.addArrayRefIfNotPresent(t)) { fixedpoint = false; }
+								}
 								if(CDS.addIfNotPresent(loadPtr)) { fixedpoint = false; }
 							  	fixedpoint = false;
 							}

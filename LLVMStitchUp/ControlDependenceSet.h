@@ -18,6 +18,7 @@
 #include <exception>
 #include "llvm/IR/InstrTypes.h"
 #include "ControlMemorySet.h"
+#include "ControlArrayRefs.h"
 
 using namespace llvm;
 
@@ -36,11 +37,14 @@ namespace StchUp{
 			bool checkMemLocation(Value *p); //returns true if the memory location is tracked
 			void addMem(Value *p); //Adds the memory location to Cmem
 			bool addMemIfNotPresent(Value *p); //adds only if not present in Cmem
+			bool addArrayRefIfNotPresent(GetElementPtrInst *v); //Adds a reference to an array if it doesn't exist
+			bool checkIfArrayExists(GetElementPtrInst *v); 
 			cds_iterator begin(); //Returns the begining of a CDS iterator	
 			cds_iterator end(); //Returns the end of a CDS iterator
 		private:
 			std::vector<Value *>* CDS; //Set of LLVM values that influence control
 			ControlMemorySet Cmem; //Data structure of memory locations which influence the CFG 	
+			ControlArrayRef Carray; //Keeps track of array references that may influence the CFG
 	}; //Class ControlDependenceSet
 
 	//constructor
@@ -122,5 +126,10 @@ namespace StchUp{
 	//adds only if not present in Cmem  
 	bool ControlDependenceSet::addMemIfNotPresent(Value *p){ return Cmem.addIfNotPresent(p); }
 
+	//Adds a reference to an array if it doesn't exist
+	bool ControlDependenceSet::addArrayRefIfNotPresent(GetElementPtrInst *v) { return Carray.addIfNotPresent(v); } 
+
+	//checks if array reference is flagged
+	bool ControlDependenceSet::checkIfArrayExists(GetElementPtrInst *v) { return Carray.checkIfExists(v); }
 } //namespace StchUp
 
