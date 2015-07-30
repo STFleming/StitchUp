@@ -1,7 +1,7 @@
 
 %.pdf: %.tex
 	pdflatex $<
-	#bibtex $<
+	bibtex $<
 	pdflatex $<
 	pdflatex $<
 
