@@ -18,12 +18,20 @@ LLVM_DIR=$LEGUP_HOME/llvm
 LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
 STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
 LLVMStitchUp=./LLVMStitchUp
+STITCHUPBACKEND=./StitchUpBackend
+TARGET_DIR=$LLVM_DIR/lib/Target
+LLVMSTITCHUP_BACKEND=$TARGET_DIR/StitchUp
 CHSTONE_DIR=$(pwd)/benchmarks/chstone_stitchup
 LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
     cp -rs $(pwd)/LLVMStitchUp $STITCH_UP_DIR
+fi
+
+#Create the Backend Dir in Target
+if [ ! -L $LLVMSTITCHUP_BACKEND ]; then
+	cp -rs $(pwd)/StitchUpBackend $LLVMSTITCHUP_BACKEND
 fi
 
 #Create a symbolic link for the chstone_stitchup benchmarks
@@ -39,6 +47,13 @@ if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
     echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
 else
     sed -i '/^PARALLEL_DIRS = .*/ s/$/ StitchUp/' $LLVM_LIB_DIR/Makefile
+fi
+
+#Include StitchUp into the TargetMakefile list
+if grep -q "StitchUp" $LLVM_DIR/Makefile.config; then
+	echo "The StitchUp Target backend has already been included into the LLVM Makefile.config"
+else
+	sed -i '/^\sTARGETS_TO_BUILD=.*/ s/$/ StitchUp/' $LLVM_DIR/Makefile.config
 fi
 
 echo "LLVM_DIR=$LLVM_DIR" > Makefile.config
@@ -68,3 +83,4 @@ else
 	cp config/Makefile.common $LEGUP_HOME/examples/	
 fi
 
+(cd $LLVMSTITCHUP_BACKEND; make; cd $CURR_DIR; )
