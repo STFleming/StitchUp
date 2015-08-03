@@ -198,7 +198,7 @@ endif # LLVM_PROFILE
 ifdef STITCHUP
 	$(LLVM_HOME)opt -load=$(LLVM_HOME)../lib/LLVMStitchUp.so -StitchUp < $(NAME).postlto.bc > $(NAME).stitchup.bc
 	$(LLVM_HOME)llvm-dis $(NAME).stitchup.bc
-	$(LLVM_HOME)llc $(LLC_FLAGS) -march=v $(NAME).stitchup.bc -o $(VFILE)
+	$(LLVM_HOME)llc $(LLC_FLAGS) -march=s $(NAME).stitchup.bc -o $(VFILE)
 else
 	$(LLVM_HOME)llc $(LLC_FLAGS) -march=v $(NAME).bc -o $(VFILE)
 endif

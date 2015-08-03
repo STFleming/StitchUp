@@ -42,6 +42,8 @@ fi
 echo "BUILD_DIR=$LEGUP_EXAMPLES_DIR/chstone_stitchup" > $CHSTONE_DIR/build.config
 chmod u+x $CHSTONE_DIR/build.config
 
+CURR_DIR=$(pwd)
+
 #Include StitchUp to the library makefile lists.
 if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
     echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
@@ -50,10 +52,17 @@ else
 fi
 
 #Include StitchUp into the TargetMakefile list
-if grep -q "StitchUp" $LLVM_DIR/Makefile.config; then
+if grep -q "StitchUp" $LLVM_DIR/configure; then
 	echo "The StitchUp Target backend has already been included into the LLVM Makefile.config"
 else
-	sed -i '/^\sTARGETS_TO_BUILD=.*/ s/$/ StitchUp/' $LLVM_DIR/Makefile.config
+	sed -i "s/Verilog/Verilog StitchUp/g" $LLVM_DIR/configure	
+fi
+
+#Include StitchUp into the TargetMakefile list
+if grep -q "StitchUp" $LLVM_DIR/lib/Target/LLVMBuild.txt; then
+	echo "The StitchUp Target backend has already been included into the Target LLVMBuild.txt "
+else
+	sed -i "s/Verilog/Verilog StitchUp/g"  $LLVM_DIR/lib/Target/LLVMBuild.txt	
 fi
 
 echo "LLVM_DIR=$LLVM_DIR" > Makefile.config
@@ -68,7 +77,6 @@ echo "(cd \$CURRDIR/tests/ControlFlowAnalysis;./runChecks)" >> ./build
 chmod u+x build
 
 echo "Reconfiguring the LLVM base"
-CURR_DIR=$(pwd)
 (cd $LLVM_DIR; ./configure; cd $CURR_DIR;)
 echo "Finished configuring the LLVM base"
 
@@ -76,11 +84,6 @@ echo "Finished configuring the LLVM base"
 (cd $STITCH_UP_DIR; make; cd $CURR_DIR;)
 
 #Edit the LegUp makefile so that the makefile argument STITCHUP=1 can be used to build the system with stitchup
-if grep -q "StitchUp" $LEGUP_HOME/examples/Makefile.common; then
-	echo "StitchUp has already been added to the examples makefile of LegUp."	
-else
-	echo "Patching the LegUp examples makefile"
-	cp config/Makefile.common $LEGUP_HOME/examples/	
-fi
+cp config/Makefile.common $LEGUP_HOME/examples/	
 
 (cd $LLVMSTITCHUP_BACKEND; make; cd $CURR_DIR; )
