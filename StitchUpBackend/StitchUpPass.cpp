@@ -31,14 +31,8 @@
 using namespace llvm;
 using namespace legup;
 
-//Set to true if StitchUp code is being generated
-static cl::opt<bool> 
-StitchUpFlag("stitchup_generate", cl::init(false), cl::Hidden, 
-	    cl::desc("Set to true when StitchUp code is being produced."));
-
-
 namespace legup {
-Debugging dbger;
+Debugging dbger1;
 
 class FunctionSortingWrapper;
 
@@ -120,8 +114,6 @@ std::vector<Function*> StitchUpPass::getDepthFirstSortedFunctions(Module &M) {
 }
 
 bool StitchUpPass::doInitialization(Module &M) {
-
-    if(StitchUpFlag){ errs() << "StichUpFlag has been turned on.\n"; }
 
     allocation = new Allocation(&M);
     Scheduler::alloc = allocation;
@@ -219,7 +211,7 @@ void StitchUpPass::printBBStats(Function &F) {
 bool StitchUpPass::runOnModule(Module &M) {
 
     // NC changes
-    // Debugging dbger;
+    // Debugging dbger1;
     if (LEGUP_CONFIG->getParameterInt("INSPECT_DEBUG") ||
         LEGUP_CONFIG->getParameterInt("INSPECT_ONCHIP_BUG_DETECT_DEBUG")) {
         std::cout << "***LegUp Inspect-Debug mode is selected***" << std::endl;
@@ -246,8 +238,8 @@ bool StitchUpPass::runOnModule(Module &M) {
         /*Timer timer;
         timer.init(StringRef("timer"));
         timer.startTimer();*/
-        dbger.initializeDatabase();
-        dbger.initialize();
+        dbger1.initializeDatabase();
+        dbger1.initialize();
         /*timer.stopTimer();
         std::cout << "inspect debug database initialized: " << std::endl;*/
     }
@@ -275,7 +267,7 @@ bool StitchUpPass::runOnModule(Module &M) {
 		if (LEGUP_CONFIG->getParameterInt("INSPECT_DEBUG")
 				|| LEGUP_CONFIG->getParameterInt(
 						"INSPECT_ONCHIP_BUG_DETECT_DEBUG")) {
-            dbger.fillDebugDB(&F);
+            dbger1.fillDebugDB(&F);
         }
 
         // Do not codegen any 'extern' functions at all, they have
@@ -338,7 +330,7 @@ bool StitchUpPass::runOnModule(Module &M) {
 
         // NC changes...
         if (LEGUP_CONFIG->getParameterInt("INSPECT_DEBUG")) {
-            dbger.mapIRsToStates(HW);
+            dbger1.mapIRsToStates(HW);
         }
     }
 
@@ -460,14 +452,14 @@ bool StitchUpPass::doFinalization(Module &M) {
     GenerateRTL::printPath(overallReport, overallPaths);
 
     if (LEGUP_CONFIG->getParameterInt("INSPECT_DEBUG")) {
-        dbger.fillHardwareInfo(allocation);
-        dbger.fillSignals(allocation);
-        dbger.fillVariables(allocation);
+        dbger1.fillHardwareInfo(allocation);
+        dbger1.fillSignals(allocation);
+        dbger1.fillVariables(allocation);
 
-        dbger.StateStoreInfoMapping(allocation);
+        dbger1.StateStoreInfoMapping(allocation);
     } else if (LEGUP_CONFIG->getParameterInt(
                    "INSPECT_ONCHIP_BUG_DETECT_DEBUG")) {
-        dbger.fillCurStateAndFinishSignals(allocation);
+        dbger1.fillCurStateAndFinishSignals(allocation);
     }
 
     return false;
@@ -497,9 +489,9 @@ void StitchUpPass::printResourcesFile(std::string fileName) {
 // compiling ../../Transforms/LegUp. This will cause an error that the
 // MinimizeBitwidth pass has been registered twice when running:
 //      opt -load=../../llvm/Debug+Asserts/lib/LLVMLegUp.so
-char MinimizeBitwidth::ID = 0;
-static RegisterPass<MinimizeBitwidth> X("legup-minimize-bitwidth",
-        "Pre-Link Time Optimization Pass to shrink integer bitwidth to arbritrary precision");
+//char MinimizeBitwidth::ID = 0;
+//static RegisterPass<MinimizeBitwidth> X("legup-minimize-bitwidth",
+//        "Pre-Link Time Optimization Pass to shrink integer bitwidth to arbritrary precision");
 
 } // End stchup namespace
 
