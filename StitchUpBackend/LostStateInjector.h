@@ -30,16 +30,16 @@ namespace stchup {
 		std::ifstream origSchedule(OriginalSchedule);
 		if(!origSchedule.is_open()) { errs() << "Cannot open original schedule!\n"; assert(true);}	
 		std::string line;				
-		//std::regex expr("Basic\\sBlock\\s:\\s%BB(\\d*)\\sNum\\sStates:\\s(\\d+)");
-		//std::smatch group;
-		//while(getline(origSchedule, line))
-		//{
-		//	if(std::regex_search(line, group, expr))
-		//	{
-		//		for (auto x:group) errs() << x << "\t";
-		//		errs() << "\n";
-		//	}	
-		//}
+		std::regex e ("Basic Block: %BB(\\d+)? Num States: (\\d+)");
+		std::smatch group;
+		while(getline(origSchedule, line))
+		{
+			if(std::regex_search(line, group, e))
+			{
+				for (auto x:group) errs() << x << "\t";
+				errs() << "\n";
+			}	
+		}
 		origSchedule.close();
 	}	
 
