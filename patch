@@ -17,7 +17,9 @@ LEGUP_HOME=$1
 LLVM_DIR=$LEGUP_HOME/llvm
 LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
 STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
+LABEL_BB_DIR=$LLVM_LIB_DIR/LabelBB
 LLVMStitchUp=./LLVMStitchUp
+LLVMLabelBB=./LLVMStitchUp
 STITCHUPBACKEND=./StitchUpBackend
 TARGET_DIR=$LLVM_DIR/lib/Target
 LLVMSTITCHUP_BACKEND=$TARGET_DIR/StitchUp
@@ -27,6 +29,11 @@ LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
     cp -rs $(pwd)/LLVMStitchUp $STITCH_UP_DIR
+fi
+
+#Making the StitchUp LLVM library directory and creating a symbolic link to it
+if [ ! -L $LABEL_BB_DIR ]; then
+    cp -rs $(pwd)/LLVMLabelBB $LABEL_BB_DIR
 fi
 
 #Create the Backend Dir in Target
@@ -49,6 +56,13 @@ if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
     echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
 else
     sed -i '/^PARALLEL_DIRS = .*/ s/$/ StitchUp/' $LLVM_LIB_DIR/Makefile
+fi
+
+#Include StitchUp to the library makefile lists.
+if grep -q "LabelBB" $LLVM_LIB_DIR/Makefile; then
+    echo "The LabelBB Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
+else
+    sed -i '/^PARALLEL_DIRS = .*/ s/$/ LabelBB/' $LLVM_LIB_DIR/Makefile
 fi
 
 #Include StitchUp into the TargetMakefile list
@@ -82,6 +96,8 @@ echo "Finished configuring the LLVM base"
 
 #Attempting to build the StitchUp pass
 (cd $STITCH_UP_DIR; make; cd $CURR_DIR;)
+#Attempting to build the LabelBB pass
+(cd $LABEL_BB_DIR; make; cd $CURR_DIR;)
 
 #Edit the LegUp makefile so that the makefile argument STITCHUP=1 can be used to build the system with stitchup
 cp config/Makefile.common $LEGUP_HOME/examples/	

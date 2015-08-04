@@ -27,10 +27,13 @@
 
 #include "llvm/Support/FileSystem.h"
 
+#include "LostStateInjector.h"
+
 #define DEBUG_TYPE "LegUp:LegupPass"
 
 using namespace llvm;
 using namespace legup;
+
 
 namespace legup {
 Debugging dbger1;
@@ -300,11 +303,7 @@ bool StitchUpPass::runOnModule(Module &M) {
 	HW->scheduleOperations();
 	//STITCHUP FSM MANIPULATION
 	FiniteStateMachine *su_fsm = HW->getFSM(); 
-	for(FiniteStateMachine::StateListType::iterator iter=su_fsm->begin(), end=su_fsm->end(); iter != end; ++iter)
-	{
-		State s = *iter;	
-		errs() << s.getName() << "\t\t:\t" << su_fsm->getStateNum(iter) << "\n";
-	}
+	stchup::LostStateInjector lostStates(su_fsm);
     }
 
     // Calculate the required functional units (multipliers/dividers) required
