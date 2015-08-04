@@ -299,12 +299,11 @@ bool StitchUpPass::runOnModule(Module &M) {
         GenerateRTL *HW = *i;
 	HW->scheduleOperations();
 	//STITCHUP FSM MANIPULATION
-	FiniteStateMachine *su_fsm = HW->getFSM(); //This is the Finite State Machine that we need to edit with the Lost States
-	//Testing, itterating accross the states and printing
+	FiniteStateMachine *su_fsm = HW->getFSM(); 
 	for(FiniteStateMachine::StateListType::iterator iter=su_fsm->begin(), end=su_fsm->end(); iter != end; ++iter)
 	{
 		State s = *iter;	
-		errs() << s.getName() << "\n";
+		errs() << s.getName() << "\t\t:\t" << su_fsm->getStateNum(iter) << "\n";
 	}
     }
 
