@@ -18,6 +18,7 @@
 #include "../Verilog/LegupConfig.h"
 #include "../Verilog/Scheduler.h"
 #include "../Verilog/ResourceEstimator.h"
+#include "../Verilog/State.h"
 //#include "llvm/Analysis/ProfileInfo.h"
 #include "../Verilog/Debug.h"
 #include <fstream>
@@ -297,6 +298,14 @@ bool StitchUpPass::runOnModule(Module &M) {
             allocation->hw_end(); i != ie; ++i) {
         GenerateRTL *HW = *i;
 	HW->scheduleOperations();
+	//STITCHUP FSM MANIPULATION
+	FiniteStateMachine *su_fsm = HW->getFSM(); //This is the Finite State Machine that we need to edit with the Lost States
+	//Testing, itterating accross the states and printing
+	for(FiniteStateMachine::StateListType::iterator iter=su_fsm->begin(), end=su_fsm->end(); iter != end; ++iter)
+	{
+		State s = *iter;	
+		errs() << s.getName() << "\n";
+	}
     }
 
     // Calculate the required functional units (multipliers/dividers) required
@@ -315,7 +324,7 @@ bool StitchUpPass::runOnModule(Module &M) {
             allocation->hw_end(); i != ie; ++i) {
         GenerateRTL *HW = *i;
         Function *F = HW->getFunction();
-
+	
         allocation->addLVA(F, &getAnalysis<LiveVariableAnalysis>(*F));
         MinimizeBitwidth *MBW = &getAnalysis<MinimizeBitwidth>(*F);
         allocation->addLI(F, &getAnalysis<LoopInfo>(*F));
@@ -437,6 +446,9 @@ bool StitchUpPass::doFinalization(Module &M) {
             }
         }
     }
+
+
+	//StitchUp FSM manipulation
 
     printVerilog(AcceleratedFcts);
 
