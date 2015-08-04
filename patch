@@ -87,3 +87,4 @@ echo "Finished configuring the LLVM base"
 cp config/Makefile.common $LEGUP_HOME/examples/	
 
 (cd $LLVMSTITCHUP_BACKEND; make; cd $CURR_DIR; )
+(cd $LLVM_DIR/tools/llc; make; cd $CURR_DIR; )
