@@ -62,7 +62,6 @@ namespace stchup {
 		populateStitchupBBStateNum();
 		locateLostStates();
 		injectLostStates();
-		errs() << "Lost State Injection Completed..\n";
 	}
 
 	LostStateInjector::~LostStateInjector()
@@ -109,9 +108,8 @@ namespace stchup {
 	{
 		for(BBState_iterator it =stitchup_begin(), fin=stitchup_end(); it != fin; ++it)
 		{
-			BBstates t = *it;
-			if(blk->getName() == t.stateRef){	
-				t.stateCount++;
+			if(blk->getName() == it->stateRef){	
+				it->stateCount++;
 				return;	
 			}	
 		} 
@@ -207,7 +205,7 @@ namespace stchup {
 
 	void LostStateInjector::print()
 	{
-		for(BBState_iterator it=orig_begin(), fin=orig_end(); it != fin; ++it)
+		for(BBState_iterator it=stitchup_begin(), fin=stitchup_end(); it != fin; ++it)
 		{
 			BBstates t = *it;
 			errs() << t.stateRef << "\t" << to_string(t.stateCount) << "\n"; 
