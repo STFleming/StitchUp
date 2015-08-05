@@ -183,7 +183,6 @@ namespace stchup {
 				unsigned lostStateCount = getLostStateCount(blk);
 				if(lostStateCount > 0)
 				{
-					errs() << "Injecting " << to_string(lostStateCount) << " here\n";
 					State::Transition origTran = s->getTransition();
 					State::Transition newTran;
 					s->setTerminating(false);
