@@ -306,7 +306,7 @@ __attribute__((always_inline)) void DecodeHuffMCU(int *out_buf, int num_cmp);
 /*
  * Decode one block
  */
- void
+__attribute__((always_inline))void
 decode_block(int comp_no, int *out_buf,
              int *HuffBuff)
 {
