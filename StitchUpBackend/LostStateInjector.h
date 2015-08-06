@@ -211,7 +211,6 @@ typedef std::vector<BBstates>::iterator BBState_iterator;
 					s->setTerminating(true);
 					removeLostState(blk);
 				}	
-				errs() << "\n";
 			}
 		}
 	}
