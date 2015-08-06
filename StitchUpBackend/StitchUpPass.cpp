@@ -300,10 +300,28 @@ bool StitchUpPass::runOnModule(Module &M) {
     for (Allocation::hw_iterator i = allocation->hw_begin(), ie =
             allocation->hw_end(); i != ie; ++i) {
         GenerateRTL *HW = *i;
+
+//#######################################################################
+//Start of StitchUp IR/FSM backend manipulation
+	Function * t = HW->getFunction(); 
 	HW->scheduleOperations();
-	//STITCHUP FSM MANIPULATION
+	LostStateInjector lostStates(t, HW->getFSM());
+	
+	//We have to special case the first state
+	//Due to it being optimised if size == 1 see utils isEmptyFirstBB()
+	//So we can just insert a dummy instruction to prevent it
+	if(lostStates.hasLostStates("BB"))
+		lostStates.addDummyInstToFirstBB();	
+
+	//We need to reschedule the operations
+	HW->scheduleOperations();
+
 	FiniteStateMachine *su_fsm = HW->getFSM(); 
-	stchup::LostStateInjector lostStates(su_fsm);
+	lostStates.setFSM(su_fsm);	
+	lostStates.injectLostStates();
+//End of StitchUp Backend
+//########################################################################
+
     }
 
     // Calculate the required functional units (multipliers/dividers) required
@@ -316,6 +334,7 @@ bool StitchUpPass::runOnModule(Module &M) {
         allocation->getDbgInfo()->generateVariableInfo();
         allocation->getDbgInfo()->analyzeProgram();
     }
+
 
     // Generate the RTL
     for (Allocation::hw_iterator i = allocation->hw_begin(), ie =

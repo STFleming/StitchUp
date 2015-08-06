@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "../Verilog/FiniteStateMachine.h"
+#include "../Verilog/RTL.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/IR/Instructions.h"
 #include <regex>
@@ -16,10 +17,9 @@ struct BBstates {
 
 typedef std::vector<BBstates>::iterator BBState_iterator;
 
-namespace stchup {
  class LostStateInjector {
 	public:
-		LostStateInjector(FiniteStateMachine *fsm);	
+		LostStateInjector(Function *f, FiniteStateMachine *fsm_in);	
 		~LostStateInjector();
 		void populateOrigBBStateNum();
 		void populateStitchupBBStateNum();
@@ -28,7 +28,9 @@ namespace stchup {
 		void injectLostStates();
 		unsigned getLostStateCount(BasicBlock *blk);
 		void removeLostState(BasicBlock *blk);
-
+		void setFSM(FiniteStateMachine *in); 
+		bool hasLostStates(std::string blkName);
+		void addDummyInstToFirstBB();
 		
 		BBState_iterator orig_begin();
 		BBState_iterator orig_end();
@@ -45,6 +47,7 @@ namespace stchup {
 		std::vector<BBstates> stitchupBBStateNum;
 		std::vector<BBstates> lostStates; //stateRef the BB we are refering to, stateCount = number of lost states
 		FiniteStateMachine *fsm;
+		Function *F;
 
  }; //namespace LostStateInjector
 
@@ -55,14 +58,16 @@ namespace stchup {
 	BBState_iterator LostStateInjector::lost_begin() { return lostStates.begin(); }
 	BBState_iterator LostStateInjector::lost_end() { return lostStates.end(); }
 
-	LostStateInjector::LostStateInjector(FiniteStateMachine *in)
+	LostStateInjector::LostStateInjector(Function *f, FiniteStateMachine* fsm_in)
 	{
-		fsm = in;
+		fsm = fsm_in;
+		F = f;
 		populateOrigBBStateNum();
 		populateStitchupBBStateNum();
 		locateLostStates();
-		injectLostStates();
 	}
+
+	void LostStateInjector::setFSM(FiniteStateMachine *in) { fsm = in; return; }
 
 	LostStateInjector::~LostStateInjector()
 	{
@@ -73,7 +78,7 @@ namespace stchup {
 		std::ifstream origSchedule(OriginalSchedule);
 		if(!origSchedule.is_open()) { errs() << "Cannot open original schedule!\n"; assert(true);}	
 		std::string line;				
-		std::regex e ("Basic Block: %(BB\\d+)? Num States: (\\d+)");
+		std::regex e ("Basic Block: %(BB\\d*) Num States: (\\d+)");
 		std::smatch group;
 		while(getline(origSchedule, line))
 		{
@@ -91,8 +96,7 @@ namespace stchup {
 	
 	void LostStateInjector::populateStitchupBBStateNum()
 	{
-		for(FiniteStateMachine::StateListType::iterator it = fsm->begin(), fin=fsm->end();
-			it != fin; ++it)
+		for(FiniteStateMachine::StateListType::iterator it=fsm->begin(), fin=fsm->end();it != fin; ++it)
 		{
 			State s = *it;
 			BasicBlock *blk = s.getBasicBlock();
@@ -120,6 +124,7 @@ namespace stchup {
 		stitchupBBStateNum.push_back(newBB);	
 		return;
 	}
+
 
 	void LostStateInjector::locateLostStates()
 	{
@@ -181,26 +186,61 @@ namespace stchup {
 				unsigned lostStateCount = getLostStateCount(blk);
 				if(lostStateCount > 0)
 				{
+					//save the original transition
 					State::Transition origTran = s->getTransition();
 					State::Transition newTran;
+					
+					//Blank the current state transition
 					s->setTerminating(false);
 					s->setTransition(newTran);
 					for(unsigned ls=0; ls < lostStateCount; ls++)
 					{
-						std::string LostStateName = "LostState_" + blk->getName().str() 
-									    + "_" + to_string(ls);
+						//Create the new state
+						std::string LostStateName = "LOSTSTATE_" + blk->getName().str() 
+									    + "_" + to_string(ls);	
 						State *t;
 						t = fsm->newState(s, LostStateName);
 						t->setBasicBlock(blk);
+					
+						//Make the current state transition to it
 						s->setDefaultTransition(t);
+						//point to the newly created state
 						s = t;
 					}
+					//give the original transition info to the last state added
 					s->setTransition(origTran);
 					s->setTerminating(true);
 					removeLostState(blk);
 				}	
 			}
 		}
+	}
+
+
+	bool LostStateInjector::hasLostStates(std::string blkName)
+	{
+		for(BBState_iterator it=lost_begin(), fin=lost_end(); it != fin; ++it)
+		{
+			BBstates t = *it;
+			if(t.stateRef == blkName)
+				return true;
+		}
+		return false;
+	}
+
+	void LostStateInjector::addDummyInstToFirstBB()
+	{
+        	for(Function::iterator it=F->begin(), fin=F->end(); it != fin; ++it)
+        	{   
+        	        BasicBlock *blk = it; 
+        	        if(blk->getName() == "BB")
+        	        {   
+        	                AllocaInst* pa = new AllocaInst(Type::getInt32Ty(blk->getContext()), 0, "Dummy");
+        	                TerminatorInst *T = blk->getTerminator(); 
+        	                blk->getInstList().insert(T, pa);        
+        	        }
+        	} 
+		return;
 	}
 
 	void LostStateInjector::print()
@@ -212,4 +252,3 @@ namespace stchup {
 		} 
 	}
 
-} //namespace stchup
