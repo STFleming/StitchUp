@@ -24,6 +24,7 @@ STITCHUPBACKEND=./StitchUpBackend
 TARGET_DIR=$LLVM_DIR/lib/Target
 LLVMSTITCHUP_BACKEND=$TARGET_DIR/StitchUp
 CHSTONE_DIR=$(pwd)/benchmarks/chstone_stitchup
+MMM_DIR=$(pwd)/benchmarks/matrixmultiply
 LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
@@ -49,8 +50,17 @@ fi
 echo "BUILD_DIR=$LEGUP_EXAMPLES_DIR/chstone_stitchup" > $CHSTONE_DIR/build.config
 chmod u+x $CHSTONE_DIR/build.config
 
-CURR_DIR=$(pwd)
+#Create a symbolic link for the matrixmultiply benchmark
+if [ ! -L $LEGUP_EXAMPLES_DIR/matrixmultiply_stitchup ]; then
+	cp -rs $MMM_DIR $LEGUP_EXAMPLES_DIR/matrixmultiply_stitchup
+	cp $LEGUP_HOME/ip/libs/altera/altfp_multiplier_11.v $LEGUP_EXAMPLES_DIR/matrixmultiply_stitchup
+	cp $LEGUP_HOME/ip/libs/altera/altfp_adder_14.v $LEGUP_EXAMPLES_DIR/matrixmultiply_stitchup
+fi
+#Create the matrixmultiply build and run scripts
+echo "BUILD_DIR=$LEGUP_EXAMPLES_DIR/matrixmultiply_stitchup" > $MMM_DIR/build.config
+chmod u+x $MMM_DIR/build.config
 
+CURR_DIR=$(pwd)
 #Include StitchUp to the library makefile lists.
 if grep -q "StitchUp" $LLVM_LIB_DIR/Makefile; then
     echo "The StitchUp Library has already been included into the LLVM lib Makefile $LLVM_LIB_DIR/Makefile"
