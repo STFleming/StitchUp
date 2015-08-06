@@ -18,9 +18,11 @@ LLVM_DIR=$LEGUP_HOME/llvm
 LLVM_LIB_DIR=$LLVM_DIR/lib/Transforms
 STITCH_UP_DIR=$LLVM_LIB_DIR/StitchUp
 LABEL_BB_DIR=$LLVM_LIB_DIR/LabelBB
-LLVMStitchUp=./LLVMStitchUp
-LLVMLabelBB=./LLVMStitchUp
-STITCHUPBACKEND=./StitchUpBackend
+LOCAL_TRANSFORMS=./libs/Transforms
+LOCAL_TARGETS=./libs/Targets
+LLVMStitchUp=$LOCAL_TRANSFORMS/LLVMStitchUp
+LLVMLabelBB=$LOCAL_TRANSFORMS/LVMStitchUp
+STITCHUPBACKEND=$LOCAL_TARGETS/StitchUpBackend
 TARGET_DIR=$LLVM_DIR/lib/Target
 LLVMSTITCHUP_BACKEND=$TARGET_DIR/StitchUp
 CHSTONE_DIR=$(pwd)/benchmarks/chstone_stitchup
@@ -29,17 +31,17 @@ LEGUP_EXAMPLES_DIR=$LEGUP_HOME/examples
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $STITCH_UP_DIR ]; then
-    cp -rs $(pwd)/LLVMStitchUp $STITCH_UP_DIR
+    cp -rs $(pwd)/$LOCAL_TRANSFORMS/LLVMStitchUp $STITCH_UP_DIR
 fi
 
 #Making the StitchUp LLVM library directory and creating a symbolic link to it
 if [ ! -L $LABEL_BB_DIR ]; then
-    cp -rs $(pwd)/LLVMLabelBB $LABEL_BB_DIR
+    cp -rs $(pwd)/$LOCAL_TRANSFORMS/LLVMLabelBB $LABEL_BB_DIR
 fi
 
 #Create the Backend Dir in Target
 if [ ! -L $LLVMSTITCHUP_BACKEND ]; then
-	cp -rs $(pwd)/StitchUpBackend $LLVMSTITCHUP_BACKEND
+	cp -rs $(pwd)/$LOCAL_TARGETS/StitchUpBackend $LLVMSTITCHUP_BACKEND
 fi
 
 #Create a symbolic link for the chstone_stitchup benchmarks
