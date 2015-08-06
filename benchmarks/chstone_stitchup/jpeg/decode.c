@@ -48,7 +48,7 @@ algorithms.
  *
  *  @(#) $Id: decode.c,v 1.2 2003/07/18 10:19:21 honda Exp $
  */
- void ChenIDct(int *x, int *y);
+__attribute__((always_inline)) void ChenIDct(int *x, int *y);
 
 int rgb_buf[4][RGB_NUM][DCTSIZE2];
 
@@ -201,7 +201,7 @@ WriteBlock(int *store, int *p_out_vpos, int *p_out_hpos, unsigned char *p_out_bu
 /*
  *  4:1:1
  */
- void
+__attribute__((always_inline)) void
 Write4Blocks(int *store1,int *store2, int *store3, int *store4, int *p_out_vpos, int *p_out_hpos, unsigned char *p_out_buf)
 {
     int voffs,hoffs;
@@ -302,7 +302,7 @@ YuvToRgb(int p, int* y_buf, int* u_buf, int* v_buf)
 }
 
 
- void DecodeHuffMCU(int *out_buf, int num_cmp);
+__attribute__((always_inline)) void DecodeHuffMCU(int *out_buf, int num_cmp);
 /*
  * Decode one block
  */

@@ -75,7 +75,7 @@ vol. COM-25, pp. 1004-1009, Sept 1977.
  * input vectors that represent x=input, and y=output, and must be
  * defined (and storage allocated) before this routine is called.
  */
-void ChenIDct(int *x, int *y)
+__attribute__((always_inline)) void ChenIDct(int *x, int *y)
 {
   register int i;
   register int *aptr;
