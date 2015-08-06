@@ -189,7 +189,6 @@ typedef std::vector<BBstates>::iterator BBState_iterator;
 					//save the original transition
 					State::Transition origTran = s->getTransition();
 					State::Transition newTran;
-					
 					//Blank the current state transition
 					s->setTerminating(false);
 					s->setTransition(newTran);
@@ -212,6 +211,7 @@ typedef std::vector<BBstates>::iterator BBState_iterator;
 					s->setTerminating(true);
 					removeLostState(blk);
 				}	
+				errs() << "\n";
 			}
 		}
 	}
