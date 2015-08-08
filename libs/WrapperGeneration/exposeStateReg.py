@@ -12,7 +12,9 @@ def getStateBits(verilogin):
         if m:
             bmax = m.group(1)
             bmin = m.group(2)
-    return (bmax, bmin)
+    	    return (bmax, bmin)
+    print "ERROR: could not locate cur_state!\n"
+    sys.exit(2)
 
 #Find the topmost module port declaration and insert check_state signal
 def insertTopCheckState(vinString, stateSize):
@@ -35,7 +37,7 @@ def insertMainCheckState(vinString, stateSize):
     regex = re.compile(r'module main\n\(\n((?:\s*[A-z0-9]+,?)+)\n\);', re.MULTILINE)
     m = regex.search(vinString)
     if m:
-        return regex.sub('module main\n(\n' + m.group(1) + ',\n\tcheck_state\n);\noutput wire [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+        return regex.sub('module main\n(\n' + m.group(1) + ',\n\tcheck_state\n);\noutput reg [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
     return "error"
 
 #assign the check_state signal with the cur_state signal
