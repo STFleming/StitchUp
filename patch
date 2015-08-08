@@ -99,12 +99,19 @@ echo "LEGUP_HOME=$LEGUP_HOME" >> Makefile.config
 
 echo "CURRDIR=$(pwd)" > ./build
 echo "(cd $STITCH_UP_DIR; make)" >> ./build
+echo "(cd $LABEL_BB_DIR; make)" >> ./build
+echo "(cd $LLVMSTITCHUP_BACKEND; make)" >> ./build
+echo "echo \"\n\n......ControlFlowAnalysis Tests......\"" >> ./build
 echo "(cd \$CURRDIR/tests/ControlFlowAnalysis;./runChecks)" >> ./build
+echo "echo \"\n\n......StitchUpBackend Tests......\"" >> ./build
+echo "(cd \$CURRDIR/tests/StitchUpBackend;./runChecks)" >> ./build
 chmod u+x build
 
 echo "Reconfiguring the LLVM base"
 (cd $LLVM_DIR; ./configure; cd $CURR_DIR;)
 echo "Finished configuring the LLVM base"
+
+(cd $LLVM_DIR; make; cd $CURR_DIR;)
 
 #Attempting to build the StitchUp pass
 (cd $STITCH_UP_DIR; make; cd $CURR_DIR;)
