@@ -18,7 +18,7 @@ def getStateBits(verilogin):
 
 #Find the topmost module port declaration and insert check_state signal
 def insertTopCheckState(vinString, stateSize):
-    regex = re.compile(r'^module top$\n^\s*\(((?:\n\s*[A-z0-9]*,?)+)\s*\);', re.MULTILINE)
+    regex = re.compile(r'^module top$\n^\s*\(((?:\n\s*[A-z0-9]*,?)+)\n\s*\);', re.MULTILINE)
     m = regex.search(vinString)
     if m:
         return regex.sub('module top('+m.group(1)+',\n\tcheck_state\n);\noutput wire [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
