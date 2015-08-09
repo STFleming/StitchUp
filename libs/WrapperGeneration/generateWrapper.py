@@ -102,19 +102,35 @@ def main(argv):
     for o in outputlist:
         wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
 
+    #Instantiate the check_state XOR checking logic
+    #Get the bit width for the check_state register
+    for s in outputlist:
+        if s[0] == "check_state":
+            checkStateMSB = str(s[1])
+            checkStateLSB = str(s[2])
+    wrapperString += '\nreg [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
+    wrapperString += 'reg [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
+    wrapperString += '\nalways @(posedge clk) begin\n'
+    wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
+    wrapperString += 'end\n'
+
     #Instantiate the original LegUp component
     wrapperString += '\ntop top_inst(\n'
     for s in signals: 
-        wrapperString += '\t.' + s + '(' + s + '_orig),\n'
-    wrapperString = wrapperString[:-2]
-    wrapperString += '\n);\n'
+        if s == "check_state":
+            wrapperString += '\t.check_state( orig_check_state )\n' 
+        else:
+            wrapperString += '\t.' + s + '(' + s + '),\n'
+    wrapperString += ');\n'
 
     #Instantiate the StitchUp component
     wrapperString += '\nstitchup_top stitchup_top_inst(\n'
     for s in signals: 
-        wrapperString += '\t.' + s + '(stitchup_' + s + '),\n'
-    wrapperString = wrapperString[:-2]
-    wrapperString += '\n);\n'
+        if s == "check_state":
+            wrapperString += '\t.check_state( stitchup_check_state )\n' 
+        else:
+            wrapperString += '\t.' + s + '(' + s + '),\n'
+    wrapperString += ');\n'
 
 
     wrapperString += 'endmodule\n'
