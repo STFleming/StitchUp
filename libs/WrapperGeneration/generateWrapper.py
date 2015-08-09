@@ -30,7 +30,7 @@ def main(argv):
 
     wrapperString = "//Stitchup toplevel wrapper for" + original + ", will flag an error on CFG faults.\n"
     
-    signals = wH.getSignals(origString)
+    signals = wH.getSignals(origString, 'top')
 
     #Declare the port list of the topmost module
     wrapperString += "\nmodule topmost(\n"

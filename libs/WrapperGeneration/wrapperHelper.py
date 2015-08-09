@@ -1,8 +1,8 @@
 import sys, getopt
 import re
 
-def getSignals(origString):
-    regex = re.compile(r'module top\(\n((?:\s*[A-z0-9]+,?)*)\n\);', re.MULTILINE)
+def getSignals(origString, modulename):
+    regex = re.compile(r'module '+modulename+'\(\n((?:\s*[A-z0-9]+,?)*)\n\);', re.MULTILINE)
     m = regex.search(origString)
     if m:
         portregex = re.compile(r'\s*([A-z0-9]+),?')
@@ -29,7 +29,7 @@ def gatherIOLists(inputfile, lop):
 
         for p in lop:
                 r_i = "input\s+(\[(\d+):(\d+)\])?\s*" + re.escape(p) + "\s*;"
-                r_o = "output\s+(?:reg)?\s*(\[(\d+):(\d+)\])?\s*" + re.escape(p) + "\s*;"
+                r_o = "output\s+(?:reg|wire)?\s*(\[(\d+):(\d+)\])?\s*" + re.escape(p) + "\s*;"
                 for l in vin:
                         item = [ ]
                         f_i = re.search(r_i, l)
