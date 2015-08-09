@@ -2,61 +2,8 @@
 #the stitchup circuit, and the checking logic on the exposed state registers 
 import sys, getopt
 import re
+import wrapperHelper as wH
 
-def getSignals(origString):
-    regex = re.compile(r'module top\(\n((?:\s*[A-z0-9]+,?)*)\n\);', re.MULTILINE)
-    m = regex.search(origString)
-    if m:
-        portregex = re.compile(r'\s*([A-z0-9]+),?')
-        p = portregex.search(m.group(1))
-        return re.findall(portregex, m.group(1))
-    return "error"
-
-#Check to see if an item already exists
-def inList(siglist, signame):
-        for s in siglist:
-                if signame == s[0]:
-                        return True
-        return False
-
-#Function that takes the list of ports for the module and returns if they are inputs or outputs
-def gatherIOLists(inputfile, lop):
-        inputvfile = open(inputfile, 'r')
-        vin = inputvfile.readlines()
-        inputvfile.close()
-
-        inputlist = [ ]
-        outputlist = [ ]
-
-        for p in lop:
-                r_i = "input\s+(\[(\d+):(\d+)\])?\s*" + re.escape(p) + "\s*;"
-                r_o = "output\s+(?:reg)?\s*(\[(\d+):(\d+)\])?\s*" + re.escape(p) + "\s*;"
-                for l in vin:
-                        item = [ ]
-                        f_i = re.search(r_i, l)
-                        f_o = re.search(r_o, l)
-                        if f_i:
-                                if not inList(inputlist, p) and not inList(outputlist, p):
-                                        item.append(p)
-                                        if f_i.group(1) is not None:
-                                                item.append(int(f_i.group(2)))
-                                                item.append(int(f_i.group(3)))
-                                        else:
-                                                item.append(0)
-                                                item.append(0)
-                                        inputlist.append(item)
-
-                        if f_o:
-                                if not inList(outputlist, p) and not inList(inputlist, p):
-                                        item.append(p)
-                                        if f_o.group(1) is not None:
-                                                item.append(int(f_o.group(2)))
-                                                item.append(int(f_o.group(3)))
-                                        else:
-                                                item.append(0)
-                                                item.append(0)
-                                        outputlist.append(item)
-        return (inputlist, outputlist)
 
 def main(argv):
     original = ''
@@ -83,7 +30,7 @@ def main(argv):
 
     wrapperString = "//Stitchup toplevel wrapper for" + original + ", will flag an error on CFG faults.\n"
     
-    signals = getSignals(origString)
+    signals = wH.getSignals(origString)
 
     #Declare the port list of the topmost module
     wrapperString += "\nmodule topmost(\n"
@@ -94,7 +41,7 @@ def main(argv):
 
     #Instantiate the signals that are used in the I/O top level ports
     #For this we need to grab the direction
-    (inputlist, outputlist) = gatherIOLists(original, signals)
+    (inputlist, outputlist) = wH.gatherIOLists(original, signals)
 
     #Instantiate the input/output with the correct widths
     for i in inputlist:

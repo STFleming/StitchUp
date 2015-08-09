@@ -22,6 +22,7 @@ def insertTopCheckState(vinString, stateSize):
     m = regex.search(vinString)
     if m:
         return regex.sub('module top('+m.group(1)+',\n\tcheck_state\n);\noutput wire [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+    print "Unable to insert Top Check State!"
     return "error"
 
 #Find the main instantiation in top and patch through the check_state register
@@ -30,6 +31,7 @@ def insertMainInstCheckState(vinString):
     m = regex.search(vinString)
     if m:
         return regex.sub('main main_inst(\n'+m.group(1)+',\n\t.check_state( check_state )\n);\n', vinString)
+    print "Unable to insert Main inst check state!"
     return "error"
 
 #Insert the check_state signal into the port of the main module
@@ -38,6 +40,7 @@ def insertMainCheckState(vinString, stateSize):
     m = regex.search(vinString)
     if m:
         return regex.sub('module main\n(\n' + m.group(1) + ',\n\tcheck_state\n);\noutput reg [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+    print "Unable to insert Main check state!"
     return "error"
 
 #assign the check_state signal with the cur_state signal
@@ -46,6 +49,7 @@ def insertCurStateCheckStateAssignment(vinString):
     m = regex.search(vinString)
     if m:
         return regex.sub(m.group(0) + 'check_state = cur_state;\n', vinString)
+    print "Unable to make main check state assignment!"
     return "error"
 
 def main(argv):
