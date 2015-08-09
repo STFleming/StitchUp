@@ -47,7 +47,10 @@ def main(argv):
     for i in inputlist:
         wrapperString += 'input [' + str(i[1]) + ':' + str(i[2]) +'] ' + i[0] + ';\n' 
     for o in outputlist:
-        wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
+        if o[0] == 'check_state':
+            wrapperString += 'output reg[' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
+        else:
+            wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
 
     #Instantiate the check_state XOR checking logic
     #Get the bit width for the check_state register
@@ -55,8 +58,8 @@ def main(argv):
         if s[0] == "check_state":
             checkStateMSB = str(s[1])
             checkStateLSB = str(s[2])
-    wrapperString += '\nreg [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
-    wrapperString += 'reg [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
+    wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
+    wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
     wrapperString += '\nalways @(posedge clk) begin\n'
     wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
     wrapperString += 'end\n'

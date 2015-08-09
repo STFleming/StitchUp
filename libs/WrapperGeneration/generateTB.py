@@ -8,15 +8,17 @@ def main(argv):
     simscript = ''
     testbenchfile = ''
     wrapper = ''
+    stitchup=''
+    original=''
     try:
-            opts, args = getopt.getopt(argv, "hw:t:s", ["wrapper=", "tb=", "simscript="])
+        opts, args = getopt.getopt(argv, "hw:t:s:u:i", ["wrapper=", "tb=", "simscript=", "stitchup=", "orig="])
     except getopt.GetoptError:
-            print 'Usage: python generateTB.py --wrapper stitchup_orig_wrapper.v --tb testbench.v --simscript vsim_script'
+            print 'Usage: python generateTB.py --wrapper stitchup_orig_wrapper.v --tb testbench.v --simscript vsim_script --stitchup stitchup.v --orig original.v'
             sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: python generateTB.py --wrapper stitchup_orig_wrapper.v --tb testbench.v --simscript vsim_script'
+            print 'Usage: python generateTB.py --wrapper stitchup_orig_wrapper.v --tb testbench.v --simscript vsim_script --stitchup stitchup.v --orig original.v'
             sys.exit()
         if opt in ("-w", "--wrapper"):
             wrapper = arg 
@@ -24,6 +26,10 @@ def main(argv):
             testbenchfile = arg 
         if opt in ("-s", "--simscript"):
             simscript = arg 
+        if opt in ("-u", "--stitchup"):
+            stitchup = arg 
+        if opt in ("-i", "--orig"):
+            original = arg 
 
     infile = open(wrapper, 'r')
     tboutfile = open(testbenchfile, 'w')
@@ -45,27 +51,40 @@ def main(argv):
         testbench += 'wire [' +str(o[1]) +':'+ str(o[2]) +'] ' + o[0] + ';\n'
     testbench += '\n\n'
 
+    #Clock generation
+    testbench += 'initial\n\tclk = 0;\nalways @(clk)\n\tclk <= #10 ~clk;\n\n'
+
     #Initial conditions for clock and reset signals
     #Pulses the reset condition
-    testbench += 'initial begin\n'
-    testbench += '\tclk = 0;\n'
-    testbench += '\treset = 0;\n'
-    testbench += '\t#10 reset = 1;\n'
-    testbench += '\t#10 reset = 0;\n'
-    testbench += 'end\n\n'
-    
-    #Clock generation
-    testbench += 'always begin\n'
-    testbench += '\t#5 clk = ~clk;\n'
-    testbench += 'end\n\n'
+    testbench += 'initial begin\n//$monitor("At t=%t clk=%b %b %b %b %d", $time, clk, reset, start, finish, return_val);\n@(negedge clk);\nreset <= 1;\n@(negedge clk);\nreset <= 0;\nstart <= 1;\n@(negedge clk);\nstart <= 0;\nend\n\n'
+
 
     #Assert statement to makesure that the Error flag has never been signalled
-    testbench += 'always @(posedge clk) begin\n'
+    testbench += 'always @(negedge clk) begin\n'
     testbench += '\tif (!(check_state == 6\'b000000)) begin\n'
     testbench += '\t\t $display(\"Assertion Failed! %d\", check_state);\n'
     testbench += '\t\t $finish;\n'
     testbench += '\tend\n'
-    testbench += 'end\n'
+    testbench += 'end\n\n'
+
+    #End condition
+    testbench += 'always @(finish) begin\n'
+    testbench += '\tif (finish == 1) begin\n'
+    testbench += '\t\t$display("At t=%t clk=%b finish=%b return_val=%d", $time, clk, finish, return_val);\n'
+    testbench += '\t\t$display("Cycles: %d", ($time-50)/20);\n'
+    testbench += '\t\t$finish;\n'
+    testbench += '\tend\n'
+    testbench += 'end\n\n'
+    
+    #Memory
+    testbench += 'initial begin\nwaitrequest <= 1;\n@(negedge clk);\n@(negedge clk);\nwaitrequest <= 0;\nend\n\n'
+
+    #Instantiate the wrapper module
+    testbench += 'topmost dut(\n'
+    for s in signals:
+        testbench += '\t.' + s + '( '+ s + ' ),\n'
+    testbench = testbench[:-2]   
+    testbench += '\n);\n'
 
     testbench += '\n\nendmodule\n'
 
@@ -73,8 +92,10 @@ def main(argv):
     tboutfile.close()
 
     sim = 'rm -r -f work\n'
+    sim += 'source ./modelsim.config\n'
     sim += 'vlib work\n'
-    sim += 'vlog ./' + testbenchfile + '\n'  
+    sim += 'vlog ${VERILOG_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
+    sim += 'vlog ${SYSTEMVERILOG_LIBS}*.v\n'  
     sim += 'vsim -c tbtop -do \"run 10000000 ; echo [simstats]; quit -f;\"\n'
 
     simoutfile.write(sim)
