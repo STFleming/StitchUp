@@ -1,5 +1,4 @@
 include $(LEVEL)/Makefile.config
-LEVEL=..
 CFLAG += -fno-builtin -m32
 LLVM_BIN = $(LLVM_DIR)/Release+Asserts/bin/
 LLVM_LIB = $(LLVM_DIR)/Release+Asserts/lib/
@@ -26,16 +25,21 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %.bc: %.c
 	$(FRONT_END) $< -emit-llvm -c $(CFLAG) -o $@
 
-construct_check: input.ll
-	$(LLVM_BIN)llvm-as input.ll -o input.bc 
+%.orig.bc: %.ll
+	$(LLVM_BIN)llvm-as $< -o $@ 
 
-%_tb.v: %.wrapper.v %.renamed.stitchedup_c.v %_c.v
-	python $(WRAPPER_DIR)/generateTB.py --wrapper %.wrapper.v --tb $@ --simscript %runVsim --stitchup %.renamed.stitchedup_c.v --orig %_c.v
-	chmod u+x %runVsim
+%.stitchedup.bc: %.ll
+	$(LLVM_BIN)llvm-as $< -o tmp.bc 
+	@$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMStitchUp.so -StitchUp < tmp.bc > $@
+	rm tmp.bc
+
+%_tb.v: %.wrapper.v %.renamed.stitchedup_c.v %.orig_c.v
+	python $(WRAPPER_DIR)/generateTB.py --wrapper $*.wrapper.v --tb $@ --simscript $*runVsim --stitchup $*.renamed.stitchedup_c.v --orig $*.orig_c.v
+	chmod u+x $*runVsim
 
 #Generate the wrapper for each
-%.wrapper.v: %.renamed.stitchedup_c.v %_c.v
-	python $(WRAPPER_DIR)/generateWrapper.py --orig %_c.v --stitchup %.renamed,stitchedup_c.v --wrapper $@
+%.wrapper.v: %.renamed.stitchedup_c.v %.orig_c.v
+	python $(WRAPPER_DIR)/generateWrapper.py --orig $*.orig_c.v --stitchup $*.renamed,stitchedup_c.v --wrapper $@
 
 #rename the stitchup file
 %.renamed.stitchedup.v: %.stitchedup.v
@@ -45,3 +49,5 @@ construct_check: input.ll
 #Expose the state register of the circuit
 %_c.v: %.v
 	python $(WRAPPER_DIR)/exposeStateReg.py --ifile $< --ofile $@
+
+

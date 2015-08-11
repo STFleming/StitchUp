@@ -1,0 +1,10 @@
+make input.orig.bc
+make input.stitchedup.bc
+make input.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make input.stitchedup.v
+make input.orig_c.v
+make input.renamed.stitchedup.v
+make input.renamed.stitchedup_c.v 
+make input.wrapper.v
+make input_tb.v
