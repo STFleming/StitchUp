@@ -7,6 +7,7 @@ FRONT_END = clang-3.5
 LEGUP_EXAMPLE_CONFIG=$(LEGUP_HOME)/examples/legup.tcl
 BOARD_TOPS_CMD = find $(LEGUP_HOME)/boards -maxdepth 3 -name "top.v"
 export BOARD_TOPS = $(shell $(BOARD_TOPS_CMD))
+WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 
 %.stitchedup.v: %.stitchedup.bc
 	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLabelBB.so -LabelBB < $< > tmp.bc
@@ -27,3 +28,20 @@ export BOARD_TOPS = $(shell $(BOARD_TOPS_CMD))
 
 construct_check: input.ll
 	$(LLVM_BIN)llvm-as input.ll -o input.bc 
+
+%_tb.v: %.wrapper.v %.renamed.stitchedup_c.v %_c.v
+	python $(WRAPPER_DIR)/generateTB.py --wrapper %.wrapper.v --tb $@ --simscript %runVsim --stitchup %.renamed.stitchedup_c.v --orig %_c.v
+	chmod u+x %runVsim
+
+#Generate the wrapper for each
+%.wrapper.v: %.renamed.stitchedup_c.v %_c.v
+	python $(WRAPPER_DIR)/generateWrapper.py --orig %_c.v --stitchup %.renamed,stitchedup_c.v --wrapper $@
+
+#rename the stitchup file
+%.renamed.stitchedup.v: %.stitchedup.v
+	python $(WRAPPER_DIR)/renameStitchupTop.py --stitchup $<
+	mv $< $@
+
+#Expose the state register of the circuit
+%_c.v: %.v
+	python $(WRAPPER_DIR)/exposeStateReg.py --ifile $< --ofile $@
