@@ -4,7 +4,9 @@ make input.orig.v
 mv scheduling.legup.rpt original.scheduling.rpt.keep
 make input.stitchedup.v
 make input.orig_c.v
+rm input.orig.v
 make input.renamed.stitchedup.v
 make input.renamed.stitchedup_c.v 
+rm input.renamed.stitchedup.v
 make input.wrapper.v
 make input_tb.v
