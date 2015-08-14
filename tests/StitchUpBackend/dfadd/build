@@ -1,0 +1,13 @@
+make dfadd.ll
+make dfadd.orig.bc
+make dfadd.stitchedup.bc
+make dfadd.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make dfadd.stitchedup.v
+make dfadd.orig_c.v
+rm dfadd.orig.v
+make dfadd.renamed.stitchedup.v
+make dfadd.renamed.stitchedup_c.v 
+rm dfadd.renamed.stitchedup.v
+make dfadd.wrapper.v
+make dfadd_tb.v
