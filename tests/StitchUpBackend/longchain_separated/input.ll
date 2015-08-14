@@ -3,9 +3,9 @@ target datalayout = "e-m:e-p:32:32-f64:32:64-f80:32-n8:16:32-S128"
 target triple = "i386-pc-linux-gnu"
 
 ; Function Attrs: nounwind
-define i32 @long_chain(i32 %control, i32 %data) #0 {
-  %con1 = add i32 1, %control
-  %dat1 = add i32 1, %data
+define i32 @main() #0 {
+  %con1 = add i32 1, 4 
+  %dat1 = add i32 1, 5 
   br label %uncond1
 
 uncond1:                                          ; preds = %0
