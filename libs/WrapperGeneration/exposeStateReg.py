@@ -8,10 +8,10 @@ def getStateBits(verilogin):
     vin = open(verilogin, 'r')
     lines = vin.readlines()
     for line in lines:
-        m = re.search('reg \[(\d+):(\d+)\] cur_state;', line)
+        m = re.search('reg (?:\[(\d+):(\d+)\])? cur_state;', line)
         if m:
-            bmax = m.group(1)
-            bmin = m.group(2)
+            bmax = m.group(1) if m.group(1) else str(0) 
+            bmin = m.group(2) if m.group(2) else str(0)
     	    return (bmax, bmin)
     print "ERROR: could not locate cur_state!\n"
     sys.exit(2)
