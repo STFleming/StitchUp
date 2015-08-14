@@ -27,19 +27,27 @@ def insertTopCheckState(vinString, stateSize):
 
 #Find the main instantiation in top and patch through the check_state register
 def insertMainInstCheckState(vinString):
-    regex = re.compile(r'main main_inst\(\n((?:\s*\.[A-z0-9]+\(\s*[A-z0-9]+\s*\),?)+)\n\);', re.MULTILINE)
+    regex = re.compile(r'(s)?main s?main_inst\(\n((?:\s*\.[A-z0-9]+\(\s*[A-z0-9]+\s*\),?)+)\n\);', re.MULTILINE)
     m = regex.search(vinString)
     if m:
-        return regex.sub('main main_inst(\n'+m.group(1)+',\n\t.check_state( check_state )\n);\n', vinString)
+        if m.group(1):
+            s = regex.sub('smain smain_inst(\n'+m.group(2)+',\n\t.check_state( check_state )\n);\n', vinString)
+        else:
+            s = regex.sub('main main_inst(\n'+m.group(2)+',\n\t.check_state( check_state )\n);\n', vinString)
+        return s 
     print "Unable to insert Main inst check state!"
     return "error"
 
 #Insert the check_state signal into the port of the main module
 def insertMainCheckState(vinString, stateSize):
-    regex = re.compile(r'module main\n\(\n((?:\s*[A-z0-9]+,?)+)\n\);', re.MULTILINE)
+    regex = re.compile(r'module (s)?main\n\(\n((?:\s*[A-z0-9]+,?)+)\n\);', re.MULTILINE)
     m = regex.search(vinString)
     if m:
-        return regex.sub('module main\n(\n' + m.group(1) + ',\n\tcheck_state\n);\noutput reg [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+        if m.group(1):
+            s = regex.sub('module smain\n(\n' + m.group(2) + ',\n\tcheck_state\n);\noutput reg [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+        else:
+            s = regex.sub('module main\n(\n' + m.group(2) + ',\n\tcheck_state\n);\noutput reg [' + stateSize[0] +':'+stateSize[1]+'] check_state;\n\n', vinString)
+        return s 
     print "Unable to insert Main check state!"
     return "error"
 

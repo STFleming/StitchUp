@@ -19,7 +19,8 @@ def main(argv):
         if opt in ("-s", "--stitchup"):
             stitchup = arg 
 
-    wH.prefixModule(stitchup, 'stitchup_')
+    wH.prefixModule(stitchup, 'stitchup_', 'top')
+    wH.prefixModule(stitchup, 's', 'main')
 
 
 if __name__ == "__main__":

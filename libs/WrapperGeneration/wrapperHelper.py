@@ -68,11 +68,10 @@ def gatherModuleName(inputString):
 #prefxModule prefixes a modules name with a string so that we
 #can instantiate both the presynthesis and the post synthesis 
 #versions
-def prefixModule(modulefilename, prefix):
+def prefixModule(modulefilename, prefix, module):
         f = open(modulefilename, 'r')
         filedata = f.read()
         f.close()
-        module = gatherModuleName(filedata)
         newmodule = prefix + module
 
         newdata = filedata.replace(module, newmodule)

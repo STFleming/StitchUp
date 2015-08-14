@@ -11,3 +11,4 @@ make dfadd.renamed.stitchedup_c.v
 rm dfadd.renamed.stitchedup.v
 make dfadd.wrapper.v
 make dfadd_tb.v
+#./dfaddrunVsim
