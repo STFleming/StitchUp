@@ -62,7 +62,7 @@ def main(argv):
     #Assert statement to makesure that the Error flag has never been signalled
     testbench += 'always @(negedge clk) begin\n'
     testbench += '\tif (!(check_state == 6\'b000000)) begin\n'
-    testbench += '\t\t $display(\"Assertion Failed! %d\", check_state);\n'
+    testbench += '\t\t $display(\"CONFIGURATION MISMATCH, CFG ERROR DETECTED! %d\", check_state);\n'
     testbench += '\t\t $finish;\n'
     testbench += '\tend\n'
     testbench += 'end\n\n'
