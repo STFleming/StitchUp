@@ -1,0 +1,14 @@
+make gsm.ll
+make gsm.orig.bc
+make gsm.stitchedup.bc
+make gsm.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make gsm.stitchedup.v
+make gsm.orig_c.v
+rm gsm.orig.v
+make gsm.renamed.stitchedup.v
+make gsm.renamed.stitchedup_c.v 
+rm gsm.renamed.stitchedup.v
+make gsm.wrapper.v
+make gsm_tb.v
+#./gsmrunVsim

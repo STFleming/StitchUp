@@ -1,0 +1,14 @@
+make mpeg2.ll
+make mpeg2.orig.bc
+make mpeg2.stitchedup.bc
+make mpeg2.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make mpeg2.stitchedup.v
+make mpeg2.orig_c.v
+rm mpeg2.orig.v
+make mpeg2.renamed.stitchedup.v
+make mpeg2.renamed.stitchedup_c.v 
+rm mpeg2.renamed.stitchedup.v
+make mpeg2.wrapper.v
+make mpeg2_tb.v
+#./mpeg2runVsim

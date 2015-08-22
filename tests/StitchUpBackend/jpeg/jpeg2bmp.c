@@ -1,0 +1,1 @@
+/home/vagrant/StitchUp/benchmarks/chstone_stitchup/jpeg/jpeg2bmp.c

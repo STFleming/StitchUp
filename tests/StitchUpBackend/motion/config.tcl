@@ -1,0 +1,1 @@
+/home/vagrant/StitchUp/benchmarks/chstone_stitchup/motion/config.tcl
