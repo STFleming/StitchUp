@@ -49,6 +49,8 @@ def main(argv):
     #Instantiate a wire for each output
     for o in outputlist:
         testbench += 'wire [' +str(o[1]) +':'+ str(o[2]) +'] ' + o[0] + ';\n'
+        if o[0] == "check_state":
+            check_MSB = str(o[1]) #This is needed for the assertion check.
     testbench += '\n\n'
 
     #Clock generation
@@ -61,7 +63,7 @@ def main(argv):
 
     #Assert statement to makesure that the Error flag has never been signalled
     testbench += 'always @(negedge clk) begin\n'
-    testbench += '\tif (!(check_state == 6\'b000000)) begin\n'
+    testbench += '\tif (!(check_state == '+check_MSB+'\'b000000)) begin\n'
     testbench += '\t\t $display(\"CONFIGURATION MISMATCH, CFG ERROR DETECTED! %d\", check_state);\n'
     testbench += '\t\t $finish;\n'
     testbench += '\tend\n'
