@@ -1,7 +1,52 @@
 %Why protecting FPGAs in hostile environments is difficult?
 
-%Traditional approaches to protecting against this and their problems
+%FPGAs are great but have problems
+Aerospace and automotive systems often require strict constraints on performance
+along with a tight power budget making FPGAs an ideal candidate, yet they are seldom used.
+In such domains two main issues prevent widespread adoption: firstly they are difficult
+to program, with designs taking many man-hours to build and verify;
+and secondly they are highly susceptible to soft errors with single event upsets (SEU)
+potentially causing unwanted reconfigurations to the operating circuit.
+To address development time issues active research into High Level Synthesis (HLS) has received both academic and
+commercial success \cite{feist2012vivado}. These tools aim to transform a widely known programming language, such as C,
+into a digital circuit removing the need for expensive hardware designers.
+As the issue of detecting/tolerating soft errors is typically done through replication and comparison
+costing large amounts of additional logic and power, which may require the design to break constraints.
 
-%Increasing interest in HLS tools
+%I really really need to motivate only protecting the control path and how there are plenty of applications
+%where data path stuff can be ignored.
 
-%How this paper aims to address these issues
+This paper presents StitchUp an extension to the LegUp HLS tool \cite{canis2011legup} capable of producing circuits
+guaranteed to terminate even in the presence of SEUs provided that the input terminates, while always consuming equal
+or less logic than full circuit duplication.
+In order to achieve this the tool determines the set of instructions required to make an exact duplicate of the Control
+Flow Graph (CFG) while ignoring instructions which only effect the data flow.
+We argue that it is often the case that instructions which may influence the control flow of an application are more critical
+than instructions which never effect control; for example an image renderer which can tolerant errors, within
+it's pixel values but where errors in it's control flow could cause it to hang indefinitely \cite{sampson2011enerj}.
+
+The tool has three distinct stages: an analysis stage statically examines the input source and extracts any instruction
+which potentially effects control; a CFG shadow generation stage consists of a modified LegUp backend
+which takes the output of the analysis stage along with a description of the original schedule to produce a CFG shadow circuit;
+finally a wrapper generation stage combines the original circuit, the CFG shadow circuit, and generates error detection logic;
+Using this approach we are able to show that for certain applications we can guarantee that the CFG
+is followed correctly, while consuming only 4\% of the resources required of standard Dual Modular Redundancy approaches.
+
+%Below LEO
+Until recently soft error concerns have primarily been contained within domains where
+devices are placed in harsh radioactive conditions, such as satellites in low earth orbit, however
+with shrinking device geometries this issue is set to become a problem for the entire
+industry\cite{ibe2010impact}.
+If terrestrial devices start to become increasingly effected by ground level radiation
+then managing such faults is incredibly important especially in safety critical applications, such
+as driverless cars.\\
+
+%Typical Approaches are expensive, if you want to make guarantees
+Protecting against soft errors is often achieved using N-Modular Redundancy, where N identical
+versions of the module are executed, their outputs are compared and any differences in the
+result indicate that a fault has occurred.
+
+
+%We present a way to protect a subset of the circuit, while being able to make some guarantees
+
+
