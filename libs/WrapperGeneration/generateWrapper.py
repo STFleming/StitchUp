@@ -78,6 +78,8 @@ def main(argv):
     for s in signals: 
         if s == "check_state":
             wrapperString += '\t.check_state( stitchup_check_state )\n' 
+        elif s == "return_val":
+            wrapperString += '\t.return_val( open ),\n'
         else:
             wrapperString += '\t.' + s + '(' + s + '),\n'
     wrapperString += ');\n'
