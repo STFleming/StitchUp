@@ -1,1 +1,0 @@
-/home/vagrant/StitchUp/benchmarks/chstone_stitchup/blowfish/config.tcl
