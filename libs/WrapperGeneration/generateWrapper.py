@@ -61,6 +61,7 @@ def main(argv):
     wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
     wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
     wrapperString += '\nalways @(posedge clk) begin\n'
+    wrapperString += '$display(\"%t, su=%d, orig=%d\",$time, stitchup_check_state, orig_check_state);\n'
     wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
     wrapperString += 'end\n'
 
