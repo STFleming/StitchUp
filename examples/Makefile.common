@@ -1,5 +1,5 @@
 include $(LEVEL)/Makefile.config
-CFLAG += -fno-builtin -m32
+CFLAG += -fno-builtin -m32 -I $(LEGUP_HOME)/lib/include -I /usr/include/i386-linux-gnu -O3 -fno-vectorize -fno-slp-vectorize
 LLVM_BIN = $(LLVM_DIR)/Release+Asserts/bin/
 LLVM_LIB = $(LLVM_DIR)/Release+Asserts/lib/
 FRONT_END = clang-3.5
@@ -11,8 +11,8 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %.legupfront.bc: %.bc
 	$(LLVM_BIN)opt -mem2reg -loops -loop-simplify < $< > 1.$< 
 	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -std-link-opts < 1.$< -o 2.$< 
-	#$(LLVM_BIN)opt opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -legup-prelto < 2.$< > 3.$< 
-	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -std-link-opts < 2.$< -o 4.$< 
+	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -legup-prelto < 2.$< > 3.$< 
+	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -std-link-opts < 3.$< -o 4.$< 
 	$(LLVM_BIN)llvm-link  4.$< $(LEGUP_HOME)/examples/lib/llvm/liblegup.bc $(LEGUP_HOME)/examples/lib/llvm/libm.bc -o 5.$< 
 	$(LLVM_BIN)opt -internalize-public-api-list=main -internalize -globaldce 5.$< -o 6.$< 
 	$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMLegUp.so -legup-config=$(LEGUP_HOME)/examples/legup.tcl -legup-config=config.tcl -instcombine -std-link-opts < 6.$< -o 7.$< 
