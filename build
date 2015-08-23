@@ -1,1 +1,0 @@
-(cd /home/vagrant/legup/llvm/lib/Transforms/StitchUp; make)

@@ -195,12 +195,14 @@ ifeq ($(LLVM_PROFILE),1)
 endif # LLVM_PROFILE
 	# produces verilog: $(NAME).v
 	
+	$(LLVM_HOME)opt -load=$(LLVM_HOME)../lib/LLVMLabelBB.so -LabelBB < $(NAME).bc > $(NAME).labelBB.bc
+	$(LLVM_HOME)llvm-dis $(NAME).labelBB.bc
 ifdef STITCHUP
-	$(LLVM_HOME)opt -load=$(LLVM_HOME)../lib/LLVMStitchUp.so -StitchUp < $(NAME).postlto.bc > $(NAME).stitchup.bc
+	$(LLVM_HOME)opt -load=$(LLVM_HOME)../lib/LLVMStitchUp.so -StitchUp < $(NAME).labelBB.bc > $(NAME).stitchup.bc
 	$(LLVM_HOME)llvm-dis $(NAME).stitchup.bc
-	$(LLVM_HOME)llc $(LLC_FLAGS) -march=v $(NAME).stitchup.bc -o $(VFILE)
+	$(LLVM_HOME)llc $(LLC_FLAGS) -march=stitchup $(NAME).stitchup.bc -orig_sched /home/vagrant/original.scheduling.rpt -o stitchup.$(VFILE)
 else
-	$(LLVM_HOME)llc $(LLC_FLAGS) -march=v $(NAME).bc -o $(VFILE)
+	$(LLVM_HOME)llc $(LLC_FLAGS) -march=v $(NAME).labelBB.bc -o $(VFILE)
 endif
 
 

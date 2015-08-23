@@ -71,6 +71,17 @@ namespace StchUp {
 
 
 //---------------------------------------------------------------------------------------------------------------------
+//TODO: Remove, used for debugging purposes
+	void ControlFlowAnalysis::labelBasicBlocks()
+	{
+		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
+		{
+			BasicBlock *blk = fs;
+			blk->setName("BB");
+		}
+	}
+
+//---------------------------------------------------------------------------------------------------------------------
 // Keeps iterating over the Basic Blocks in the program removing instructions that are 
 // not present in the CDS, it is a fixed point algorithm due to the restriction that
 // to remove instructions safely they must not be used anywhere. 
@@ -100,19 +111,6 @@ namespace StchUp {
 				inst->replaceAllUsesWith(blank);
 				inst->eraseFromParent();
 			}
-		}
-	}
-
-
-
-//---------------------------------------------------------------------------------------------------------------------
-//TODO: Remove, used for debugging purposes
-	void ControlFlowAnalysis::labelBasicBlocks()
-	{
-		for(Function::iterator fs=F->begin(), fe=F->end(); fs != fe; ++fs)
-		{
-			BasicBlock *blk = fs;
-			blk->setName("BB");
 		}
 	}
 

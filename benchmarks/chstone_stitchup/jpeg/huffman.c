@@ -164,7 +164,7 @@ buf_getv(int n){
 /*
  * Create Table for decoding
  */
- int
+__attribute__((always_inline)) int
 huff_make_dhuff_tb(int *p_xhtbl_bits, int *p_dhtbl_maxcode, int *p_dhtbl_mincode, int *p_dhtbl_valptr)
 {
     int i,j,p,code,size,l;

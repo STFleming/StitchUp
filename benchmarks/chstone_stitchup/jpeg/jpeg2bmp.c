@@ -46,7 +46,7 @@
 unsigned char JpegFileBuf[JPEG_FILE_SIZE];
 
 
-int
+__attribute__((always_inline)) int
 jpeg2bmp_main()
 {
     int  ci;

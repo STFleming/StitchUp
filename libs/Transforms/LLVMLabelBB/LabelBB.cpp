@@ -1,4 +1,4 @@
-//===- StitchUp.cpp - Example code from "Writing an LLVM Pass" ---------------===//
+//===- LabelBB.cpp - Example code from "Writing an LLVM Pass" ---------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file implements two versions of the LLVM "StitchUp World" pass described
+// This file implements two versions of the LLVM "LabelBB World" pass described
 // in docs/WritingAnLLVMPass.html
 //
 //===----------------------------------------------------------------------===//
@@ -16,18 +16,19 @@
 #include "llvm/IR/Function.h"
 #include "llvm/Pass.h"
 #include "llvm/Support/raw_ostream.h"
-#include "ControlFlowAnalysis.h"
 using namespace llvm;
 
 namespace {
-  struct StitchUp : public FunctionPass {
+  struct LabelBB : public FunctionPass {
     static char ID; // Pass identification, replacement for typeid
-    StitchUp() : FunctionPass(ID) {}
+    LabelBB() : FunctionPass(ID) {}
 
     bool runOnFunction(Function &F) override {
-	StchUp::ControlFlowAnalysis CFGbones (&F);	
-	//CFGbones.testPrint();
-	CFGbones.createControlShadow();
+	for(Function::iterator i=F.begin(), e=F.end(); i != e; ++i)
+	{
+		BasicBlock *blk = i;
+		blk->setName("BB");
+	}
       return true;
     }
 
@@ -38,6 +39,6 @@ namespace {
   };
 }
 
-char StitchUp::ID = 0;
-static RegisterPass<StitchUp> X("StitchUp", "StitchUp World Pass");
+char LabelBB::ID = 0;
+static RegisterPass<LabelBB> X("LabelBB", "LabelBB World Pass");
 

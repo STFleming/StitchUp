@@ -92,7 +92,7 @@ memcpy (LONG * s1, const BYTE * s2, int n)
 
 /* do SHA transformation */
 
-static void
+__attribute__((always_inline)) static void
 sha_transform ()
 {
   int i;
