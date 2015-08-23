@@ -1,0 +1,14 @@
+make dfsin.ll
+make dfsin.orig.bc
+make dfsin.stitchedup.bc
+make dfsin.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make dfsin.stitchedup.v
+make dfsin.orig_c.v
+rm dfsin.orig.v
+make dfsin.renamed.stitchedup.v
+make dfsin.renamed.stitchedup_c.v 
+rm dfsin.renamed.stitchedup.v
+make dfsin.wrapper.v
+make dfsin_tb.v
+#./runVsim

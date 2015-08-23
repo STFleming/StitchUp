@@ -1,0 +1,14 @@
+make main.ll
+make main.orig.bc
+make main.stitchedup.bc
+make main.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make main.stitchedup.v
+make main.orig_c.v
+rm main.orig.v
+make main.renamed.stitchedup.v
+make main.renamed.stitchedup_c.v 
+rm main.renamed.stitchedup.v
+make main.wrapper.v
+make main_tb.v
+#./runVsim

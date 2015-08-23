@@ -1,0 +1,14 @@
+make aes.ll
+make aes.orig.bc
+make aes.stitchedup.bc
+make aes.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make aes.stitchedup.v
+make aes.orig_c.v
+rm aes.orig.v
+make aes.renamed.stitchedup.v
+make aes.renamed.stitchedup_c.v 
+rm aes.renamed.stitchedup.v
+make aes.wrapper.v
+make aes_tb.v
+#./runVsim

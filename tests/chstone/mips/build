@@ -1,0 +1,14 @@
+make mips.ll
+make mips.orig.bc
+make mips.stitchedup.bc
+make mips.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make mips.stitchedup.v
+make mips.orig_c.v
+rm mips.orig.v
+make mips.renamed.stitchedup.v
+make mips.renamed.stitchedup_c.v 
+rm mips.renamed.stitchedup.v
+make mips.wrapper.v
+make mips_tb.v
+#./runVsim

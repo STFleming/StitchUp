@@ -1,0 +1,14 @@
+make sha_driver.ll
+make sha_driver.orig.bc
+make sha_driver.stitchedup.bc
+make sha_driver.orig.v
+mv scheduling.legup.rpt original.scheduling.rpt.keep
+make sha_driver.stitchedup.v
+make sha_driver.orig_c.v
+rm sha_driver.orig.v
+make sha_driver.renamed.stitchedup.v
+make sha_driver.renamed.stitchedup_c.v 
+rm sha_driver.renamed.stitchedup.v
+make sha_driver.wrapper.v
+make sha_driver_tb.v
+#./runVsim
