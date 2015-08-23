@@ -60,7 +60,7 @@ these four paragraphs for those parts of this code that are retained.
 | should be simply `float_exception_flags |= flags;'.
 *----------------------------------------------------------------------------*/
 
-void
+__attribute__((always_inline)) void
 float_raise (int8 flags)
 {
   float_exception_flags |= flags;
@@ -78,7 +78,7 @@ float_raise (int8 flags)
 | otherwise returns 0.
 *----------------------------------------------------------------------------*/
 
-flag
+__attribute__((always_inline)) flag
 float64_is_nan (float64 a)
 {
 
@@ -91,7 +91,7 @@ float64_is_nan (float64 a)
 | NaN; otherwise returns 0.
 *----------------------------------------------------------------------------*/
 
-flag
+__attribute__((always_inline)) flag
 float64_is_signaling_nan (float64 a)
 {
 
@@ -105,7 +105,7 @@ float64_is_signaling_nan (float64 a)
 | signaling NaN, the invalid exception is raised.
 *----------------------------------------------------------------------------*/
 
-static float64
+__attribute__((always_inline)) static float64
 propagateFloat64NaN (float64 a, float64 b)
 {
   flag aIsNaN, aIsSignalingNaN, bIsNaN, bIsSignalingNaN;

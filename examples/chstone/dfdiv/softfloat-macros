@@ -56,7 +56,7 @@ these four paragraphs for those parts of this code that are retained.
 | The result is stored in the location pointed to by `zPtr'.
 *----------------------------------------------------------------------------*/
 
-INLINE void
+__attribute__((always_inline)) void
 shift64RightJamming (bits64 a, int16 count, bits64 * zPtr)
 {
   bits64 z;
@@ -84,7 +84,7 @@ shift64RightJamming (bits64 a, int16 count, bits64 * zPtr)
 | are stored at the locations pointed to by `z0Ptr' and `z1Ptr'.
 *----------------------------------------------------------------------------*/
 
-INLINE void
+__attribute__((always_inline)) void
 add128 (bits64 a0, bits64 a1, bits64 b0, bits64 b1, bits64 * z0Ptr,
 	bits64 * z1Ptr)
 {
@@ -104,7 +104,7 @@ add128 (bits64 a0, bits64 a1, bits64 b0, bits64 b1, bits64 * z0Ptr,
 | `z1Ptr'.
 *----------------------------------------------------------------------------*/
 
-INLINE void
+__attribute__((always_inline)) void
 sub128 (bits64 a0, bits64 a1, bits64 b0, bits64 b1, bits64 * z0Ptr,
 	bits64 * z1Ptr)
 {
@@ -120,7 +120,7 @@ sub128 (bits64 a0, bits64 a1, bits64 b0, bits64 b1, bits64 * z0Ptr,
 | `z0Ptr' and `z1Ptr'.
 *----------------------------------------------------------------------------*/
 
-INLINE void
+__attribute__((always_inline)) void
 mul64To128 (bits64 a, bits64 b, bits64 * z0Ptr, bits64 * z1Ptr)
 {
   bits32 aHigh, aLow, bHigh, bLow;
@@ -153,7 +153,7 @@ mul64To128 (bits64 a, bits64 b, bits64 * z0Ptr, bits64 * z1Ptr)
 | unsigned integer is returned.
 *----------------------------------------------------------------------------*/
 
-static bits64
+__attribute__((always_inline)) static bits64
 estimateDiv128To64 (bits64 a0, bits64 a1, bits64 b)
 {
   bits64 b0, b1;
@@ -183,7 +183,7 @@ estimateDiv128To64 (bits64 a0, bits64 a1, bits64 b)
 | `a'.  If `a' is zero, 32 is returned.
 *----------------------------------------------------------------------------*/
 
-static int8
+__attribute__((always_inline)) static int8
 countLeadingZeros32 (bits32 a)
 {
   static const int8 countLeadingZerosHigh[256] = {
@@ -227,7 +227,7 @@ countLeadingZeros32 (bits32 a)
 | `a'.  If `a' is zero, 64 is returned.
 *----------------------------------------------------------------------------*/
 
-static int8
+__attribute__((always_inline)) static int8
 countLeadingZeros64 (bits64 a)
 {
   int8 shiftCount;

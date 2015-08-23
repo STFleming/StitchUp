@@ -78,7 +78,7 @@ int8 float_exception_flags = 0;
 | Returns the fraction bits of the double-precision floating-point value `a'.
 *----------------------------------------------------------------------------*/
 
-INLINE bits64
+__attribute__((always_inline)) bits64
 extractFloat64Frac (float64 a)
 {
 
@@ -90,7 +90,7 @@ extractFloat64Frac (float64 a)
 | Returns the exponent bits of the double-precision floating-point value `a'.
 *----------------------------------------------------------------------------*/
 
-INLINE int16
+__attribute__((always_inline)) int16
 extractFloat64Exp (float64 a)
 {
 
@@ -102,7 +102,7 @@ extractFloat64Exp (float64 a)
 | Returns the sign bit of the double-precision floating-point value `a'.
 *----------------------------------------------------------------------------*/
 
-INLINE flag
+__attribute__((always_inline)) flag
 extractFloat64Sign (float64 a)
 {
 
@@ -117,7 +117,7 @@ extractFloat64Sign (float64 a)
 | `zSigPtr', respectively.
 *----------------------------------------------------------------------------*/
 
-static void
+__attribute__((always_inline)) static void
 normalizeFloat64Subnormal (bits64 aSig, int16 * zExpPtr, bits64 * zSigPtr)
 {
   int8 shiftCount;
@@ -139,7 +139,7 @@ normalizeFloat64Subnormal (bits64 aSig, int16 * zExpPtr, bits64 * zSigPtr)
 | significand.
 *----------------------------------------------------------------------------*/
 
-INLINE float64
+__attribute__((always_inline)) float64
 packFloat64 (flag zSign, int16 zExp, bits64 zSig)
 {
 
@@ -169,7 +169,7 @@ packFloat64 (flag zSign, int16 zExp, bits64 zSig)
 | Binary Floating-Point Arithmetic.
 *----------------------------------------------------------------------------*/
 
-static float64
+__attribute__((always_inline)) static float64
 roundAndPackFloat64 (flag zSign, int16 zExp, bits64 zSig)
 {
   int8 roundingMode;
@@ -237,7 +237,7 @@ roundAndPackFloat64 (flag zSign, int16 zExp, bits64 zSig)
 | the IEC/IEEE Standard for Binary Floating-Point Arithmetic.
 *----------------------------------------------------------------------------*/
 
-float64
+__attribute__((always_inline)) float64
 float64_div (float64 a, float64 b)
 {
   flag aSign, bSign, zSign;
