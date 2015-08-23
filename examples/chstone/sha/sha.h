@@ -33,12 +33,12 @@ LONG sha_info_digest[5];	/* message digest */
 LONG sha_info_count_lo, sha_info_count_hi;	/* 64-bit bit count */
 LONG sha_info_data[16];
 
-void sha_init ();
-void sha_update (const BYTE *, int);
-void sha_final ();
+__attribute__((always_inline)) void sha_init ();
+__attribute__((always_inline)) void sha_update (const BYTE *, int);
+__attribute__((always_inline)) void sha_final ();
 
-void sha_stream ();
-void sha_print ();
+__attribute__((always_inline)) void sha_stream ();
+__attribute__((always_inline)) void sha_print ();
 
 #define BLOCK_SIZE 8192
 #define VSIZE 2

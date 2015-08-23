@@ -47,7 +47,7 @@
     temp = ROT32(A,5) + f##n(B,C,D) + E + W[i] + CONST##n;	\
     E = D; D = C; C = ROT32(B,30); B = A; A = temp
 
-void
+__attribute__((always_inline)) void
 memset (LONG * s, int c, int n, int e)
 {
   LONG uc;
@@ -67,7 +67,7 @@ memset (LONG * s, int c, int n, int e)
     }
 }
 
-void
+__attribute__((always_inline)) void
 memcpy (LONG * s1, const BYTE * s2, int n)
 {
   LONG *p1;
@@ -138,7 +138,7 @@ sha_transform ()
 
 /* initialize the SHA digest */
 
-void
+__attribute__((always_inline)) void
 sha_init ()
 {
   sha_info_digest[0] = 0x67452301L;
@@ -152,7 +152,7 @@ sha_init ()
 
 /* update the SHA digest */
 
-void
+__attribute__((always_inline)) void
 sha_update (const BYTE * buffer, int count)
 {
   if ((sha_info_count_lo + ((LONG) count << 3)) < sha_info_count_lo)
@@ -173,7 +173,7 @@ sha_update (const BYTE * buffer, int count)
 
 /* finish computing the SHA digest */
 
-void
+__attribute__((always_inline)) void
 sha_final ()
 {
   int count;
@@ -200,7 +200,7 @@ sha_final ()
 }
 
 /* compute the SHA digest of a FILE stream */
-void
+__attribute__((always_inline)) void
 sha_stream ()
 {
   int i, j;
