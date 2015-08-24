@@ -23,10 +23,10 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %.stitchedup.v: %.legupfront.stitchedup.bc
 	$(LLVM_BIN)llc -legup-config=$(LEGUP_EXAMPLE_CONFIG) -legup-config=config.tcl -march=stitchup $< -orig_sched $(shell pwd)/original.scheduling.rpt.keep -o $@
 
-%.orig.v: %.orig.legupfront.bc
+%.orig.v: %.legupfront.orig.bc
 	$(LLVM_BIN)llc -legup-config=$(LEGUP_EXAMPLE_CONFIG) -legup-config=config.tcl -march=v $< -o $@
 
-%.stitchedup.bc: %.bc
+%.legupfront.stitchedup.bc: %.legupfront.bc
 	@$(LLVM_BIN)opt -load=$(LLVM_LIB)LLVMStitchUp.so -StitchUp < $< > $@
 
 %.ll: %.bc
