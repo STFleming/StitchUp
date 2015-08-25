@@ -96,7 +96,7 @@ def main(argv):
     sim = 'rm -r -f work\n'
     sim += 'source ./modelsim.config\n'
     sim += 'vlib work\n'
-    sim += 'vlog ${VERILOG_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
+    sim += 'vlog ${VERILOG_LIBS}*.v ${GENERIC_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
     sim += 'vlog ${SYSTEMVERILOG_LIBS}*.v\n'  
     sim += 'vsim -c tbtop -do \"run 10000000 ; echo [simstats]; quit -f;\"\n'
 

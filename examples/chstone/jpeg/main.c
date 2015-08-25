@@ -45,20 +45,41 @@
 #include "decode.c"
 #include "huffman.c"
 #include "jfif_read.c"
-#include "jpeg2bmp.c"
+//#include "jpeg2bmp.c"
+
+unsigned char JpegFileBuf[JPEG_FILE_SIZE];
 
 int
 main ()
 {
-      main_result = 0;
-      jpeg2bmp_main ();
-
-      //printf ("Result: %d\n", main_result);
-      //if (main_result == 21745) {
-      //    printf("RESULT: PASS\n");
-      //} else {
-      //    printf("RESULT: FAIL\n");
-      //}
-
-      return main_result;
+    int  ci;
+    unsigned char* c;
+	int i, j;
+	
+    /*
+     * Store input data in buffer
+     */
+    c = JpegFileBuf;
+	  for (i = 0; i < JPEGSIZE; i++)
+    {
+      ci = hana_jpg[i];
+      *c++ = ci;
     }
+
+	jpeg_read(JpegFileBuf);
+
+	for(i=0; i<RGB_NUM; i++){
+		for(j=0; j<BMP_OUT_SIZE; j++){
+			if(OutData_comp_buf[i][j] == hana_bmp[i][j]){
+				main_result++;
+			}
+		}
+	}
+	if(OutData_image_width == out_width){
+		main_result++;
+	}
+	if(OutData_image_height == out_length){
+		main_result++;
+	}
+    return(0);
+}

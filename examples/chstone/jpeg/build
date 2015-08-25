@@ -1,6 +1,7 @@
 make main.ll
-make main.orig.bc
-make main.stitchedup.bc
+make main.legupfront.bc
+make main.legupfront.orig.bc
+make main.legupfront.stitchedup.bc
 make main.orig.v
 mv scheduling.legup.rpt original.scheduling.rpt.keep
 make main.stitchedup.v

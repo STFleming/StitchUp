@@ -120,6 +120,7 @@ echo "Finished configuring the LLVM base"
 
 #Edit the LegUp makefile so that the makefile argument STITCHUP=1 can be used to build the system with stitchup
 cp config/Makefile.common $LEGUP_HOME/examples/	
+cp config/legup.tcl $LEGUP_HOME/examples/
 
 (cd $LLVMSTITCHUP_BACKEND; make; cd $CURR_DIR; )
 (cd $LLVM_DIR/tools/llc; make; cd $CURR_DIR; )
