@@ -40,7 +40,7 @@ def main(argv):
     signals = wH.getSignals(inString, 'topmost')
     (inputlist, outputlist) = wH.gatherIOLists(wrapper, signals)
 
-    testbench = "//Testbench file for the stitchup wrapped project.\m"
+    testbench = "//Testbench file for the stitchup wrapped project.\n"
     testbench += "\nmodule tbtop (\n);\n\n"
      
     #Instantiate a register for each input 
@@ -96,7 +96,8 @@ def main(argv):
     sim = 'rm -r -f work\n'
     sim += 'source ./modelsim.config\n'
     sim += 'vlib work\n'
-    sim += 'vlog ${VERILOG_LIBS}*.v ${GENERIC_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
+    sim += 'vlog ${GENERIC_DIVIDER_LIBS}*.v\n'
+    sim += 'vlog ${VERILOG_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
     sim += 'vlog ${SYSTEMVERILOG_LIBS}*.v\n'  
     sim += 'vsim -c tbtop -do \"run 10000000 ; echo [simstats]; quit -f;\"\n'
 
