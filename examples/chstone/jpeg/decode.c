@@ -68,7 +68,7 @@ const int zigzag_index[64] =  /* Is zig-zag map for matrix -> scan array */
  * IZigzagMatrix() performs an inverse zig-zag translation on the
  * input imatrix and places the output in omatrix.
  */
- void
+__attribute__((always_inline)) void
 IZigzagMatrix(int *imatrix, int *omatrix)
 {
 	int i;
@@ -84,7 +84,7 @@ IZigzagMatrix(int *imatrix, int *omatrix)
  * IQuantize() takes an input matrix and does an inverse quantization
  * and puts the output int qmatrix.
  */
- void
+__attribute__((always_inline)) void
 IQuantize(int *matrix, int *qmatrix){
     int *mptr;
 
@@ -99,7 +99,7 @@ IQuantize(int *matrix, int *qmatrix){
  * PostshiftIDctMatrix() adds 128 (2048) to all 64 elements of an 8x8 matrix.
  * This results in strictly positive values for all pixel coefficients.
  */
- void
+__attribute__((always_inline)) void
 PostshiftIDctMatrix(int *matrix,int shift)
 {
     int *mptr;
@@ -113,7 +113,7 @@ PostshiftIDctMatrix(int *matrix,int shift)
  * BoundIDctMatrix bounds the inverse dct matrix so that no pixel has a
  * value greater than 255 (4095) or less than 0.
  */
- void
+__attribute__((always_inline)) void
 BoundIDctMatrix(int *matrix, int Bound)
 {
     int *mptr;
@@ -130,7 +130,7 @@ BoundIDctMatrix(int *matrix, int Bound)
 
 
 
- void
+__attribute__((always_inline)) void
 WriteOneBlock(int *store, unsigned char *out_buf, int width, int height,
               int voffs, int hoffs)
 {
@@ -164,7 +164,7 @@ WriteOneBlock(int *store, unsigned char *out_buf, int width, int height,
  * second row of (8) elements....
  * ONLY for MCU 1:1:1
  */
- void
+__attribute__((always_inline)) void
 WriteBlock(int *store, int *p_out_vpos, int *p_out_hpos, unsigned char *p_out_buf)
 {
     int voffs,hoffs;
@@ -264,7 +264,7 @@ Write4Blocks(int *store1,int *store2, int *store3, int *store4, int *p_out_vpos,
 /*
  * Transform from Yuv into RGB
  */
- void
+__attribute__((always_inline)) void
 YuvToRgb(int p, int* y_buf, int* u_buf, int* v_buf)
 {
     int r, g, b;

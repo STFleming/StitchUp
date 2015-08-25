@@ -165,14 +165,14 @@ static unsigned char* ReadBuf;
 /*
  *  Read from Buffer
  */
- int
+__attribute__((always_inline)) int
 read_byte(void)
 {
     return *ReadBuf++;
 }
 
 
- short
+__attribute__((always_inline)) short
 read_word(void)
 {
     short c;
@@ -184,7 +184,7 @@ read_word(void)
 }
 
 
- int
+__attribute__((always_inline)) int
 read_dword(void)
 {
     int c;
@@ -197,7 +197,7 @@ read_dword(void)
     return c;
 }
 
- int
+__attribute__((always_inline)) int
 first_marker(void)
 {
     int c1,c2;
@@ -215,7 +215,7 @@ first_marker(void)
 }
 
 
- int
+__attribute__((always_inline)) int
 next_marker(void)
 {
     int c;
@@ -239,7 +239,7 @@ next_marker(void)
 /*
  *  Baseline DCT ( Huffman )  
  */
- void
+__attribute__((always_inline)) void
 get_sof()
 {
     int ci,c;
@@ -348,7 +348,7 @@ get_sof()
 }
 
 
- void
+__attribute__((always_inline)) void
 get_sos()
 {
     int length,num_comp;
@@ -435,7 +435,7 @@ get_sos()
 /*
  * Get Huffman Table
  */
- void
+__attribute__((always_inline)) void
 get_dht()
 {
     int length;
@@ -500,7 +500,7 @@ get_dht()
 }
 
 
- void
+__attribute__((always_inline)) void
 get_dqt()
 {
     int length;
@@ -554,7 +554,7 @@ get_dqt()
 
 
 
- void
+__attribute__((always_inline)) void
 read_markers(unsigned char* buf)
 {
     int unread_marker;

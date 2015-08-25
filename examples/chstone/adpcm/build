@@ -11,4 +11,4 @@ make adpcm.renamed.stitchedup_c.v
 rm adpcm.renamed.stitchedup.v
 make adpcm.wrapper.v
 make adpcm_tb.v
-#./runVsim
+./runVsim

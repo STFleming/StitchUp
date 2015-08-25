@@ -11,4 +11,4 @@ make aes.renamed.stitchedup_c.v
 rm aes.renamed.stitchedup.v
 make aes.wrapper.v
 make aes_tb.v
-#./runVsim
+./runVsim

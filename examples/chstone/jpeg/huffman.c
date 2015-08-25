@@ -107,7 +107,7 @@ pgetc()
 /*
  * buf_getb() gets a bit from the read stream.
  */
- int
+__attribute__((always_inline)) int
 buf_getb()
 {
     if (read_position < 0){
@@ -248,7 +248,7 @@ DecodeHuffman(int *Xhuff_huffval, int Dhuff_ml, int *Dhuff_maxcode, int *Dhuff_m
 /*
  * Decode one MCU
  */
- void
+__attribute__((always_inline)) void
 DecodeHuffMCU(int *out_buf, int num_cmp)
 {
     int s,diff,tbl_no,*mptr,k,n,r;

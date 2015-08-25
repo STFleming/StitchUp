@@ -43,7 +43,7 @@
 /*
  * Initialize after reading markers
  */
-void
+__attribute__((always_inline))void
 jpeg_init_decompress()
 {
 	int tmp;
@@ -85,7 +85,7 @@ jpeg_init_decompress()
 
 
 
-void
+__attribute__((always_inline)) void
 jpeg_read(unsigned char *read_buf)
 {
 
