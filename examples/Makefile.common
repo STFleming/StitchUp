@@ -60,4 +60,13 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %_c.v: %.v
 	python $(WRAPPER_DIR)/exposeStateReg.py --ifile $< --ofile $@
 
+#Package the wrapper into a vivado IP core
+%.ipcore: %.wrapper.v
+	cp -r $(LEVEL)/libs/AXIWrapper/AXIWrapperStitchUp_1.0 ./
+	cp *.v *.mif ./AXIWrapperStitchUp_1.0/hdl
+	touch $< 
 
+#Build a Zynq System with the protected IP placed on a known bus address
+%.system.bit: %.ipcore
+	cp $(LEVEL)/config/vivado_build.tcl ./
+	vivado -mode batch -source vivado_build.tcl

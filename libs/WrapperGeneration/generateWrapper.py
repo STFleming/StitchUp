@@ -52,9 +52,21 @@ def main(argv):
         else:
             wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
 
+    wrapperString += 'wire [31:0] result;\n\n'
+
     wrapperString += '\nwire finish_orig, finish_stitchup;\n'
     wrapperString += 'always @ (posedge clk)\nbegin\n'
-    wrapperString += 'finish = finish_orig & finish_stitchup;\nend\n'
+    wrapperString += '\tif(reset==1)\n'
+    wrapperString += '\tbegin\n'
+    wrapperString += '\t\treturn_val <= 0;\n'
+    wrapperString += '\t\tfinish <= 0;\n'
+    wrapperString += '\tend\n'
+    wrapperString += '\tif(finish_orig==1)\n'
+    wrapperString += '\t\treturn_val <= result;\n'
+    wrapperString += '\t\tfinish <= 1;\n'
+    wrapperString += '\tbegin\n'
+    wrapperString += '\tend\n'
+    wrapperString += 'end\n'
 
     #Instantiate the check_state XOR checking logic
     #Get the bit width for the check_state register
@@ -65,7 +77,17 @@ def main(argv):
     wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
     wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
     wrapperString += '\nalways @(posedge clk) begin\n'
+    wrapperString += '\tif(reset==1)\n'
+    wrapperString += '\tbegin\n'
+    wrapperString += '\t\terrorFlag <=  0;\n'
+    wrapperString += '\t\tcheck_state <= 0;\n'
+    wrapperString += '\tend\n'
     wrapperString += '$display(\"%t, su=%d, orig=%d\",$time, stitchup_check_state, orig_check_state);\n'
+    wrapperString += '\tif (((orig_check_state ^ stitchup_check_state) != 0) && errorFlag == 0)\n'
+    wrapperString += '\tbegin\n'
+    wrapperString += '\t\tcheck_state <= 1;\n'
+    wrapperString += '\t\terrorFlag <= 1;\n'
+    wrapperString += '\tend\n'
     wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
     wrapperString += 'end\n'
 
