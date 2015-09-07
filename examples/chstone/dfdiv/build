@@ -12,3 +12,4 @@ rm dfdiv.renamed.stitchedup.v
 make dfdiv.wrapper.v
 make dfdiv_tb.v
 #./runVsim
+make dfdiv.ipcore

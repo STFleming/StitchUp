@@ -12,3 +12,4 @@ rm sha_driver.renamed.stitchedup.v
 make sha_driver.wrapper.v
 make sha_driver_tb.v
 #./runVsim
+make sha_driver.ipcore

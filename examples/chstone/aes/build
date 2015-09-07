@@ -13,3 +13,4 @@ make aes.wrapper.v
 make aes_tb.v
 #./runVsim
 make aes.ipcore
+#make aes.system.bit

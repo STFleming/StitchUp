@@ -12,3 +12,4 @@ rm mpeg2.renamed.stitchedup.v
 make mpeg2.wrapper.v
 make mpeg2_tb.v
 #./runVsim
+make mpeg2.ipcore

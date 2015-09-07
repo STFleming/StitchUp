@@ -13,4 +13,4 @@ make dfadd.wrapper.v
 make dfadd_tb.v
 #./runVsim
 make dfadd.ipcore
-make dfadd.system.bit
+#make dfadd.system.bit
