@@ -54,6 +54,7 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 #rename the stitchup file
 %.renamed.stitchedup.v: %.stitchedup.v
 	python $(WRAPPER_DIR)/renameStitchupTop.py --stitchup $<
+	sed -i '/resmain/d' $<
 	mv $< $@
 
 #Expose the state register of the circuit
