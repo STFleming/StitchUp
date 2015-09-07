@@ -129,7 +129,7 @@ architecture arch_imp of AXIWrapperStitchUp_v1_0_S00_AXI is
 
     signal out_finish : std_logic_vector(0 downto 0);
     signal out_return_val : std_logic_vector(31 downto 0);
-    signal out_check_state : std_logic_vector(6 downto 0);
+    signal out_check_state : std_logic_vector(31 downto 0);
     signal out_debug : std_logic_vector(6 downto 0);
 
     COMPONENT topmost PORT
@@ -140,7 +140,7 @@ architecture arch_imp of AXIWrapperStitchUp_v1_0_S00_AXI is
         waitrequest : in std_logic;
         finish : out std_logic;
         return_val : out std_logic_vector(31 downto 0);
-        check_state : out std_logic_vector(6 downto 0)
+        check_state : out std_logic_vector(31 downto 0)
     );
     END COMPONENT;
 
@@ -179,7 +179,7 @@ STITCHUP_UNIT: topmost port map(
         if rising_edge(S_AXI_ACLK) then
             slv_reg2 <= std_logic_vector(resize(unsigned(out_finish),32));
             slv_reg3 <= out_return_val;
-            slv_reg4 <= std_logic_vector(resize(unsigned(out_check_state), 32));
+            slv_reg4 <= out_check_state;
             slv_reg5 <= std_logic_vector(resize(unsigned(out_debug), 32));
         end if;
     end process;

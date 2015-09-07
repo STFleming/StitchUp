@@ -47,8 +47,10 @@ def main(argv):
     for i in inputlist:
         wrapperString += 'input [' + str(i[1]) + ':' + str(i[2]) +'] ' + i[0] + ';\n' 
     for o in outputlist:
-        if o[0] == 'check_state' or o[0] == 'finish' or o[0] == 'return_val':
+        if o[0] == 'finish' or o[0] == 'return_val':
             wrapperString += 'output reg[' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
+	elif o[0] == 'check_state': 
+            wrapperString += 'output reg[31:0] check_state;\n'
         else:
             wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
 
