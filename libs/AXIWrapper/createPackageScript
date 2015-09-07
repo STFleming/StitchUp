@@ -1,14 +1,14 @@
-echo "open_project ./AXIWrapperStitchUp_1.0/AXIWrapperStitchUp_v1.0_project/AXIWrapperStitchUp_v1.0_project.xpr" > _packageIPScript.tcl
-echo "ipx::open_core -upgrade true {./AXIWrapperStitchUp_1.0/component.xml}" >> _packageIPScript.tcl 
+current_dir=$(pwd)
+echo "open_project $current_dir/AXIWrapperStitchUp_v1.0_project/AXIWrapperStitchUp_v1.0_project.xpr" > _packageIPScript.tcl
+echo "ipx::open_core -upgrade true {$current_dir/AXIWrapperStitchUp_1.0/component.xml}" >> _packageIPScript.tcl 
 
 cd AXIWrapperStitchUp_1.0/hdl/
-
 #Find all Verilog files
 count=`ls -1 *.v 2>/dev/null | wc -l`
 if [ $count !=  0 ]
 then
 	for i in *.v; do
-		echo "ipx::add_file {./AXIWrapperStitchUp_1.0/hdl/$i;} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
+		echo "ipx::add_file {$current_dir/AXIWrapperStitchUp_1.0/hdl/$i} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
 	done
 fi
 
@@ -17,7 +17,7 @@ count=`ls -1 *.vhd 2>/dev/null | wc -l`
 if [ $count !=  0 ]
 then
 	for i in *.vhd; do
-		echo "ipx::add_file {./AXIWrapperStitchUp_1.0/hdl/$i;} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
+		echo "ipx::add_file {$current_dir/AXIWrapperStitchUp_1.0/hdl/$i} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
 	done
 fi
 
@@ -26,13 +26,11 @@ count=`ls -1 *.mif 2>/dev/null | wc -l`
 if [ $count !=  0 ]
 then
 	for i in *.mif; do
-		echo "ipx::add_file {./AXIWrapperStitchUp_1.0/hdl/$i;} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
+		echo "ipx::add_file {$current_dir/AXIWrapperStitchUp_1.0/hdl/$i} [ipx::get_file_group xilinx_anylanguagesynthesis [ipx::current_core]]" >> ../../_packageIPScript.tcl 
 	done
 fi
-
-
 cd ../../
 
 echo "ipx::check_integrity -quiet [ipx::current_core]" >> _packageIPScript.tcl
-echo "ipx::archive_core {./AXIWrapperStitchUp_1.0/imperial_user_AXIWrapperStitchUp_1.0.zip} [ipx::current_core]" >> _packageIPScript.tcl
+echo "ipx::archive_core {$current_dir/AXIWrapperStitchUp_1.0/imperial_user_AXIWrapperStitchUp_1.0.zip} [ipx::current_core]" >> _packageIPScript.tcl
 echo "ipx:::unload_core {imperial:user:AXIWrapperStitchUp:1.0}" >> _packageIPScript.tcl

@@ -62,8 +62,10 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 
 #Package the wrapper into a vivado IP core
 %.ipcore: %.wrapper.v
-	cp -r $(LEVEL)/libs/AXIWrapper/AXIWrapperStitchUp_1.0 ./
-	cp *.v *.mif ./AXIWrapperStitchUp_1.0/hdl
+	cp -r $(LEVEL)/libs/AXIWrapper ./
+	cp *.v *.mif ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
+	(cd ./AXIWrapper; ./createPackageScript)
+	vivado -mode batch -source ./AXIWrapper/_packageIPScript.tcl
 	touch $< 
 
 #Build a Zynq System with the protected IP placed on a known bus address
