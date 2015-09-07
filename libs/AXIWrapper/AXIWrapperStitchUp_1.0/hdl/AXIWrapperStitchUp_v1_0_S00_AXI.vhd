@@ -140,7 +140,6 @@ architecture arch_imp of AXIWrapperStitchUp_v1_0_S00_AXI is
         waitrequest : in std_logic;
         finish : out std_logic;
         return_val : out std_logic_vector(31 downto 0);
-        debug : out std_logic_vector(6 downto 0);
         check_state : out std_logic_vector(6 downto 0)
     );
     END COMPONENT;
@@ -172,7 +171,6 @@ STITCHUP_UNIT: topmost port map(
     waitrequest => slv_reg1(0),
     finish => out_finish(0),
     return_val => out_return_val,
-    debug => out_debug,
     check_state => out_check_state
 );
 
