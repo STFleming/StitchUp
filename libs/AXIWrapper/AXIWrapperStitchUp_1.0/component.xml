@@ -606,38 +606,8 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>hdl/UNUSED.mif</spirit:name>
-        <spirit:userFileType>mif</spirit:userFileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/rom_32.mif</spirit:name>
-        <spirit:userFileType>mif</spirit:userFileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/rom_64.mif</spirit:name>
-        <spirit:userFileType>mif</spirit:userFileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>hdl/AXIWrapperStitchUp_v1_0_S00_AXI.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/dfadd.wrapper.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/dfadd.renamed.stitchedup_c.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>hdl/dfadd.orig_c.v</spirit:name>
-        <spirit:fileType>verilogSource</spirit:fileType>
         <spirit:logicalName>work</spirit:logicalName>
       </spirit:file>
       <spirit:file>
@@ -685,8 +655,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>axi_wrapped_stitchup</xilinx:displayName>
-      <xilinx:coreRevision>9</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2015-08-26T14:44:40Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>10</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2015-09-07T08:40:28Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2013.4</xilinx:xilinxVersion>
