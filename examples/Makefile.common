@@ -64,6 +64,7 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %.ipcore: %.wrapper.v
 	cp -r $(LEVEL)/libs/AXIWrapper ./
 	cp *.v *.mif ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
+	cp ../libs/*.v ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
 	(cd ./AXIWrapper; ./createPackageScript)
 	vivado -mode batch -source ./AXIWrapper/_packageIPScript.tcl
 	touch $< 
