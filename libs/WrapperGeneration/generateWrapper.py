@@ -76,6 +76,7 @@ def main(argv):
             checkStateLSB = str(s[2])
     wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
     wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
+    wrapperString += 'reg [0:0] errorFlag;\n' 
     wrapperString += '\nalways @(posedge clk) begin\n'
     wrapperString += '\tif(reset==1)\n'
     wrapperString += '\tbegin\n'
