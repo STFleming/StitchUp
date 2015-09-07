@@ -99,6 +99,8 @@ def main(argv):
             wrapperString += '\t.check_state( orig_check_state )\n' 
 	elif s == "finish":
 	    wrapperString += '\t.finish( finish_orig ),\n'
+	elif s == "return_val":
+	    wrapperString += '\t.return_val( result ),\n'
         else:
             wrapperString += '\t.' + s + '(' + s + '),\n'
     wrapperString += ');\n'
