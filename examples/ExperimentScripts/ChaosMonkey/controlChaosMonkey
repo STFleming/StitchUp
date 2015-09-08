@@ -18,6 +18,9 @@ make clean
 ./build 
 ./runVsim_worklib
 
+sed -i s/"\$finish;"/" "/g $top_name.orig_c.v
+sed -i s/"\$finish;"/" "/g $top_name.renamed.stitchedup_c.v
+
 #Copy the original file so that it is fresh ever iteration
 cp $top_name.orig_c.v ./$top_name.orig_c.orig
 
