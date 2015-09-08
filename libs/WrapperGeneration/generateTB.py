@@ -67,7 +67,7 @@ def main(argv):
     #Assert statement to makesure that the Error flag has never been signalled
     testbench += 'always @(negedge clk) begin\n'
     testbench += '\tif (check_state != 0) begin\n'
-    testbench += '\t\t$fwrite(log, "%t,\t%d,\t%d,\t%d,\t1",$time, finish, return_val, check_state);\n'
+    testbench += '\t\t$fwrite(log, "%d,\t%d,\t%d,\t%d,\t1",($time-50)/20, finish, return_val, check_state);\n'
     testbench += '\t\t$display(\"CONFIGURATION MISMATCH, CFG ERROR DETECTED! %d\", check_state);\n'
     testbench += '\t\t$fclose(log);\n'
     testbench += '\t\t$finish;\n'
@@ -77,7 +77,7 @@ def main(argv):
     #End condition
     testbench += 'always @(finish) begin\n'
     testbench += '\tif (finish == 1) begin\n'
-    testbench += '\t\t$fwrite(log, "%t,\t%d,\t%d,\t%d,\t0",$time, finish, return_val, check_state);\n'
+    testbench += '\t\t$fwrite(log, "%d,\t%d,\t%d,\t%d,\t0",($time-50)/20, finish, return_val, check_state);\n'
     testbench += '\t\t$display("At t=%t clk=%b finish=%b return_val=%d", $time, clk, finish, return_val);\n'
     testbench += '\t\t$display("Cycles: %d", ($time-50)/20);\n'
     testbench += '\t\t$fclose(log);\n'
@@ -113,7 +113,7 @@ def main(argv):
 
     sim = 'source ./modelsim.config\n'
     sim += 'vlog ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
-    sim += 'vsim -c tbtop -do \"run 1000000000 ; echo [simstats]; quit -f;\"\n'
+    sim += 'vsim -c tbtop -do \"run 10000000000 ; echo [simstats]; quit -f;\"\n'
 
     simoutfile.write(sim)
     simoutfile.close()
