@@ -29,9 +29,12 @@ for i in `seq 1 $total_states`
     do
         for j in `seq 1 $total_states`
             do
-		python $chaosMonkeyDir/stateMachineChaosMonkey.py --input $build_dir/$top_name.orig_c.orig --output $build_dir/$top_name.orig_c.v --state $i --maxstate $total_states --newVal $j
-		./runVsim
-		cat res.log >> $curr_dir/res.csv		
-                echo ",    $i,    $j" >> $curr_dir/res.csv
+		if [ "$i" != "$j" ]
+		then
+			python $chaosMonkeyDir/stateMachineChaosMonkey.py --input $build_dir/$top_name.orig_c.orig --output $build_dir/$top_name.orig_c.v --state $i --maxstate $total_states --newVal $j
+			./runVsim
+			cat res.log >> $curr_dir/res.csv		
+                	echo ",    $i,    $j" >> $curr_dir/res.csv
+		fi
             done
     done
