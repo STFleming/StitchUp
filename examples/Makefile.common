@@ -46,6 +46,7 @@ WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
 %_tb.v: %.wrapper.v %.renamed.stitchedup_c.v %.orig_c.v
 	python $(WRAPPER_DIR)/generateTB.py --wrapper $*.wrapper.v --tb $@ --simscript runVsim --stitchup $*.renamed.stitchedup_c.v --orig $*.orig_c.v
 	chmod u+x runVsim
+	chmod u+x runVsim_worklib
 
 #Generate the wrapper for each
 %.wrapper.v: %.renamed.stitchedup_c.v %.orig_c.v

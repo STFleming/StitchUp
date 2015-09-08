@@ -33,6 +33,7 @@ def main(argv):
 
     infile = open(wrapper, 'r')
     tboutfile = open(testbenchfile, 'w')
+    workoutfile = open(simscript + '_worklib', 'w')
     simoutfile = open(simscript, 'w')
 
     inString = infile.read(); 
@@ -41,6 +42,7 @@ def main(argv):
     (inputlist, outputlist) = wH.gatherIOLists(wrapper, signals)
 
     testbench = "//Testbench file for the stitchup wrapped project.\n"
+    testbench += "`timescale 1 ns / 1 ns\n"
     testbench += "\nmodule tbtop (\n);\n\n"
      
     #Instantiate a register for each input 
@@ -51,6 +53,7 @@ def main(argv):
         testbench += 'wire [' +str(o[1]) +':'+ str(o[2]) +'] ' + o[0] + ';\n'
         if o[0] == "check_state":
             check_MSB = str(o[1]) #This is needed for the assertion check.
+    testbench += 'integer log;\n'
     testbench += '\n\n'
 
     #Clock generation
@@ -58,22 +61,26 @@ def main(argv):
 
     #Initial conditions for clock and reset signals
     #Pulses the reset condition
-    testbench += 'initial begin\n//$monitor("At t=%t clk=%b %b %b %b %d", $time, clk, reset, start, finish, return_val);\n@(negedge clk);\nreset <= 1;\n@(negedge clk);\nreset <= 0;\nstart <= 1;\n@(negedge clk);\nstart <= 0;\nend\n\n'
+    testbench += 'initial begin\n\tlog = $fopen(\"res.log\",\"w\");\n//$monitor("At t=%t clk=%b %b %b %b %d", $time, clk, reset, start, finish, return_val);\n@(negedge clk);\nreset <= 1;\n@(negedge clk);\nreset <= 0;\nstart <= 1;\n@(negedge clk);\nstart <= 0;\nend\n\n'
 
 
     #Assert statement to makesure that the Error flag has never been signalled
     testbench += 'always @(negedge clk) begin\n'
-    testbench += '\tif (!(check_state == '+check_MSB+'\'b000000)) begin\n'
-    testbench += '\t\t $display(\"CONFIGURATION MISMATCH, CFG ERROR DETECTED! %d\", check_state);\n'
-    testbench += '\t\t $finish;\n'
+    testbench += '\tif (check_state != 0) begin\n'
+    testbench += '\t\t$fwrite(log, "%t,\t%d,\t%d,\t%d,\t1",$time, finish, return_val, check_state);\n'
+    testbench += '\t\t$display(\"CONFIGURATION MISMATCH, CFG ERROR DETECTED! %d\", check_state);\n'
+    testbench += '\t\t$fclose(log);\n'
+    testbench += '\t\t$finish;\n'
     testbench += '\tend\n'
     testbench += 'end\n\n'
 
     #End condition
     testbench += 'always @(finish) begin\n'
     testbench += '\tif (finish == 1) begin\n'
+    testbench += '\t\t$fwrite(log, "%t,\t%d,\t%d,\t%d,\t0",$time, finish, return_val, check_state);\n'
     testbench += '\t\t$display("At t=%t clk=%b finish=%b return_val=%d", $time, clk, finish, return_val);\n'
     testbench += '\t\t$display("Cycles: %d", ($time-50)/20);\n'
+    testbench += '\t\t$fclose(log);\n'
     testbench += '\t\t$finish;\n'
     testbench += '\tend\n'
     testbench += 'end\n\n'
@@ -93,12 +100,19 @@ def main(argv):
     tboutfile.write(testbench)
     tboutfile.close()
 
-    sim = 'rm -r -f work\n'
-    sim += 'source ./modelsim.config\n'
-    sim += 'vlib work\n'
-    sim += 'vlog ${GENERIC_DIVIDER_LIBS}*.v\n'
-    sim += 'vlog ${VERILOG_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
-    sim += 'vlog ${SYSTEMVERILOG_LIBS}*.v\n'  
+    #Build the file to compile the work libs
+    worklibs = 'rm -r -f work\n'
+    worklibs += 'source ./modelsim.config\n'
+    worklibs += 'vlib work\n'
+    worklibs += 'vlog ${GENERIC_DIVIDER_LIBS}*.v\n'
+    worklibs += 'vlog ${VERILOG_LIBS}*.v ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
+    worklibs += 'vlog ${SYSTEMVERILOG_LIBS}*.v\n'  
+
+    workoutfile.write(worklibs)
+    workoutfile.close()
+
+    sim = 'source ./modelsim.config\n'
+    sim += 'vlog ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
     sim += 'vsim -c tbtop -do \"run 10000000 ; echo [simstats]; quit -f;\"\n'
 
     simoutfile.write(sim)
