@@ -1,20 +1,19 @@
 import sys, getopt
 import re
-from random import randint
 
 def main(argv):
     infile = ''
     outfile = ''
     stateNum = 0 
     try:
-            opts, args = getopt.getopt(argv, "hi:o:s:m", ["input=", "output=", "state=", "maxstate="])
+            opts, args = getopt.getopt(argv, "hi:o:s:m:n", ["input=", "output=", "state=", "maxstate=", "newVal="])
     except getopt.GetoptError:
-            print 'Usage: python stateMachineChaosMonkey.py --input <input file>.v --output <output file>.v --state <corrupted state number> --maxstate <largest state number>'
+            print 'Usage: python stateMachineChaosMonkey.py --input <input file>.v --output <output file>.v --state <corrupted state number> --maxstate <largest state number> --newVal <new value of state>'
             sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: python stateMachineChaosMonkey.py --input <input file>.v --output <output file>.v --state <corrupted state number>'
+            print 'Usage: python stateMachineChaosMonkey.py --input <input file>.v --output <output file>.v --state <corrupted state number> --maxstate <largest state number> --newVal <new value of state>'
             sys.exit()
         if opt in ("-i", "--input"):
             infile = arg
@@ -24,6 +23,8 @@ def main(argv):
             stateNum = int(arg)
 	if opt in ("-m", "--maxstate"):
             maxState = int(arg)
+	if opt in ("-n", "--newVal"):
+            newVal = int(arg)
     assert(outfile != '')
     assert(infile != '')
     inputfile = open(infile, 'r')
@@ -38,7 +39,7 @@ def main(argv):
         m = regex.search(l)	
         if m:
 	    oldState = l
-            damagedState = m.group(1) + str(randint(0, maxState)) + ';\n' 	
+            damagedState = m.group(1) + str(newVal) + ';\n' 	
 
     assert(oldState != '')
     assert(damagedState != '')
