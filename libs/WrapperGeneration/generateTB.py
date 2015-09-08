@@ -113,7 +113,7 @@ def main(argv):
 
     sim = 'source ./modelsim.config\n'
     sim += 'vlog ./'+wrapper+' ./'+testbenchfile+' ./'+stitchup+' ./'+original+'\n'
-    sim += 'vsim -c tbtop -do \"run 10000000 ; echo [simstats]; quit -f;\"\n'
+    sim += 'vsim -c tbtop -do \"run 1000000000 ; echo [simstats]; quit -f;\"\n'
 
     simoutfile.write(sim)
     simoutfile.close()
