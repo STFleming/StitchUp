@@ -1,0 +1,7 @@
+#DIRS="adpcm aes blowfish dfadd dfdiv dfmul dfsin gsm jpeg mips motion sha"
+for d in */ ; do
+	echo "$d"
+	cd $d
+	make clean	
+	cd ../
+done

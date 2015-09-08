@@ -6,3 +6,4 @@ clean:
 	rm -f -r work AXIWrapper
 	rm -f *.log *.jou
 	rm -f _packageIPScript.tcl
+	rm -f runVsim_*
