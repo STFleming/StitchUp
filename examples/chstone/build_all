@@ -2,6 +2,6 @@
 for d in */ ; do
 	echo "$d"
 	cd $d
-	./build
+	./build	
 	cd ../
 done
