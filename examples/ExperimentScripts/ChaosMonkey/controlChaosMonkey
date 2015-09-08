@@ -1,0 +1,34 @@
+#!/bin/bash
+#This script performs the control chaos monkey experiment 
+
+if [ $# -lt 3 ]
+  then
+    echo "usage: ./controlChaosMonkey <dir of build> <top filename> <total states>"
+    exit
+fi
+
+curr_dir=$(pwd)
+build_dir=$1
+top_name=$2
+total_states=$3
+chaosMonkeyDir=$curr_dir/../../../libs/ChaosMonkey/StateMachineMonkey
+
+cd $build_dir
+make clean
+./build 
+./runVsim_worklib
+
+#Copy the original file so that it is fresh ever iteration
+cp $top_name.orig_c.v ./$top_name.orig_c.orig
+
+###Initialisation completed, open the monkey cage.
+for i in `seq 1 $total_states`
+    do
+        for j in `seq 1 $total_states`
+            do
+		python $chaosMonkeyDir/stateMachineChaosMonkey.py --input $build_dir/$top_name.orig_c.orig --output $build_dir/$top_name.orig_c.v --state $i --maxstate $total_states --newVal $j
+		./runVsim
+		cat res.log >> $curr_dir/res.csv		
+                echo ",    $i,    $j" >> $curr_dir/res.csv
+            done
+    done
