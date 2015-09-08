@@ -64,9 +64,9 @@ def main(argv):
     wrapperString += '\t\tfinish <= 0;\n'
     wrapperString += '\tend\n'
     wrapperString += '\tif(finish_orig==1)\n'
+    wrapperString += '\tbegin\n'
     wrapperString += '\t\treturn_val <= result;\n'
     wrapperString += '\t\tfinish <= 1;\n'
-    wrapperString += '\tbegin\n'
     wrapperString += '\tend\n'
     wrapperString += 'end\n'
 
