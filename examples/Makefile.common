@@ -7,7 +7,7 @@ LEGUP_EXAMPLE_CONFIG=$(LEGUP_HOME)/examples/legup.tcl
 BOARD_TOPS_CMD = find $(LEGUP_HOME)/boards -maxdepth 3 -name "top.v"
 export BOARD_TOPS = $(shell $(BOARD_TOPS_CMD))
 WRAPPER_DIR=$(LEVEL)/libs/WrapperGeneration
-CONFIG_MONKEY=$(LEVEL)/libs/ConfigBitMonkey
+CONFIG_MONKEY=$(LEVEL)/libs/ChaosMonkey/ConfigBitMonkey
 
 %.legupfront.bc: %.bc
 	$(LLVM_BIN)opt -mem2reg -loops -loop-simplify < $< > 1.$< 
@@ -66,7 +66,7 @@ CONFIG_MONKEY=$(LEVEL)/libs/ConfigBitMonkey
 #Package the wrapper into a vivado IP core
 %.ipcore: %.wrapper.v
 	cp -r $(LEVEL)/libs/AXIWrapper ./
-	cp -r $(CONFIG_MONEKY)/sem_axi_1_1.0 ./
+	cp -r $(CONFIG_MONKEY)/sem_axi_1_1.0 ./AXIWrapper/
 	cp *.v *.mif ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
 	cp ../libs/*.v ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
 	(cd ./AXIWrapper; ./createPackageScript)
