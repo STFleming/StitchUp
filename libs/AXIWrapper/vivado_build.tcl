@@ -80,5 +80,4 @@ wait_on_run impl_1
 
 #Cleaning up
 file copy -force $current_dir/tmp/$temp_prj_name/$temp_prj_name.runs/impl_1/${bd_name}_wrapper.bit $current_dir/
-file copy -force $current_dir/tmp/$temp_prj_name/$temp_prj_name.runs/impl_1/${bd_name}_wrapper.ebc $current_dir/
 file copy -force $current_dir/tmp/$temp_prj_name/$temp_prj_name.runs/impl_1/${bd_name}_wrapper.ebd $current_dir/
