@@ -27,19 +27,21 @@ def main(argv):
     inputfile.close()
 
     frameSize = 101 #Size of the frame in 32 bit words
+    offset = 109 #Size of the zero padding
 
     frame = 0
     linecount = 0  
-    essentialBits = 0
+    word = 0
+    bit = 0
     for l in inLines:
+        bit = 0
+	word = (linecount - offset) % frameSize
+        frame = int(math.floor((linecount - offset) / frameSize))
        	for c in l:
             if c == '1':
-		essentialBits = essentialBits + 1 	
-	if essentialBits > 0:
-	    print 'Frame: ' + str(frame) + '  eb: ' + str(essentialBits)
-	    essentialBits = 0
+		print 'Frame: ' + str(frame) + '    Word: ' + str(word) + '    bit: ' + str(bit) 
+	    bit = bit + 1
         linecount = linecount + 1
-        frame = math.floor(linecount / 101)
 
 if __name__ == "__main__":
             main(sys.argv[1:])
