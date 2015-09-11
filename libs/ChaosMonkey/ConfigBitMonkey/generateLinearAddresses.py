@@ -26,6 +26,8 @@ def main(argv):
     inLines = inputfile.readlines()
     inputfile.close()
 
+    outf = open(outfile, 'w')
+
     frameSize = 101 #Size of the frame in 32 bit words
     offset = 109 #Size of the zero padding
 
@@ -38,10 +40,12 @@ def main(argv):
 	word = (linecount - offset) % frameSize
         frame = int(math.floor((linecount - offset) / frameSize))
        	for c in l:
-            if c == '1':
-		print 'Frame: ' + str(frame) + '    Word: ' + str(word) + '    bit: ' + str(bit) 
+            if c == '1' and linecount > offset:
+		outf.write(str(frame) + ',' + str(word) + ',' + str(bit) + '\n')
 	    bit = bit + 1
         linecount = linecount + 1
+
+    outf.close()
 
 if __name__ == "__main__":
             main(sys.argv[1:])
