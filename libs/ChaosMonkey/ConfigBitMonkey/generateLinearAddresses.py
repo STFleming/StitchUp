@@ -35,13 +35,19 @@ def main(argv):
     linecount = 0  
     word = 0
     bit = 0
+    address = 0
     for l in inLines:
         bit = 0
 	word = (linecount - offset) % frameSize
         frame = int(math.floor((linecount - offset) / frameSize))
        	for c in l:
             if c == '1' and linecount > offset:
-		outf.write(str(frame) + ',' + str(word) + ',' + str(bit) + '\n')
+		address = address | (frame << 12)
+		address = address | (word << 5)
+		address = address | (bit << 0)	
+		#print bin(address) + '        f: ' + bin(frame) + '   w: ' + bin(word) + '   b: ' + bin(bit) 
+		outf.write(str(address) + '\n')
+		address = 0
 	    bit = bit + 1
         linecount = linecount + 1
 
