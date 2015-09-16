@@ -9,12 +9,12 @@ def main(argv):
     try:
             opts, args = getopt.getopt(argv, "hi:o:s:m:n", ["input=", "output="])
     except getopt.GetoptError:
-            print 'Usage: python stateMachineChaosMonkey.py --input <input ebd> --output <output linear addresses>'
+            print 'Usage: python generateLinearAddresses.py --input <input ebd> --output <output linear addresses>'
             sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: python stateMachineChaosMonkey.py --input <input ebd> --output <output linear addresses>'
+            print 'Usage: python generateLinearAddresses.py --input <input ebd> --output <output linear addresses>'
             sys.exit()
         if opt in ("-i", "--input"):
             infile = arg
