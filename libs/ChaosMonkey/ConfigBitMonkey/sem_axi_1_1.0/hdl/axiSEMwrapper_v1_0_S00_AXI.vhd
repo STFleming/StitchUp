@@ -165,26 +165,41 @@ architecture arch_imp of axiSEMwrapper_v1_0_S00_AXI is
     END COMPONENT;
 
     signal injection_status : std_logic;
+    signal heartbeat_status : std_logic;
+	signal initialization_status : std_logic;
+	signal observation_status : std_logic;
+	signal correction_status : std_logic;
+	signal classification_status : std_logic;
+	signal essential_status : std_logic;
+	signal uncorrectable_status : std_logic; 
     signal inject_strobe : std_logic;
     signal inject_address : std_logic_vector(39 downto 0);
 
 begin
 
-    slv_reg0(0) <= injection_status;
+    slv_reg0(0) <= heartbeat_status;
+    slv_reg0(1) <= initialization_status;
+    slv_reg0(2) <= observation_status;
+    slv_reg0(3) <= correction_status;
+    slv_reg0(4) <= classification_status;
+    slv_reg0(5) <= injection_status;
+    slv_reg0(6) <= essential_status;
+    slv_reg0(7) <= uncorrectable_status;
+
     inject_strobe <= slv_reg1(0);
     inject_address <= slv_reg3(7 downto 0) & slv_reg2;
 
     SEM1 : sem_0_sem_example
     PORT MAP(
       clk => S_AXI_ACLK,
-      status_heartbeat => open,
-      status_initialization => open,
-      status_observation => open,
-      status_correction => open,
-      status_classification => open,
+      status_heartbeat => heartbeat_status,
+      status_initialization => initialization_status,
+      status_observation => observation_status,
+      status_correction => correction_status,
+      status_classification => classification_status,
       status_injection => injection_status,
-      status_essential => open,
-      status_uncorrectable => open,
+      status_essential => essential_status,
+      status_uncorrectable => uncorrectable_status,
       inject_strobe => inject_strobe,
       inject_address => inject_address,
       monitor_tx => open,
