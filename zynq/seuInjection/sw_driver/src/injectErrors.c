@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     volatile void *semdev = getvaddr(0x42C00000);
 
 
-    printf("Initial: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+    //printf("Initial: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
 
     *((volatile unsigned *)devcfg_ctrl) = *((volatile unsigned *)devcfg_ctrl) & ~PCAP_PR;
     *((volatile unsigned *)(semdev)+4) = 1; //set icap_grant to 1
@@ -24,14 +24,14 @@ int main(int argc, char* argv[])
 
     while(CHECK_BIT(*((volatile unsigned *)(semdev)+0), 1)){ } //Wait while the device initialises 
     
-    printf("Observation: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+    //printf("Observation: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
 
     //Attempting to enter idle state
     *((volatile unsigned*)(semdev)+3) = 224;
     *((volatile unsigned*)(semdev)+1) = 1;
     *((volatile unsigned*)(semdev)+1) = 0;
     while(CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2)){ } //Wait while the device initialises 
-    printf("Entering Idle State: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+    //printf("Entering Idle State: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
 
 
     *((volatile unsigned*)(semdev)+3) = 192;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     *((volatile unsigned*)(semdev)+1) = 0;
     while(!CHECK_BIT(*((volatile unsigned *)(semdev)+0), 5)){  } //Wait while the device initialises 
 
-    printf("Inject Error: 0x%x\n", *((unsigned *)(semdev)+0)); 
+    //printf("Inject Error: 0x%x\n", *((unsigned *)(semdev)+0)); 
 
     //Enable the PCAP
     //*((unsigned *)devcfg_ctrl) = *((unsigned *)devcfg_ctrl) | PCAP_MODE;
