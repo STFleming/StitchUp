@@ -1,5 +1,6 @@
 import sys, getopt
 import os
+import time
 
 def main(argv):
     linaddrsfile = ''
@@ -30,8 +31,9 @@ def main(argv):
     for addr in addrLines:
         inject_cmd = '../sw_driver/bin/injectErrors ' + str(addr)
         os.system(reconfig_cmd)
-        os.system('printf  \"' + str(addr) + ',   \" >> res.csv')
+	time.sleep(150/1000.0)
         os.system(inject_cmd)
+    	exec_cmd = '../sw_driver/bin/hlsKicker ' + str(addr) +' >> res.csv'
         os.system(exec_cmd)
 
 if __name__ == "__main__":
