@@ -13,7 +13,7 @@ DEPS = $(INC_DIR)/gos_interface_driver.h
 $(BIN_DIR)/%.o: $(INC_DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-all: hlsKicker monitor reset injectErrors
+all: hlsKicker monitor reset injectErrors injectOnly injectSetup injectFinish
 
 hlsKicker: $(OBJS)
 	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
@@ -25,4 +25,13 @@ reset: $(OBJS)
 	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
 
 injectErrors: $(OBJS)
+	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
+
+injectOnly: $(OBJS)
+	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
+
+injectSetup: $(OBJS)
+	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
+
+injectFinish: $(OBJS)
 	$(CC) $(SRC_DIR)/$@.c -o $(BIN_DIR)/$@ $^ $(CFLAGS)
