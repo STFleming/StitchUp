@@ -9,15 +9,17 @@ def main(argv):
     original = ''
     stitchup = ''
     wrapper = ''
+    dmrflag = False
+    noProtect = False
     try:
-            opts, args = getopt.getopt(argv, "ho:i:w", ["orig=", "stitchup=", "wrapper="])
+            opts, args = getopt.getopt(argv, "ho:i:w:n:d", ["orig=", "stitchup=", "wrapper=", "np", "dmr"])
     except getopt.GetoptError:
-            print 'Usage: python generateWrapper.py --origi original.v --stitchup stitchup.v --wrapper=protected.v'
+            print 'Usage: python generateWrapper.py --origi original.v --stitchup stitchup.v --wrapper=protected.v --np --dmr'
             sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage: python generateWrapper.py --origi original.v --stitchup stitchup.v --wrapper=protected.v'
+            print 'Usage: python generateWrapper.py --origi original.v --stitchup stitchup.v --wrapper=protected.v --np --dmr'
             sys.exit()
         if opt in ("-o", "--orig"):
             original = arg 
@@ -25,6 +27,10 @@ def main(argv):
             stitchup = arg
         if opt in ("-w", "--wrapper"):
             wrapper = arg
+	if opt in ("--np"):
+	    noProtect = True
+        if opt in ("--dmr"):
+	    dmrflag = True
     outfile = open(wrapper, 'w')
     origString = open(original, 'r').read()
 
@@ -70,29 +76,30 @@ def main(argv):
     wrapperString += '\tend\n'
     wrapperString += 'end\n'
 
-    #Instantiate the check_state XOR checking logic
-    #Get the bit width for the check_state register
-    for s in outputlist:
-        if s[0] == "check_state":
-            checkStateMSB = str(s[1])
-            checkStateLSB = str(s[2])
-    wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
-    wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
-    wrapperString += 'reg [0:0] errorFlag;\n' 
-    wrapperString += '\nalways @(posedge clk) begin\n'
-    wrapperString += '\tif(reset==1)\n'
-    wrapperString += '\tbegin\n'
-    wrapperString += '\t\terrorFlag <=  0;\n'
-    wrapperString += '\t\tcheck_state <= 0;\n'
-    wrapperString += '\tend\n'
-    wrapperString += '$display(\"%t, su=%d, orig=%d\",$time, stitchup_check_state, orig_check_state);\n'
-    wrapperString += '\tif (((orig_check_state ^ stitchup_check_state) != 0) && errorFlag == 0)\n'
-    wrapperString += '\tbegin\n'
-    wrapperString += '\t\tcheck_state <= 1;\n'
-    wrapperString += '\t\terrorFlag <= 1;\n'
-    wrapperString += '\tend\n'
-    wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
-    wrapperString += 'end\n'
+    if noProtect == False :
+    	#Instantiate the check_state XOR checking logic
+    	#Get the bit width for the check_state register
+    	for s in outputlist:
+    	    if s[0] == "check_state":
+    	        checkStateMSB = str(s[1])
+    	        checkStateLSB = str(s[2])
+    	wrapperString += '\nwire [' + checkStateMSB + ':' + checkStateLSB + '] orig_check_state;\n' 
+    	wrapperString += 'wire [' + checkStateMSB + ':' + checkStateLSB + '] stitchup_check_state;\n' 
+    	wrapperString += 'reg [0:0] errorFlag;\n' 
+    	wrapperString += '\nalways @(posedge clk) begin\n'
+    	wrapperString += '\tif(reset==1)\n'
+    	wrapperString += '\tbegin\n'
+    	wrapperString += '\t\terrorFlag <=  0;\n'
+    	wrapperString += '\t\tcheck_state <= 0;\n'
+    	wrapperString += '\tend\n'
+    	wrapperString += '$display(\"%t, su=%d, orig=%d\",$time, stitchup_check_state, orig_check_state);\n'
+    	wrapperString += '\tif (((orig_check_state ^ stitchup_check_state) != 0) && errorFlag == 0)\n'
+    	wrapperString += '\tbegin\n'
+    	wrapperString += '\t\tcheck_state <= 1;\n'
+    	wrapperString += '\t\terrorFlag <= 1;\n'
+    	wrapperString += '\tend\n'
+    	wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
+    	wrapperString += 'end\n'
 
     #Instantiate the original LegUp component
     wrapperString += '\ntop top_inst(\n'
@@ -107,18 +114,23 @@ def main(argv):
             wrapperString += '\t.' + s + '(' + s + '),\n'
     wrapperString += ');\n'
 
-    #Instantiate the StitchUp component
-    wrapperString += '\nstitchup_top stitchup_top_inst(\n'
-    for s in signals: 
-        if s == "check_state":
-            wrapperString += '\t.check_state( stitchup_check_state )\n' 
-        elif s == "return_val":
-            wrapperString += '\t.return_val( open ),\n'
-	elif s == "finish":
-	    wrapperString += '\t.finish( finish_stitchup ),\n'
-        else:
-            wrapperString += '\t.' + s + '(' + s + '),\n'
-    wrapperString += ');\n'
+    if noProtect == False :
+    	#Instantiate the StitchUp component
+	if dmrflag == True:
+    	    wrapperString += '\ntop stitchup_top_inst(\n'
+	else:
+    	    wrapperString += '\nstitchup_top stitchup_top_inst(\n'
+
+    	for s in signals: 
+    	    if s == "check_state":
+    	        wrapperString += '\t.check_state( stitchup_check_state )\n' 
+    	    elif s == "return_val":
+    	        wrapperString += '\t.return_val( open ),\n'
+    	    elif s == "finish":
+    	        wrapperString += '\t.finish( finish_stitchup ),\n'
+    	    else:
+    	        wrapperString += '\t.' + s + '(' + s + '),\n'
+    	wrapperString += ');\n'
 
 
     wrapperString += 'endmodule\n'
