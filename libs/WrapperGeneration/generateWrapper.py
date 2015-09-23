@@ -42,6 +42,10 @@ def main(argv):
     wrapperString += "\nmodule topmost(\n"
     for s in signals:
         wrapperString += '\t' + s +',\n'
+    if dmrflag:
+        wrapperString += '\tstart_dmr,\n'
+	wrapperString += '\tfinish_dmr,\n'
+	wrapperString += '\treturn_val_dmr,\n';
     wrapperString = wrapperString[:-2]
     wrapperString += '\n);\n\n'
 
@@ -52,15 +56,21 @@ def main(argv):
     #Instantiate the input/output with the correct widths
     for i in inputlist:
         wrapperString += 'input [' + str(i[1]) + ':' + str(i[2]) +'] ' + i[0] + ';\n' 
+	if i[0] == 'start' and dmrflag:
+	    wrapperString += 'input start_dmr;\n'
     for o in outputlist:
         if o[0] == 'finish' or o[0] == 'return_val':
             wrapperString += 'output reg[' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
+	    if dmrflag:
+            	wrapperString += 'output reg[' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + '_dmr;\n'
 	elif o[0] == 'check_state': 
             wrapperString += 'output reg[31:0] check_state;\n'
         else:
             wrapperString += 'output wire [' + str(o[1]) + ':' + str(o[2]) + '] ' + o[0] + ';\n'
 
     wrapperString += 'wire [31:0] result;\n\n'
+    if dmrflag:
+	wrapperString += 'wire [31:0] result_dmr;\n\n'
 
     wrapperString += '\nwire finish_orig, finish_stitchup;\n'
     wrapperString += 'always @ (posedge clk)\nbegin\n'
@@ -75,6 +85,21 @@ def main(argv):
     wrapperString += '\t\tfinish <= 1;\n'
     wrapperString += '\tend\n'
     wrapperString += 'end\n'
+
+    if dmrflag:
+    	wrapperString += 'always @ (posedge clk)\nbegin\n'
+    	wrapperString += '\tif(reset==1)\n'
+    	wrapperString += '\tbegin\n'
+    	wrapperString += '\t\treturn_val_dmr <= 0;\n'
+    	wrapperString += '\t\tfinish_dmr <= 0;\n'
+    	wrapperString += '\tend\n'
+    	wrapperString += '\tif(finish_stitchup==1)\n'
+    	wrapperString += '\tbegin\n'
+    	wrapperString += '\t\treturn_val_dmr <= result_dmr;\n'
+    	wrapperString += '\t\tfinish_dmr <= 1;\n'
+    	wrapperString += '\tend\n'
+    	wrapperString += 'end\n'
+	
 
     if noProtect == False :
     	#Instantiate the check_state XOR checking logic
@@ -125,9 +150,14 @@ def main(argv):
     	    if s == "check_state":
     	        wrapperString += '\t.check_state( stitchup_check_state )\n' 
     	    elif s == "return_val":
-    	        wrapperString += '\t.return_val( open ),\n'
+		if dmrflag:
+    	            wrapperString += '\t.return_val( result_dmr ),\n'
+		else:
+    	            wrapperString += '\t.return_val( open ),\n'
     	    elif s == "finish":
     	        wrapperString += '\t.finish( finish_stitchup ),\n'
+    	    elif s == "start":
+    	        wrapperString += '\t.start( start_dmr ),\n'
     	    else:
     	        wrapperString += '\t.' + s + '(' + s + '),\n'
     	wrapperString += ');\n'

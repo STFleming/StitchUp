@@ -59,7 +59,7 @@ def gatherIOLists(inputfile, lop):
 
 #Function to gather the module name from a verilog file
 def gatherModuleName(inputString):
-        regex = re.compile(r'module ([A-z0-9]+)\s*\(', re.MULTILINE)
+        regex = re.compile(r'(parameter \[\d+:\d+\] (?:LEGUP_F_|LOSTSTATE_).* = \d+\'d)(\d+)', re.MULTILINE)
         m = regex.search(inputString)
         if m:
             return m.group(1)
