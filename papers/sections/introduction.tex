@@ -4,7 +4,7 @@ when there are strict constraints on performance and power, yet they are seldom 
 Two main issues prevent widespread adoption in these fields: firstly they are difficult
 to program with designs taking many man-hours to build and verify;
 and secondly they are highly susceptible to soft errors with single event upsets (SEU)
-potentially causing unwanted reconfigurations of the operating circuit.
+potentially causing unwanted device reconfiguration.
 Research into High Level Synthesis (HLS) has been academically and commercially successful
 at addressing the development time issues. HLS tools transform a popular programming language, such as C,
 into a digital circuit replacing expensive specialised hardware engineers with software engineers.
@@ -13,11 +13,11 @@ costing large amounts of additional resources and power, potentially causing the
 
 %Overview of our work
 This paper presents StitchUp which extends the LegUp HLS tool \cite{canis2011legup} so that produced circuits are
-guaranteed to terminate even in the presence of SEUs, while always consuming equal or less logic than full circuit duplication.
+guaranteed to terminate (provided the input does) even in the presence of SEUs, while always consuming equal or less logic than full circuit duplication.
 In order to achieve this the tool determines the set of instructions required to make an exact duplicate of the Control
-Flow Graph (CFG) ignoring instructions which only effect the data flow, creating what we shall refer to as a CFG shadow circuit.
+Flow Graph (CFG) ignoring instructions which only effect the data flow, creating what we shall refer to as a \emph{CFG shadow} circuit.
 We argue that it is often the case that instructions which may influence the control flow of an application are more critical
-than instructions which never effect control; for example an image renderer which can tolerant errors within
+than instructions which never effect control; for example, an image renderer which can tolerant errors within
 it's pixel values but errors in it's control flow could cause it to hang indefinitely \cite{sampson2011enerj}.
 
 The tool has three distinct stages: an analysis stage statically examines the input source and extracts any instruction
