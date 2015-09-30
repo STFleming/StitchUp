@@ -67,6 +67,10 @@ update_compile_order -fileset sim_1
 #set_property bitstream.seu.essentialbits yes [current_design]
 set_property STEPS.WRITE_BITSTREAM.TCL.PRE /home/sf306/ExperimentsStitchUp/SEUInjection/chstone/dfadd/AXIWrapper/pre_tcl_file.tcl [get_runs impl_1]
 
+#set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
+#set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
+#set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]
+
 #Build the bitstream
 reset_run synth_1
 reset_run impl_1
