@@ -100,6 +100,7 @@ set_parameter LOCAL_RAMS 1
 # Note: inferred RAMs don't support structs (no byte-enable) so having
 # structs in your program forces this parameter to turn off
 set_parameter INFERRED_RAMS 1
+set_parameter INFERRED_RAM_FORMAT "xilinx" 
 
 # Place constant arrays into RAMs instead of the default read-only memory
 #set_parameter NO_ROMS 1
