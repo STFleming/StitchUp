@@ -29,7 +29,7 @@ def main(argv):
     exec_cmd = '../sw_driver/bin/hlsKicker >> res.csv'
 
     for addr in addrLines:
-        inject_cmd = '../sw_driver/bin/injectErrors ' + str(addr)
+        inject_cmd = 'timeout 5 ../sw_driver/bin/injectErrors ' + str(addr)
         os.system(reconfig_cmd)
 	time.sleep(150/1000.0)
         os.system(inject_cmd)
