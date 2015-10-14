@@ -160,6 +160,7 @@ architecture arch_imp of axiSEMwrapper_v1_0_S00_AXI is
       inject_strobe : in std_logic;
       inject_address : in std_logic_vector(39 downto 0);
       monitor_tx : out std_logic;
+      icap_grant : out std_logic;
       monitor_rx : in std_logic
       );
     END COMPONENT;
@@ -174,6 +175,7 @@ architecture arch_imp of axiSEMwrapper_v1_0_S00_AXI is
 	signal uncorrectable_status : std_logic; 
     signal inject_strobe : std_logic;
     signal inject_address : std_logic_vector(39 downto 0);
+	signal icap_grant : std_logic;
 
 begin
 
@@ -188,6 +190,7 @@ begin
 
     inject_strobe <= slv_reg1(0);
     inject_address <= slv_reg3(7 downto 0) & slv_reg2;
+    icap_grant <= slv_reg4(0);
 
     SEM1 : sem_0_sem_example
     PORT MAP(
@@ -202,8 +205,9 @@ begin
       status_uncorrectable => uncorrectable_status,
       inject_strobe => inject_strobe,
       inject_address => inject_address,
+      icap_grant => icap_grant,
       monitor_tx => open,
-      monitor_rx => '1'
+      monitor_rx => '0' 
       );
 
 	-- I/O Connections assignments

@@ -3,6 +3,10 @@ set_parameter GROUP_RAMS 1
 set_parameter GROUP_RAMS_SIMPLE_OFFSET 1
 set_parameter CASE_FSM 1
 
+set_parameter INFERRED_RAM_FORMAT "xilinx"
+
+set_accelerator_function "float64_add"
+
 # For MC Paths
 #set_parameter MULTI_CYCLE_REMOVE_REG 1
 #set_parameter MULTI_CYCLE_DISABLE_REG_MERGING 1

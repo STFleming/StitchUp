@@ -179,6 +179,7 @@ module sem_0_sem_example (
   input  wire        inject_strobe,
   input  wire [39:0] inject_address,
   output wire        monitor_tx,
+  output wire	     icap_grant,
   input  wire        monitor_rx
   );
 
@@ -221,7 +222,7 @@ module sem_0_sem_example (
   wire        icap_csib;
   wire        icap_rdwrb;
   wire        icap_unused;
-  wire        icap_grant;
+  //wire        icap_grant;
   wire        icap_clk;
 
   ///////////////////////////////////////////////////////////////////////////
@@ -279,7 +280,6 @@ module sem_0_sem_example (
     .icap_grant(icap_grant)
     );
 
-  assign icap_grant = 1'b1;
   assign status_heartbeat = status_heartbeat_internal;
   assign status_initialization = status_initialization_internal;
   assign status_observation = status_observation_internal;
