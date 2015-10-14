@@ -33,16 +33,18 @@ def main(argv):
 
     outf = open(outfile, 'w')
 
+    count = 0
     remove=False
     for l in inLines:
-	for m in maskLines:
-	    if(l == m):
-		remove=True	
-		break
-	if remove != True:
-		outf.write(l)
-	remove=False
-
+        count = count + 1
+        for m in maskLines:
+            if(l == m):
+                remove=True
+                break
+        if remove != True:
+            outf.write(l)
+        remove=False
+        print float(count)/float(len(inLines))
     outf.close()
 
 if __name__ == "__main__":
