@@ -246,7 +246,7 @@ module sem_0_sem_example (
   // solution.  The port list is dynamic based on the IP core options.
   ///////////////////////////////////////////////////////////////////////////
 
-  sem_0 example_controller (
+  sem_1 example_controller (
     .status_heartbeat(status_heartbeat_internal),
     .status_initialization(status_initialization_internal),
     .status_observation(status_observation_internal),
