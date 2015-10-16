@@ -1,5 +1,5 @@
 include $(LEVEL)/Makefile.config
-CFLAG += -fno-builtin -m32 -I $(LEGUP_HOME)/lib/include -I /usr/include/i386-linux-gnu -O3 -fno-vectorize -fno-slp-vectorize
+CFLAG += -fno-builtin -m32 -I $(LEGUP_HOME)/lib/include -I /usr/include/i386-linux-gnu -O3 -fno-vectorize -fno-slp-vectorize -unroll-threshold=20
 LLVM_BIN = $(LLVM_DIR)/Release+Asserts/bin/
 LLVM_LIB = $(LLVM_DIR)/Release+Asserts/lib/
 FRONT_END = clang-3.5
@@ -51,7 +51,9 @@ CONFIG_MONKEY=$(LEVEL)/libs/ChaosMonkey/ConfigBitMonkey
 
 #Generate the wrapper for each
 %.wrapper.v: %.renamed.stitchedup_c.v %.orig_c.v
-	python $(WRAPPER_DIR)/generateWrapper.py --orig $*.orig_c.v --stitchup $*.renamed,stitchedup_c.v --wrapper $@
+	#python $(WRAPPER_DIR)/generateWrapper.py --orig $*.orig_c.v --stitchup $*.renamed.stitchedup_c.v --wrapper $@ --dmr 
+	#python $(WRAPPER_DIR)/generateWrapper.py --orig $*.orig_c.v --stitchup $*.renamed.stitchedup_c.v --wrapper $@ --np 
+	python $(WRAPPER_DIR)/generateWrapper.py --orig $*.orig_c.v --stitchup $*.renamed.stitchedup_c.v --wrapper $@ 
 
 #rename the stitchup file
 %.renamed.stitchedup.v: %.stitchedup.v
@@ -69,6 +71,8 @@ CONFIG_MONKEY=$(LEVEL)/libs/ChaosMonkey/ConfigBitMonkey
 	cp -r $(CONFIG_MONKEY)/sem_axi_1_1.0 ./AXIWrapper/
 	cp *.v *.mif ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
 	cp ../libs/*.v ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl
+	#mv ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl/DMR_AXIWrapper.vhd ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl/AXIWrapperStitchUp_v1_0_S00_AXI.vhd #Uncomment for DMR
+	rm ./AXIWrapper/AXIWrapperStitchUp_1.0/hdl/DMR_AXIWrapper.vhd #Uncomment for noProtection / StitchUp
 	(cd ./AXIWrapper; ./createPackageScript)
 	vivado -mode batch -source ./AXIWrapper/_packageIPScript.tcl
 	touch $< 
