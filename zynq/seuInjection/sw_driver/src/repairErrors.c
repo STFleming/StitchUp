@@ -13,10 +13,18 @@ int main(int argc, char* argv[])
     volatile void *devcfg_ctrl = getvaddr(0xF8007000);
     volatile void *semdev = getvaddr(0x42C00000);
 
-    //Enable the PCAP
-    *((volatile unsigned *)(semdev)+4) = 0; //set icap_grant to 0 
-    *((volatile unsigned *)devcfg_ctrl) = *((volatile unsigned *)devcfg_ctrl) | PCAP_PR;
 
-	return 0;
+//    printf("\t\tInitial: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+
+    *((volatile unsigned*)(semdev)+3) = 160;
+    *((volatile unsigned*)(semdev)+1) = 1;
+    *((volatile unsigned*)(semdev)+1) = 0;
+
+    while(!CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2)){ } //Wait till we are in the observation state
+    
+//    printf("\t\tFinal: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+   
+
+    return 0;
 }
 

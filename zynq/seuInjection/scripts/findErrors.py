@@ -36,7 +36,11 @@ def main(argv):
 		if row[4] != str(expectedval):
 			dE = True
 		if dE or cE:
-			print row
+			#Frame, bit, dE, cE
+			Frame = int(row[0]) >> 12 
+			Word = int((int(row[0]) & 0xFFF) / 32) 
+			print str(Frame) + "," + str(Word) + "," + str(dE) + "," + str(cE)
+			#print row
 		if dE:
 			if cE:
 				DE_T_CE_T = DE_T_CE_T + 1;
@@ -50,14 +54,10 @@ def main(argv):
 		dE = False
 		cE = False
 
-	#print "DE and CE:   " + str(DE_T_CE_T)
-	#print "DE and !CE:   " + str(DE_T_CE_F)
-	#print "!DE and CE:   " + str(DE_F_CE_T)
-	#print "!DE and !CE:   " + str(DE_F_CE_F)
-	print "Total Faults: " + str(DE_T_CE_T + DE_T_CE_F + DE_F_CE_T)
-	print "Data Only Faults: " + str(DE_T_CE_F)
-	print "StitchUp Detected Faults: " + str(DE_T_CE_T + DE_F_CE_T)
-	print "Essential bits that are not critical: " + str(DE_F_CE_F)
+	print "|Total Faults: " + str(DE_T_CE_T + DE_T_CE_F + DE_F_CE_T)
+	print "|Data Only Faults: " + str(DE_T_CE_F)
+	print "|StitchUp Detected Faults: " + str(DE_T_CE_T + DE_F_CE_T)
+	print "|Essential bits that are not critical: " + str(DE_F_CE_F)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         *((volatile unsigned*)(semdev)+1) = 1;
         *((volatile unsigned*)(semdev)+1) = 0;
         while(!CHECK_BIT(*((volatile unsigned *)(semdev)+0), 5)){ } //Wait while the device initialises 
-        printf("\t\tLA:%u    Status: 0x%x\n", linaddr, *((unsigned *)(semdev)+0)); 
+//        printf("\t\tLA:%u    Status: 0x%x\n", linaddr, *((unsigned *)(semdev)+0)); 
         while(CHECK_BIT(*((volatile unsigned *)(semdev)+0), 1) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 3) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 4) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 5)){} //Wait till we are in the Idle state.
     
    }
