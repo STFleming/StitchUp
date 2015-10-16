@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     *((int*)(hlsdev)) = 0;
 
     //block till finish
-    while(*((int*)(hlsdev)+2) == 0){}
+    while((*((int*)(hlsdev)+2) == 0) || *((int *)(hlsdev)+4) != 0){}
     //while(*((int*)(hlsdev)+3) != 46){}
 
     //check for errors
