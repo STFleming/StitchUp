@@ -1,3 +1,49 @@
+2015.3:
+ * Version 4.1 (Rev. 5)
+ * IP revision number added to HDL module, library, and include file names, to support designs with both locked and upgraded IP instances
+
+2015.2.1:
+ * Version 4.1 (Rev. 4)
+ * No changes
+
+2015.2:
+ * Version 4.1 (Rev. 4)
+ * No changes
+
+2015.1:
+ * Version 4.1 (Rev. 4)
+ * Reduce SEM controller pblock dimensions for xc7a15 and xc7a50 to align to clock regions to improve logic packing and remove placer alignment warning.
+ * Remove empty example design text file, x7_sem_mon_fw_v.txt, from being generated in the example project. This file is unnecessary and has no functional impact.
+
+2014.4.1:
+ * Version 4.1 (Rev. 3)
+ * No changes
+
+2014.4:
+ * Version 4.1 (Rev. 3)
+ * Added support for xc7a15t, xa7a15t, and xc7z035 devices.
+ * Added support for -LI speed grades to all Artix and Zynq 7Z010, 7Z015, 7Z020 Devices
+ * Added support for -2LI speed grades to Kintex 7K160T, 7K325T, 7K355T, 7K410T, 7K420T, 7K480T and Zynq 7Z030 to 7Z100 Devices
+ * Encrypted source files are concatenated together to reduce the number of files and to reduce simulator compile time
+
+2014.3:
+ * Version 4.1 (Rev. 2)
+ * Added support for xq7a50t devices.
+ * Replaced the icap_clk BUFG with BUFGCE in the example design as an example of a system-level means to delay IP start up until the clock has locked or to disable the IP in debug without modifying the bitstream.
+
+2014.2:
+ * Version 4.1 (Rev. 1)
+ * Resolved AR 60056. Makedata.tcl is no longer incorrectly displayed as a simulation source file.
+ * Resolved AR 60058. Corrected the listed support of xc7a75t, xc7z030, and xc7z015 from Pre-Production to Production.
+ * This version of the IP does not yet support new device xq7a50t.
+
+2014.1:
+ * Version 4.1
+ * Added support for xc7a35t, xc7a50t, xa7a35t, xa7a50t, and xa7a75t devices at Pre-Production status.
+ * Replaced injection shim option "ChipScope" with "Vivado Lab Tools".
+ * Improved efficiency of behavioral simulation.
+ * Added simulation test harness to demonstrate inclusion of the IP in a project using Vivado simulation flows. IP behaviors are not observable in simulation. Hardware-based evaluation is required.
+
 2013.4:
  * Version 4.0 (Rev. 3)
  * This version of the IP does not yet support new Artix devices 7A35T and 7A50T.
@@ -24,7 +70,7 @@
  * Resolved AR47402. Enabled maximum clock frequency of up to 100 MHz in 7 Series devices.
  * Resolved AR53438. Parameterized the EXT shim module to support larger SPI Flash devices. Refer to PG036 for more information.
 
-(c) Copyright 2010 - 2013 Xilinx, Inc. All rights reserved.
+(c) Copyright 2010 - 2015 Xilinx, Inc. All rights reserved.
 
 This file contains confidential and proprietary information
 of Xilinx, Inc. and is protected under U.S. and

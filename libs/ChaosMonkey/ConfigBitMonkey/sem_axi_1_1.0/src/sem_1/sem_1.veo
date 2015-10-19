@@ -54,7 +54,7 @@
 // (in parentheses) to your own signal names.
 
 //----------- Begin Cut here for INSTANTIATION Template ---// INST_TAG
-sem_0 your_instance_name (
+sem_1 your_instance_name (
   .status_heartbeat(status_heartbeat),            // output wire status_heartbeat
   .status_initialization(status_initialization),  // output wire status_initialization
   .status_observation(status_observation),        // output wire status_observation
@@ -89,7 +89,7 @@ sem_0 your_instance_name (
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 
-// You must compile the wrapper file sem_0.v when simulating
-// the core, sem_0. When compiling the wrapper file, be sure to
+// You must compile the wrapper file sem_1.v when simulating
+// the core, sem_1. When compiling the wrapper file, be sure to
 // reference the Verilog simulation library.
 

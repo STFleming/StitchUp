@@ -185,7 +185,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:format="string" spirit:resolve="immediate" spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_RESET.POLARITY" spirit:choiceRef="choices_1">ACTIVE_LOW</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_RESET.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -207,11 +207,11 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_BUSIF</spirit:name>
-          <spirit:value spirit:format="string" spirit:resolve="immediate" spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_CLOCK.ASSOCIATED_BUSIF">s00_axi</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_CLOCK.ASSOCIATED_BUSIF">s00_axi</spirit:value>
         </spirit:parameter>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:format="string" spirit:resolve="immediate" spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_CLOCK.ASSOCIATED_RESET">s00_axi_aresetn</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_SIGNAL_CLOCK.ASSOCIATED_RESET">s00_axi_aresetn</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -257,6 +257,12 @@
         <spirit:fileSetRef>
           <spirit:localName>xilinx_xpgui_view_fileset</spirit:localName>
         </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>578e2b7d</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
       </spirit:view>
       <spirit:view>
         <spirit:name>bd_tcl</spirit:name>
@@ -265,6 +271,12 @@
         <spirit:fileSetRef>
           <spirit:localName>bd_tcl_view_fileset</spirit:localName>
         </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>45a2f450</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
       </spirit:view>
       <spirit:view>
         <spirit:name>xilinx_anylanguagesynthesis</spirit:name>
@@ -272,8 +284,17 @@
         <spirit:envIdentifier>:vivado.xilinx.com:synthesis</spirit:envIdentifier>
         <spirit:modelName>axiSEMwrapper_v1_0</spirit:modelName>
         <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagesynthesis_xilinx_com_ip_sem_4_1__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagesynthesis_view_fileset</spirit:localName>
         </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>27fe9713</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
       </spirit:view>
     </spirit:views>
     <spirit:ports>
@@ -307,7 +328,7 @@
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
             <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">6</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -316,7 +337,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -325,8 +346,8 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="immediate">2</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -335,7 +356,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -350,7 +371,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -372,7 +393,7 @@
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
             <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -381,7 +402,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -391,7 +412,7 @@
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
             <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) / 8) - 1)">3</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -412,7 +433,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -433,8 +454,8 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="immediate">1</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -467,7 +488,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -477,7 +498,7 @@
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
             <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">6</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -486,7 +507,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -495,8 +516,8 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="immediate">2</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -505,7 +526,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -520,7 +541,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -542,7 +563,7 @@
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
             <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -557,8 +578,8 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="immediate">1</spirit:left>
-            <spirit:right spirit:format="long" spirit:resolve="immediate">0</spirit:right>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
@@ -591,7 +612,7 @@
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
           <spirit:driver>
-            <spirit:defaultValue>0</spirit:defaultValue>
+            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
         </spirit:wire>
       </spirit:port>
@@ -611,11 +632,7 @@
   </spirit:model>
   <spirit:choices>
     <spirit:choice>
-      <spirit:name>choices_0</spirit:name>
-      <spirit:enumeration>32</spirit:enumeration>
-    </spirit:choice>
-    <spirit:choice>
-      <spirit:name>choices_1</spirit:name>
+      <spirit:name>choice_list_9d8b0d81</spirit:name>
       <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
       <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
     </spirit:choice>
@@ -638,6 +655,10 @@
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/sem_1/sem_1.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+      </spirit:file>
       <spirit:file>
         <spirit:name>hdl/axiSEMwrapper_v1_0.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
@@ -681,8 +702,17 @@
       <spirit:file>
         <spirit:name>hdl/sem_0/sem_0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
-        <spirit:logicalName/>
       </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagesynthesis_xilinx_com_ip_sem_4_1__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="sem" xilinx:version="4.1">
+            <xilinx:mode xilinx:name="create_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
     </spirit:fileSet>
   </spirit:fileSets>
   <spirit:description>sem_axi_1</spirit:description>
@@ -711,11 +741,20 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>sem_axi_1</xilinx:displayName>
-      <xilinx:coreRevision>3</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2015-09-10T14:12:10Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>4</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2015-10-16T11:21:18Z</xilinx:coreCreationDateTime>
+      <xilinx:tags>
+        <xilinx:tag xilinx:name="imperial:stitchup:sem_axi_1:1.0_ARCHIVE_LOCATION">/home/sf306/ExperimentsStitchUp/SEUInjection/chstone/dfadd/AXIWrapper/sem_axi_1_1.0</xilinx:tag>
+      </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
-      <xilinx:xilinxVersion>2013.4</xilinx:xilinxVersion>
+      <xilinx:xilinxVersion>2015.3</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="a9a6cbcf"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="824a9651"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="56c13a8f"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="0e1f5cc1"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="a364a368"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="e9149f37"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
 </spirit:component>
