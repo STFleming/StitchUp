@@ -22,9 +22,10 @@ int main(int argc, char* argv[])
 
     while(!CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2)){ } //Wait till we are in the observation state
     
-//    printf("\t\tFinal: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+
+    printf("Repair: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
    
 
-    return 0;
+    return CHECK_BIT(*((volatile unsigned *)(semdev)+0), 7);
 }
 

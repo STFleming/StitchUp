@@ -16,6 +16,13 @@ int main(int argc, char* argv[])
 
     unsigned linaddr = atoi(argv[1]); //get the linear address we are injecting the error at
 
+    //Attempting to enter idle state
+    *((volatile unsigned*)(semdev)+3) = 224;
+    *((volatile unsigned*)(semdev)+1) = 1;
+    *((volatile unsigned*)(semdev)+1) = 0;
+    while(CHECK_BIT(*((volatile unsigned *)(semdev)+0), 1) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 3) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 4) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 5)){} //Wait till we are in the Idle state.
+    //printf("\t\tEntering Idle State: 0x%x\n", *((volatile unsigned *)(semdev)+0)); 
+
 
     if(CHECK_BIT(*((volatile unsigned *)(semdev)+0), 1) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 2) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 3) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 4) || CHECK_BIT(*((volatile unsigned *)(semdev)+0), 5))
      {
