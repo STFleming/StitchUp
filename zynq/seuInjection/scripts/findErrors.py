@@ -71,7 +71,7 @@ def main(argv):
 		tO = False
 		timeE = False
 
-	print "|Total Faults: " + str(DE_T_CE_T + DE_T_CE_F + DE_F_CE_T)
+	print "|Total Faults: " + str(DE_T_CE_T + DE_T_CE_F + DE_F_CE_T + CYCLES)
 	print "|Data Only Faults: " + str(DE_T_CE_F)
 	print "|StitchUp Detected Faults: " + str(DE_T_CE_T + DE_F_CE_T)
 	print "|Total Timeouts: " + str(TIMEOUTS)
