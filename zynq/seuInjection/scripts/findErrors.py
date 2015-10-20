@@ -38,38 +38,39 @@ def main(argv):
     with open(csvresfilename, 'rb') as csvfile:
 	csvValues = csv.reader(csvfile, delimiter=',', quotechar='|')
 	for row in csvValues:
-		if row[9] == 'ERROR':
-			cE = True
-		if row[9] == 'TIMEOUT':
-			tO = True
-		if row[4] != str(expectedval):
-			dE = True
-		if row[8] != str(cycles):
-			timeE = True
-		if dE or cE:
-			#Frame, bit, dE, cE
-			Frame = int(row[0]) >> 12 
-			Word = int((int(row[0]) & 0xFFF) / 32) 
-			print str(Frame) + "," + str(Word) + "," + str(dE) + "," + str(cE)
-			#print row
-		if dE:
-			if cE:
-				DE_T_CE_T = DE_T_CE_T + 1;
+		if row[0] != "26625903":
+			if row[9] == 'ERROR':
+				cE = True
+			if row[9] == 'TIMEOUT':
+				tO = True
+			if row[4] != str(expectedval):
+				dE = True
+			if row[8] != str(cycles):
+				timeE = True
+			if dE or cE:
+				#Frame, bit, dE, cE
+				Frame = int(row[0]) >> 12 
+				Word = int((int(row[0]) & 0xFFF) / 32) 
+				print str(Frame) + "," + str(Word) + "," + str(dE) + "," + str(cE)
+				#print row
+			if dE:
+				if cE:
+					DE_T_CE_T = DE_T_CE_T + 1;
+				else:
+					DE_T_CE_F = DE_T_CE_F + 1;	
 			else:
-				DE_T_CE_F = DE_T_CE_F + 1;	
-		else:
-			if cE:
-				DE_F_CE_T = DE_F_CE_T + 1;
-			else:
-				DE_F_CE_F = DE_F_CE_F + 1;
-		if tO:
-			TIMEOUTS = TIMEOUTS + 1
-		if timeE:
-			CYCLES = CYCLES + 1
-		dE = False
-		cE = False
-		tO = False
-		timeE = False
+				if cE:
+					DE_F_CE_T = DE_F_CE_T + 1;
+				else:
+					DE_F_CE_F = DE_F_CE_F + 1;
+			if tO:
+				TIMEOUTS = TIMEOUTS + 1
+			if timeE:
+				CYCLES = CYCLES + 1
+			dE = False
+			cE = False
+			tO = False
+			timeE = False
 
 	print "|Total Faults: " + str(DE_T_CE_T + DE_T_CE_F + DE_F_CE_T + CYCLES)
 	print "|Data Only Faults: " + str(DE_T_CE_F)
