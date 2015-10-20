@@ -38,10 +38,13 @@ def main(argv):
     os.system(init_cmd)
 
     for addr in addrLines:
-        inject_cmd = 'timeout 5 ../sw_driver/bin/injectOnly ' + str(addr)
+        inject_cmd = 'timeout 1 ../sw_driver/bin/injectOnly ' + str(addr)
         os.system(inject_cmd)
-    	exec_cmd = 'timeout 5 ../sw_driver/bin/hlsKicker {}'.format(addr)
-        os.system(exec_cmd)
+    	exec_cmd = 'timeout 1 ../sw_driver/bin/hlsKicker {}'.format(addr)
+        if os.system(exec_cmd) == 31744: #The command has timed out
+		tmp_addr = addr.replace("\n","")
+		timeout_string = 'echo \"'+ tmp_addr + ',0,0,0,0,0,0,0,TIMEOUT\" >> res.csv'
+		os.system(timeout_string) 
 	os.system(inject_cmd)
 	time.sleep(0.0105)
 	if os.system(check_cmd) == 0:
