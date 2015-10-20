@@ -47,12 +47,12 @@ def main(argv):
 				dE = True
 			if row[8] != str(cycles):
 				timeE = True
-			if dE or cE:
+			if dE or cE or timeE or tO:
 				#Frame, bit, dE, cE
 				Frame = int(row[0]) >> 12 
 				Word = int((int(row[0]) & 0xFFF) / 32) 
-				print str(Frame) + "," + str(Word) + "," + str(dE) + "," + str(cE)
-				#print row
+				#print str(Frame) + "," + str(Word) + "," + str(dE) + "," + str(cE)
+				print row
 			if dE:
 				if cE:
 					DE_T_CE_T = DE_T_CE_T + 1;
