@@ -43,7 +43,7 @@ def main(argv):
     	exec_cmd = 'timeout 1 ../sw_driver/bin/hlsKicker {}'.format(addr)
         if os.system(exec_cmd) == 31744: #The command has timed out
 		tmp_addr = addr.replace("\n","")
-		timeout_string = 'echo \"'+ tmp_addr + ',0,0,0,0,0,0,0,TIMEOUT\" >> res.csv'
+		timeout_string = 'echo \"'+ tmp_addr + ',0,0,0,0,0,0,0,0,TIMEOUT\" >> res.csv'
 		os.system(timeout_string) 
 	os.system(inject_cmd)
 	time.sleep(0.0105)

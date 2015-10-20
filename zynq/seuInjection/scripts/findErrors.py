@@ -38,9 +38,9 @@ def main(argv):
     with open(csvresfilename, 'rb') as csvfile:
 	csvValues = csv.reader(csvfile, delimiter=',', quotechar='|')
 	for row in csvValues:
-		if row[8] == 'ERROR':
+		if row[9] == 'ERROR':
 			cE = True
-		if row[8] == 'TIMEOUT':
+		if row[9] == 'TIMEOUT':
 			tO = True
 		if row[4] != str(expectedval):
 			dE = True
