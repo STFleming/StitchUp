@@ -131,6 +131,8 @@ architecture arch_imp of AXIWrapperStitchUp_v1_0_S00_AXI is
     signal out_return_val : std_logic_vector(31 downto 0);
     signal out_check_state : std_logic_vector(31 downto 0);
     signal out_debug : std_logic_vector(6 downto 0);
+    signal counter : integer;
+    signal count_lock : std_logic;
 
     COMPONENT topmost PORT
     (
@@ -181,9 +183,27 @@ STITCHUP_UNIT: topmost port map(
             slv_reg3 <= out_return_val;
             slv_reg4 <= out_check_state;
             slv_reg5 <= std_logic_vector(resize(unsigned(out_debug), 32));
+	    slv_reg7 <= std_logic_vector(to_unsigned(counter,32));
         end if;
     end process;
 
+
+    process (S_AXI_ACLK) 
+    begin
+	if rising_edge(S_AXI_ACLK) then
+		if S_AXI_ARESETN = '0' then
+			counter <= 0; 		
+		else
+			if slv_reg0(0) = '1' or count_lock = '1' then
+				count_lock <= '1';	
+				counter <= counter + 1;
+			end if;
+			if out_finish(0) = '1' then
+				count_lock <= '0';
+			end if;
+		end if;	
+	end if;
+    end process;
 
 	process (S_AXI_ACLK)
 	begin
@@ -267,7 +287,7 @@ STITCHUP_UNIT: topmost port map(
 	      --slv_reg4 <= (others => '0');
 	      --slv_reg5 <= (others => '0');
 	      slv_reg6 <= (others => '0');
-	      slv_reg7 <= (others => '0');
+	      --slv_reg7 <= (others => '0');
 	    else
 	      loc_addr := axi_awaddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
 	      if (slv_reg_wren = '1') then
@@ -333,7 +353,7 @@ STITCHUP_UNIT: topmost port map(
 	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	                -- Respective byte enables are asserted as per write strobes                   
 	                -- slave registor 7
-	                slv_reg7(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
+	                --slv_reg7(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	              end if;
 	            end loop;
 	          when others =>
@@ -344,7 +364,7 @@ STITCHUP_UNIT: topmost port map(
 	            --slv_reg4 <= slv_reg4;
 	            --slv_reg5 <= slv_reg5;
 	            slv_reg6 <= slv_reg6;
-	            slv_reg7 <= slv_reg7;
+	            --slv_reg7 <= slv_reg7;
 	        end case;
 	      end if;
 	    end if;

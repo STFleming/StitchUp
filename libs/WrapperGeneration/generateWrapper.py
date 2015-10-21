@@ -79,7 +79,7 @@ def main(argv):
     wrapperString += '\t\treturn_val <= 0;\n'
     wrapperString += '\t\tfinish <= 0;\n'
     wrapperString += '\tend\n'
-    wrapperString += '\tif(finish_orig==1)\n'
+    wrapperString += '\tif(finish_orig==1 || errorFlag==1)\n'
     wrapperString += '\tbegin\n'
     wrapperString += '\t\treturn_val <= result;\n'
     wrapperString += '\t\tfinish <= 1;\n'
@@ -118,12 +118,11 @@ def main(argv):
     	wrapperString += '\t\tcheck_state <= 0;\n'
     	wrapperString += '\tend\n'
     	wrapperString += '$display(\"%t, su=%d, orig=%d\",$time, stitchup_check_state, orig_check_state);\n'
-    	wrapperString += '\tif (((orig_check_state ^ stitchup_check_state) != 0) && errorFlag == 0)\n'
+    	wrapperString += '\tif ((orig_check_state != stitchup_check_state) && errorFlag == 0)\n'
     	wrapperString += '\tbegin\n'
-    	wrapperString += '\t\tcheck_state <= 1;\n'
+    	wrapperString += '\t\tcheck_state <= 1 + stitchup_check_state;\n'
     	wrapperString += '\t\terrorFlag <= 1;\n'
     	wrapperString += '\tend\n'
-    	wrapperString += 'check_state = orig_check_state ^ stitchup_check_state;\n' 
     	wrapperString += 'end\n'
 
     #Instantiate the original LegUp component
@@ -156,7 +155,7 @@ def main(argv):
     	            wrapperString += '\t.return_val( open ),\n'
     	    elif s == "finish":
     	        wrapperString += '\t.finish( finish_stitchup ),\n'
-    	    elif s == "start":
+    	    elif s == "start" and dmrflag:
     	        wrapperString += '\t.start( start_dmr ),\n'
     	    else:
     	        wrapperString += '\t.' + s + '(' + s + '),\n'
