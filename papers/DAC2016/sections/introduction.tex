@@ -1,3 +1,20 @@
+
+%Building fault tolerant systems either requires full duplication of the system
+%or a large amount of engineering effort in selecting the appropriate regions
+
+%StitchUp provides a compiler flag for a HLS tool which will automatically 
+%selectively duplicate the control flow of the input program
+
+%Through replicating the control flow graph we are able to guarantee (via some 
+%architectural assumptions) that in the presence of single event upsets the 
+%circuit will either follow the correct path or flag an error.
+
+% Automation claim
+% CFG protection claim (Exhaustive bit testing)
+% Area Saving claim
+% Power saving claim
+
+
 %FPGAs are great but have problems
 FPGAs are an ideal candidate platform for aerospace and automotive applications
 when there are strict constraints on performance and power, yet they are seldom used.

@@ -1,7 +1,9 @@
 
+all: StitchUp_dac2016.pdf
+
 %.pdf: %.tex
 	pdflatex $<
-	bibtex date2016
+	bibtex StitchUp_dac2016
 	pdflatex $<
 	pdflatex $<
 
