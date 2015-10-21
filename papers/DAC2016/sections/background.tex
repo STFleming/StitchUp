@@ -1,3 +1,24 @@
+\subsection{Does everything at the Application level need protection?}
+A large number of studies have explored the resillience of various applications to the injection
+of soft errors.
+
+In \cite{wong2006soft} the authors examinede the soft error masking effects of probabilistic
+inference applications. Such algorithms are designed to be robust against noisy incomplete input
+data and this paper wanted to explore if this also increased their resilience to transient faults.
+Through using instruction level fault injection techniques they discovered that the algorithms
+studied had a natural ability to mask multiple data errors, however control flow errors were more
+severe and tended to result in premature program termination.
+
+In \cite{liu2012flikker} DRAM refresh rate is varied to trade off data integrity for power consumption.
+A tool called Flikker is presented that allows for user type annotations to specify whether a section of
+memory should be stored in a critical (refreshed often) region of memory, or whether it is in a region that
+can tolerate errors and be stored in a faulty region.
+For a selection of mobile application benchmarks they find that large portions of code can stored in
+unreliable memory with little to no impact on the application performance and large savings on idling
+power consumption.
+
+
+\subsection{Protecting just a little bit..}
 
 Dual Modular Redundancy (DMR) is the traditional approach for detecting faults,
 where any difference between duplicate versions of operations on the same program state signals
