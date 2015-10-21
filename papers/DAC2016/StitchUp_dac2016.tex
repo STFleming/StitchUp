@@ -71,7 +71,7 @@
 % \documentclass[conference]{../sty/IEEEtran}
 
 
-
+\usepackage{graphicx}
 
 
 % Some very useful LaTeX packages include:
@@ -436,6 +436,21 @@ The abstract goes here.
 
 \section{Background}
 \input{./sections/background.tex}
+
+\section{StitchUp Overview} %Talk generally about the tool and what we are aiming to protect (Formal stuff goes here)
+\input{./sections/toolOverview.tex}
+
+\section{Static Code Analysis} %Section where we talk about the LLVM pass
+\input{./sections/staticAnalysis.tex}
+
+\section{Verilog Circuit generation} %Here we can talk about interfacing with LegUp and FSM generation etc..
+\input{./sections/codeGeneration.tex}
+
+\section{Experiment Setup}
+\input{./sections/expSetup.tex}
+
+\section{Experiment Results}
+\input{./sections/expResults.tex}
 
 \section{Future Work}
 \input{./sections/future_work.tex}
