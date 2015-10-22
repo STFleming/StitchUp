@@ -188,8 +188,9 @@ STITCHUP_UNIT: topmost port map(
         if rising_edge(S_AXI_ACLK) then
             slv_reg2 <= std_logic_vector(resize(unsigned(out_finish),32));
             slv_reg3 <= out_return_val;
-            slv_reg4 <= out_return_val_dmr;--out_check_state;
+            slv_reg4 <= out_check_state;
             slv_reg5 <= std_logic_vector(resize(unsigned(out_debug), 32));
+	    slv_reg7 <= std_logic_vector(to_unsigned(counter,32));
         end if;
     end process;
 
