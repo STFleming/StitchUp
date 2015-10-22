@@ -207,6 +207,9 @@ STITCHUP_UNIT: topmost port map(
 			if out_finish(0) = '1' then
 				count_lock <= '0';
 			end if;
+			if slv_reg6(0) = '1' then
+				counter <= 0;
+			end if;
 		end if;	
 	end if;
     end process;
@@ -293,7 +296,7 @@ STITCHUP_UNIT: topmost port map(
 	      --slv_reg4 <= (others => '0');
 	      --slv_reg5 <= (others => '0');
 	      slv_reg6 <= (others => '0');
-	      slv_reg7 <= (others => '0');
+	      --slv_reg7 <= (others => '0');
 	    else
 	      loc_addr := axi_awaddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
 	      if (slv_reg_wren = '1') then
@@ -359,7 +362,7 @@ STITCHUP_UNIT: topmost port map(
 	              if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	                -- Respective byte enables are asserted as per write strobes                   
 	                -- slave registor 7
-	                slv_reg7(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
+	                --slv_reg7(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	              end if;
 	            end loop;
 	          when others =>
@@ -370,7 +373,7 @@ STITCHUP_UNIT: topmost port map(
 	            --slv_reg4 <= slv_reg4;
 	            --slv_reg5 <= slv_reg5;
 	            slv_reg6 <= slv_reg6;
-	            slv_reg7 <= slv_reg7;
+	            --slv_reg7 <= slv_reg7;
 	        end case;
 	      end if;
 	    end if;

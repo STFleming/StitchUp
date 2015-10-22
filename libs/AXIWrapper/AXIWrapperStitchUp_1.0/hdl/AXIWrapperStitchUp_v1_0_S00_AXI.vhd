@@ -201,6 +201,9 @@ STITCHUP_UNIT: topmost port map(
 			if out_finish(0) = '1' then
 				count_lock <= '0';
 			end if;
+			if slv_reg6(0) = '1' then
+				counter <= 0;
+			end if;
 		end if;	
 	end if;
     end process;
