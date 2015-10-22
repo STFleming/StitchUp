@@ -132,6 +132,8 @@ architecture arch_imp of AXIWrapperStitchUp_v1_0_S00_AXI is
     signal out_return_val_dmr : std_logic_vector(31 downto 0);
     signal out_check_state : std_logic_vector(31 downto 0);
     signal out_debug : std_logic_vector(6 downto 0);
+    signal counter : integer;
+    signal count_lock : std_logic;
 
     COMPONENT topmost PORT
     (
@@ -191,6 +193,22 @@ STITCHUP_UNIT: topmost port map(
         end if;
     end process;
 
+    process (S_AXI_ACLK) 
+    begin
+	if rising_edge(S_AXI_ACLK) then
+		if S_AXI_ARESETN = '0' then
+			counter <= 0; 		
+		else
+			if slv_reg0(0) = '1' or count_lock = '1' then
+				count_lock <= '1';	
+				counter <= counter + 1;
+			end if;
+			if out_finish(0) = '1' then
+				count_lock <= '0';
+			end if;
+		end if;	
+	end if;
+    end process;
 
 	process (S_AXI_ACLK)
 	begin
