@@ -79,7 +79,10 @@ def main(argv):
     wrapperString += '\t\treturn_val <= 0;\n'
     wrapperString += '\t\tfinish <= 0;\n'
     wrapperString += '\tend\n'
-    wrapperString += '\tif(finish_orig==1 || errorFlag==1)\n'
+    if noProtect == False:
+    	wrapperString += '\tif(finish_orig==1 || errorFlag==1)\n'
+    else:
+    	wrapperString += '\tif(finish_orig==1)\n'
     wrapperString += '\tbegin\n'
     wrapperString += '\t\treturn_val <= result;\n'
     wrapperString += '\t\tfinish <= 1;\n'
