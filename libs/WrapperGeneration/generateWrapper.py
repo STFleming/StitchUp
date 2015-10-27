@@ -126,6 +126,11 @@ def main(argv):
     	wrapperString += '\t\tcheck_state <= 1 + stitchup_check_state;\n'
     	wrapperString += '\t\terrorFlag <= 1;\n'
     	wrapperString += '\tend\n'
+	if dmrflag == True: 
+    		wrapperString += '\tif ((result != result_dmr) && errorFlag == 0)\n'
+    		wrapperString += '\tbegin\n'
+    		wrapperString += '\t\terrorFlag <= 1;\n'
+    		wrapperString += '\tend\n'
     	wrapperString += 'end\n'
 
     #Instantiate the original LegUp component
