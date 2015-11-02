@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     *((int*)(hlsdev)+1) = 0;
 
     //Start the op
-    *((int*)(hlsdev)) = 1;
+    *((int*)(hlsdev)) = 3;
     *((int*)(hlsdev)) = 0;
 
     //block till finish
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     //check for errors
     if(*((int*)(hlsdev)+4) != 0){
-        printf("%s,%d,%d,%d,%d,%d,%d,%d,%d,ERROR\n", linearaddr, *((int*)(hlsdev)),*((int*)(hlsdev)+1),*((int*)(hlsdev)+2),*((int*)(hlsdev)+3),*((int*)(hlsdev)+4), *((int*)(hlsdev)+5), *((int*)(hlsdev)+6), *((int*)(hlsdev)+7));
+    	printf("%s,%d,%d,%d,%d,%d,%d,%d,%d,ERROR\n", linearaddr, *((int*)(hlsdev)),*((int*)(hlsdev)+1),*((int*)(hlsdev)+2),*((int*)(hlsdev)+3),*((int*)(hlsdev)+4), *((int*)(hlsdev)+5), *((int*)(hlsdev)+6), *((int*)(hlsdev)+7));
         //printf("CFG Error detected\n");
         return 1;
     }
