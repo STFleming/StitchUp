@@ -38,7 +38,7 @@ def main(argv):
     os.system(init_cmd)
 
     for addr in addrLines:
-        inject_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/injectOnly ' + str(addr)
+        inject_cmd = 'timeout 1 ~/StitchUp/zynq/seuInjection/sw_driver/bin/injectOnly ' + str(addr)
         os.system(inject_cmd)
     	exec_cmd = 'timeout 1 ~/StitchUp/zynq/seuInjection/sw_driver/bin/hlsKicker {}'.format(addr)
         if os.system(exec_cmd) == 31744: #The command has timed out
