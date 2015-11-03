@@ -25,7 +25,7 @@ def main(argv):
     addrLines = inputfile.readlines()
     inputfile.close()
 
-    reconfig_cmd = 'cat ' + bitfile + ' > /dev/xdevcfg'
+    reconfig_cmd = 'timeout 2 cat ' + bitfile + ' > /dev/xdevcfg'
     exec_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/hlsKicker >> res.csv'
     init_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/injectSetup'
     rep_cmd = '~/StitchUp/zynq/seuInjection/sw_driver/bin/repairErrors'
@@ -49,7 +49,8 @@ def main(argv):
 	time.sleep(0.0105)
 	if os.system(check_cmd) == 0:
 	    os.system(reset_pl_cmd)
-	    os.system(reconfig_cmd)
+	    if os.system(reconfig_cmd) == 31744:
+		os.system('reboot')
     	    os.system(init_cmd)
 
     os.system(fin_cmd)
