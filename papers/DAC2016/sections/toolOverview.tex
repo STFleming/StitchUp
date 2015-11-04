@@ -1,5 +1,26 @@
+\lstset(language=C)
+\begin{lstlisting}[caption="Matrix Multiplication Example", label=lst:MMM]
+void MMM(float A[5][5], B[5][5], C[5][5])
+{
+	int i=0, j=0, k=0;
+	for(i=0, i<5, i++)
+	{
+		C[i][j] = 0;
+		for(j=0, j<5; j++)
+		{
+			C[i][j] += A[i][k]*B[k][j];
+		}
+	} 
+}
+\end{lstlisting}
 
-\subsection{What we are protecting against}
+\subsection{Matrix Multiplication Example}
+To demonstrate and highlight the potential saving that duplicating just
+the control flow shadow can achieve we will use the classic example of
+matrix multiplication, as seen in Listing  
+
+
+\subsection{Threat Model}
 What is the threat model?
 Use some Set notation to make what is being protected more explicit.
 
@@ -8,17 +29,3 @@ do we need to define to do this?
 
 How can this be practically used in the real world?
 
-\subsection{Tool-Flow}
-
-What are the more concrete steps involved in getting this done?
-What does the frontend look like (overview) and what about the backend,
-is that mostly LegUp?
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=2.5in]{./imgs/tool-flow.pdf}
-\caption{Tool Flow Overview diagram}
-\label{fig:tool_flow_diagram}
-\end{figure}
-
-This section will likely be quite small.
