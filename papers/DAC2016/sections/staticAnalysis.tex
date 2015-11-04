@@ -11,16 +11,16 @@ Once this set has been determined a control shadow version of the input
 program can then be generated. 
 
 
-\noindent $\bm{B}$: basic block\\
-$\bm{b_B$}: branch statment of $B$\\
-$\bm{i} \in B$ : SSA statment within $B$\\
-$\bm{operand_i}$ : Set of SSA statements used in assigning $i\in B$\\
+\noindent $B$: basic block\\
+$b_B$: branch statment of $B$\\
+$i \in B$ : SSA statment within $B$\\
+$operand_i$ : Set of SSA statements used in assigning $i\in B$\\
 
-\noindent$\bm{used_B(i)}$ = $\{i|\forall j \in B, i \in operand_j : i \ne b_B\}$ \\% Set of non-branch statements where $\bm{i}$ is used as an operand in $\bm{B}$ 
-$\bm{gen_B} = \{j|\forall x \in OUT[B], j \in used_B(x) : i = j\}$
+\noindent$used_B(i)$ = $\{i|\forall j \in B, i \in operand_j : i \ne b_B\}$ \\% Set of non-branch statements where $i$ is used as an operand in $B$ 
+$gen_B = \{j|\forall x \in OUT[B], j \in used_B(x) : i = j\}$
 
-\[OUT[B] = \bigcup_{S \text{ a successor of } B} IN[S]\]
-\[IN[B] = b_B \cap gen_B\]
+%\[OUT[B] = \bigcup_{S \text{ a successor of } B} IN[S]\]
+%\[IN[B] = b_B \cap gen_B\]
 
 \subsection{Practical LLVM analysis pass}
 What does this mean in practice? What does the LLVM instance resemble.
