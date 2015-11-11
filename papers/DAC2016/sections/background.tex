@@ -1,77 +1,94 @@
 \subsection{Soft Errors}
 A Soft Error or Single Event Upset is a random non-catastrophic error, where radiation causes
 a perturbation to a circuit by temporarily altering a single signal or datum. 
-Detecting and mitigating such errors is highly important in some fields, such as satellite design 
+Detecting and mitigating such errors is highly important in some fields, such as satellite design, 
 where high design costs, harsh environments, and difficulties to repair once deployed make it necessary. 
 However these concerns are no longer restricted to niche fields
 since the shrinking of both device feature sizes and operating voltages make it increasingly likely 
 that ground level radiation sources can cause soft errors.
 This effect has been known about for some time \cite{normand1996single} and is related to 
 the reduction in critical charge required to cause an upset, this in turn broadens the spectrum of
-particles able to cause upsets such as muons with low ionising power that are prevelant in a terrestrial
-environment.
+particles able to cause upsets such as muons with lower ionising power that are prevelant in terrestrial
+environments.
 Consequently, this concern is driving reliability as a first-class design constraint in the 
 development of digital systems.
 
-In this work we shall focus on the effects of \textbf{single} errors, meaning that only one SEU is
-per clock cycle.
+%This feels more like an our work section and less like background
+In this work we shall focus on the effects of \textbf{single} errors, where we assume that only one SEU 
+can occur per clock cycle.
 We shall also limit ourselves to SRAM based FPGA designs, although the protection scheme 
 presented in this paper can be equally applied to VLSI designs.
 
 In an FPGA design circuit descriptions are mapped into a collection of Logic Blocks, decribed in programmable look-up-tables,
 which are routed together via programmable switchboxes.
 Configuration data for both the look-up-tables and switchboxes are stored in a configuration memory, which means soft errors
-in this memory can either change the functionality of Logic Blocks or can change the routing between them.  
-Due to the importance of the configuration memory this paper will focus on protecting this
-region of the device.  
+can either change the functionality of Logic Blocks or can change the routing between them.  
+Block memory and flip-flops are also present in FPGA devices, where soft errors in these regions can alter the state of the circuit.
+For this paper our \emph{fault model} assumes that a single soft error can occur at most every clock cycle, and that this error can effect block memory, configuration memory, and flip-flops. 
+However our fault model does not include routing to and from our protected region to external I/O, such as DDR accesses.
 
-\subsection{High level approaches to protecting/detecting soft errors}
-
+\subsection{High level approaches to detecting soft errors}
+%Traditional redundancy approaches
 Dual Modular Redundancy (DMR) is the traditional approach for detecting faults,
-where any difference between duplicate versions of operations on the same program state signals
-the precense of a fault.
+where any difference between duplicated versions of components operating with the same state indicates 
+an error.
 Typically this is performed with two identical hardware units executing in lock step and
 periodically comparing their outputs.
 
-However redundancy is inherently costly consuming area, power, or time, or all of the above, and is
-often not feasible in constrained systems such as satellites.
-For this reason a significant amount of research has been performed on attempting to reduce the amount of
-redundancy required to increase reliability.
-Due to the large body of work in this area this review will focus on high-level
-approaches to reliability, examining current HLS techniques from the VLSI/FPGA domain.
+Redundancy is often not feasible in constrained systems such as satellites
+since it is inherently costly consuming area, power, time, or all of the above.
+For this reason researchers have been interested in finding methods to
+increase reliability with less redundancy but without increasing engineering effort.
+The majority of research into this problem has primarily focussed on low level approaches,
+with only a few investigations into how this can be achieved through HLS tools.
 
-Early VLSI work such as \cite{antola1998high} examined how HLS tools could be used to reduce the
-amount of hardware required when duplicating the CDFG.
-The authors present a \emph{Force-directed scheduling and alloction} algorithm, which aims to
-reduce the complete duplication of the resources by exploiting ones that are idle in each
-scheduling step.
+%Intro to HLS approaches
+Early work such as \cite{antola1998high} examined how hardware redundancy 
+could be reduced when using HLS to generate DMR circuits.
+The authors present a scheduling and alloction algorithm, where the circuit duplication is optimised
+so that idle resources are reused instead of instantiating multiple hardware copies.
+They manage to successfully reduce the area requirments, while avoiding error aliasing.
 
-Almost a decade later reliable HLS is revisited in \cite{tosun2005reliability}, however instead of
-attempting to increase reliability through redundancy they increase reliability by using different versions
-of the components.
-They create a library characterisation of components which includes a reliability metric along with
-power, area, and latency.
-During the allocation phase of the HLS tool the library is searched to select the most reliable component
-while still meeting the other constraints.
-To achieve this a complete allocation, binding, and scheduling HLS algorithm is presented using ASAP scheduling.
-It starts by finding the most reliable solution, then it minimises the number of resources required,
-and finally finds a valid schedule that meets the designs latency requirement.
-If constraints cannot be met a victim node is selected and swapped out for a different less reliable
-version, and keeps repeating until a feasible solution is found.
+%Libary based approaches for Allocation stage of HLS tools
+More recent work has instead of using redundancy examined how reliability can be optimised by 
+selecting different implementations of components during allocation.
+In \cite{tosun2005reliability}
+a library of components annotated with area, power, and reliability metrics is used during component selection.    
+Initially the set of most reliable components is selected, and then itterative optimisation passes attempt to
+meet constraints on the other metrics in a fashion similar to power-aware HLS approaches. 
 
-Two years later Gla{\ss} et al expanded on \cite{tosun2005reliability} in \cite{glass2007interactive} where instead of
-attempting to search the library of components for the most reliable combination, they present the result to the
-user as a design space exploration.
-Along with selecting different types of hardware units, this work also takes into account the replication of various
-components while still respecting other constraints.
-To perform the multi-objective design space exploration, an evolutionary algorithm is used however the runtime to
-search the space can be quite costly and is not always able to find feasible solutions.
+In \cite{glass2007interactive} this library approach is extended to include the replication of some components 
+and an evolutionary algorithm is used to present the results to the user as a design space exploration.
+As work in \cite{hara2013cost} extends it to encorporate reliability decisions into scheduling, arguing that
+the longer a functional unit is active the more likely it will experience a fault. 
 
-Recently work In \cite{hara2013cost} extends \cite{tosun2005reliability}
-so that along with the library characterizations for reliability the length of time that a particular FU is active is taken into account.
-They argue that the length of time that the circuit is active will effect the reliability metric;
-a full allocation, binding, and scheduling is found using an ILP solver.
+%Application level protection, what can we skip?
+The methods discussed so far all propose changes to the underlying HLS algorithms,
+none of them  investigate how the input source can be analysed beforehand to extract
+critical and non-critical sections of code.
+But do such critical and non-critical sections exist?
+A large number of studies within the software domain have explored the resillience of various applications
+to the injection of soft errors, and found that there are clear regions of code that
+are more critical than others LIST OF CITATIONS HERE.
 
+In \cite{wong2006soft} the authors examined probabilistic
+inference applications which are designed to be robust against noisy incomplete input
+data to see if this also translated to resilience to soft errors.
+Instruction level fault injection techniques were used to discover that such algorithms
+have a natural ability to mask multiple data errors, however control flow errors were more
+severe and tended to result in premature program termination.
+
+Within the field of approximate computing there has also been interest in separating code into
+critical and non-critical sections.  
+A notable example is EnerJ \cite{sampson2011enerj} where type
+annotations indicate whether code regions should be precise or imprecise.
+The type system then ensures the segregation of imprecise code from precise code allowing for the safe execution of imprecise code on approximate hardware.
+Flikker \cite{liu2012flikker} has a similar approach where type-annotations are used to store data in
+DRAM banks that are refreshed below the recomended manufacturers rate to save idle power consumption.  
+For a selection of mobile application benchmarks they find that large portions of memory can be safely
+stored in the low refresh DRAM with minimal impact on application results.
+
+%HLS methods that exploit the static analysis of input code
 Other recent work includes \cite{chen2014reliability} where the vulnerability of variables is analysed and the most vulnerable
 variables for a HLS program are protected by assigning them to special registers.
 The proposed variable vulnerability analysis takes into account their lifetimes, dependencies, and branch probabilities.
@@ -83,113 +100,4 @@ They achieve impressive results, where protecting 20\% of the registers results 
 However full fault injection tests are not performed on the generated hardware, and only state-based probabilistic error testing
 was performed.\\
 
-Does everything at the application level need protection?
-A large number of studies within the software domain have explored the resillience of various applications
-to the injection of soft errors, and found that there are clear regions of code that
-are more critical than others LIST OF CITATIONS HERE.
-
-In \cite{wong2006soft} the authors examined the soft error masking effects of probabilistic
-inference applications. Such algorithms are designed to be robust against noisy incomplete input
-data and this paper aimed to explore if this increased their resilience to soft errors.
-Through using instruction level fault injection techniques they discovered that the algorithms
-studied had a natural ability to mask multiple data errors, however control flow errors were more
-severe and tended to result in premature program termination.
-
-However partitioning programs into critical and non-critical sections is not just limited to 
-error detection but also is important for approximate computing.
-In \cite{liu2012flikker} DRAM refresh rate is varied to trade off data integrity for power consumption.
-A tool called Flikker is presented that allows user type annotations to specify whether a section of
-data should be stored in a critical (refreshed often) region of memory, or whether it is in a region that
-can tolerate errors and be stored in a faulty region.
-For a selection of mobile application benchmarks they find that large portions of code can stored in
-unreliable memory with little to no impact on the application performance and large savings on idling
-power consumption.
-
-
-%\textbf{Summarising}, previous work on reliable HLS has generally revolved around the idea of adding a
-%reliability metric to component libraries and using that information to build more reliable circuits.
-%However, these approaches make no guarantees about reliability and only aim to improve overall
-%systems reliability without paying much attention to how the reliability metric is derived.
-%More recent work by Chen et al \cite{chen2014reliability} is different in that a static analysis of
-%the program is used to selectively duplicate sensitive variables.
-%
-%\subsection{Unreliable Hardware}
-%Research into  the use of unreliable hardware is slightly different to that of
-%fault tolerance, since we can knowingly schedule instructions to execute on
-%hardware that we don't trust.
-%One tool that aims to aide the use of unreliable hardware is EnerJ \cite{sampson2011enerj} where type qualifiers are used to annotate
-%whether a data type is approximate or precise.
-%This tool takes an \emph{all-or-nothing} approach to approximate computing, where precise annotated types are computed exactly, but
-%imprecise ones have zero guarantees.
-%Strict constraints on how data flow occurs insure that the precise and approximate code regions are segregated; with
-%approximate-to-precise data flow illegal, and precise-to-approximate legal.
-%The authors provide a Java extension for the annotated type system, and many examples of code that can tolerate
-%approximate regions demonstrating energy savings between 10-50\%.
-%
-%RAISE \cite{rehman2012raise} is a recent project that aims to schedule instructions taking into account temporal and spatial
-%vulnerabilities.
-%They call the most likely time an instruction will receive and error the vulnerable period and this is calculated
-%for every instruction.
-%The tool then adjusts the instruction schedule so that the most vulnerable instructions have the least vulnerable period,
-%minimising the overall likelihood of an error in the system.
-%An example of this is when a multiply operation causes a pipeline stall which in turn causes a \emph{load} or a \emph{store} operation
-%to get stuck at the decode stage of the processor pipline;
-%the longer this operation is stuck in the decode stage, the more likely it's opcode or address could be corrupted.
-%
-%A metric called the Instruction Criticality Factor (ICF) is determined for every instruction through analysing the total number
-%of dependent instructions that would be effected if it experienced a fault.
-%This metric is then used to rearrange the execution order of the most critical instructions in order to increase the
-%overall reliability of the program.\\
-%
-%\textbf{Summarising}, the unreliable hardware field has also started looking towards high-level approaches to managing
-%imprecise compute units. Either through a type system where users propose precise and imprecise regions of code,
-% or through analysis of code and low level architecture models to influence scheduling decisions.
-%
-%\subsection{Software Soft-Error Protection}
-%
-%The hardware expense required for reliability has provided motivation for research into software fault tolerance.
-%Many papers argue that with shrinking feature sizes and increasing use in power saving techniques such as DVFS
-%reliability will be a concern for all processor markets, such as desktops, which might not be able to afford
-%double or triple redundant execution cores \cite{reis2005swift}.
-%
-%Some software fault tolerance research requires modification to the underlying architecture especially when making
-%use of multicore and multithreaded processors.
-%One example of this is SRTR \cite{vijaykumar2002transient}, simultaneously and redundantly threaded processors with recovery,
-%which achieved fault tolerance through using two simultaneously running identical threads.
-%However instead of running both threads in lock step one of them is executed slightly before the other.
-%The trailing thread is responsible for checking that the execution of the leading thread is valid and
-%completed before the leading thread commits it's results.
-%To achieve this a new architecture is proposed which uses queued access to the register file in for checking results and to prevent it from
-%becoming a bottle neck.
-%
-%In an attempt to reduce architecture dependence research into software only fault tolerance techniques became popular in the mid 2000's.
-%Early notable work include EDDI (Error Detection by Duplicating Instructions) by Oh et al \cite{oh2002error} which is a compiler
-%tool for super-scalar processors that attempts to duplicate instructions using different registers and variables.
-%It tries to schedule operations to make use of instruction level parallelism while still preserving its fault tolerant properties.
-%
-%In an attempt to further reduce the overhead introduced by software fault tolerance Oh et al, \cite{oh2002control} used signatures
-%to ensure the correctness of the control flow graph (CFG) of a program.
-%A static signature is assigned to every block and compared against a runtime signature during execution, flagging an error
-%if there is a mismatch.
-%This ensures that a transition between two basic blocks after a branch operation is a valid one according to the CFG.
-%This method protects against transient faults in the program counter, and is often used as a method to detect malicious activity
-%trying to alter the execution path of a particular program.
-%
-%SWIFT \cite{reis2005swift}, is another popular software only fault tolerance tool that aims to combine the methods
-%presented in \cite{oh2002error} and \cite{oh2002control} for a single threaded application.
-%Through transforming the code it is able to reclaim unused instruction level resources
-%for duplicating instructions and inserting comparison points to check the replications.
-%By combining these various techniques SWIFT is able to achieve a 14\% speedup to other single threaded techniques
-%which can achieve full fault tolerance coverage.
-%
-%\textbf{Summarising}, software fault tolerance techniques tend to either fall into two broad categories; techniques that
-%require small architecture changes, such as modifying the pipeline to allow efficient checking between multiple redundant
-%threads \cite{vijaykumar2002transient}; and techniques that are purely software requiring no architecture changes.
-%In a similar fashion to reliable HLS various approaches have been modified to trade off reliability and fault coverage
-%for overhead.
-%Compiler techniques such as static analysis of the code play an important role, especially in the scheduling of redundant
-%operations and in deciding which portions of the program should be protected.
-
-\subsection{How StitchUp addresses gaps in current approaches.}
-It is fully automated, nothing more than a compiler flag. It can guarantee under certain assumptions that the
-path through a program will be followed correctly.
+%What we are aiming to do differently.
