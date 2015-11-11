@@ -1,24 +1,31 @@
-\subsection{Does everything at the Application level need protection?}
-A large number of studies have explored the resillience of various applications to the injection
-of soft errors.
+\subsection{Soft Errors}
+A Soft Error or Single Event Upset is a random non-catastrophic error, where radiation causes
+a perturbation to a circuit by temporarily altering a single signal or datum. 
+Detecting and mitigating such errors is highly important in some fields, such as satellite design 
+where high design costs, harsh environments, and difficulties to repair once deployed make it necessary. 
+However these concerns are no longer restricted to niche fields
+since the shrinking of both device feature sizes and operating voltages make it increasingly likely 
+that ground level radiation sources can cause soft errors.
+This effect has been known about for some time \cite{normand1996single} and is related to 
+the reduction in critical charge required to cause an upset, this in turn broadens the spectrum of
+particles able to cause upsets such as muons with low ionising power that are prevelant in a terrestrial
+environment.
+Consequently, this concern is driving reliability as a first-class design constraint in the 
+development of digital systems.
 
-In \cite{wong2006soft} the authors examinede the soft error masking effects of probabilistic
-inference applications. Such algorithms are designed to be robust against noisy incomplete input
-data and this paper wanted to explore if this also increased their resilience to transient faults.
-Through using instruction level fault injection techniques they discovered that the algorithms
-studied had a natural ability to mask multiple data errors, however control flow errors were more
-severe and tended to result in premature program termination.
+In this work we shall focus on the effects of \textbf{single} errors, meaning that only one SEU is
+per clock cycle.
+We shall also limit ourselves to SRAM based FPGA designs, although the protection scheme 
+presented in this paper can be equally applied to VLSI designs.
 
-In \cite{liu2012flikker} DRAM refresh rate is varied to trade off data integrity for power consumption.
-A tool called Flikker is presented that allows for user type annotations to specify whether a section of
-memory should be stored in a critical (refreshed often) region of memory, or whether it is in a region that
-can tolerate errors and be stored in a faulty region.
-For a selection of mobile application benchmarks they find that large portions of code can stored in
-unreliable memory with little to no impact on the application performance and large savings on idling
-power consumption.
+In an FPGA design circuit descriptions are mapped into a collection of Logic Blocks, decribed in programmable look-up-tables,
+which are routed together via programmable switchboxes.
+Configuration data for both the look-up-tables and switchboxes are stored in a configuration memory, which means soft errors
+in this memory can either change the functionality of Logic Blocks or can change the routing between them.  
+Due to the importance of the configuration memory this paper will focus on protecting this
+region of the device.  
 
-
-\subsection{Protecting just a little bit..}
+\subsection{High level approaches to protecting/detecting soft errors}
 
 Dual Modular Redundancy (DMR) is the traditional approach for detecting faults,
 where any difference between duplicate versions of operations on the same program state signals
@@ -26,14 +33,12 @@ the precense of a fault.
 Typically this is performed with two identical hardware units executing in lock step and
 periodically comparing their outputs.
 
-However redundancy is inherently costly consuming either power, or time, or often both, and is
+However redundancy is inherently costly consuming area, power, or time, or all of the above, and is
 often not feasible in constrained systems such as satellites.
 For this reason a significant amount of research has been performed on attempting to reduce the amount of
 redundancy required to increase reliability.
-Due to the large body of work in this area this review will focus only on high-level
-approaches to reliability, examining current software techniques along with HLS techniques from the VLSI domain.
-
-\subsection{Generating Reliable Circuits using High Level Synthesis}
+Due to the large body of work in this area this review will focus on high-level
+approaches to reliability, examining current HLS techniques from the VLSI/FPGA domain.
 
 Early VLSI work such as \cite{antola1998high} examined how HLS tools could be used to reduce the
 amount of hardware required when duplicating the CDFG.
@@ -78,89 +83,112 @@ They achieve impressive results, where protecting 20\% of the registers results 
 However full fault injection tests are not performed on the generated hardware, and only state-based probabilistic error testing
 was performed.\\
 
-\textbf{Summarising}, previous work on reliable HLS has generally revolved around the idea of adding a
-reliability metric to component libraries and using that information to build more reliable circuits.
-However, these approaches make no guarantees about reliability and only aim to improve overall
-systems reliability without paying much attention to how the reliability metric is derived.
-More recent work by Chen et al \cite{chen2014reliability} is different in that a static analysis of
-the program is used to selectively duplicate sensitive variables.
+Does everything at the application level need protection?
+A large number of studies within the software domain have explored the resillience of various applications
+to the injection of soft errors, and found that there are clear regions of code that
+are more critical than others LIST OF CITATIONS HERE.
 
-\subsection{Unreliable Hardware}
-Research into  the use of unreliable hardware is slightly different to that of
-fault tolerance, since we can knowingly schedule instructions to execute on
-hardware that we don't trust.
-One tool that aims to aide the use of unreliable hardware is EnerJ \cite{sampson2011enerj} where type qualifiers are used to annotate
-whether a data type is approximate or precise.
-This tool takes an \emph{all-or-nothing} approach to approximate computing, where precise annotated types are computed exactly, but
-imprecise ones have zero guarantees.
-Strict constraints on how data flow occurs insure that the precise and approximate code regions are segregated; with
-approximate-to-precise data flow illegal, and precise-to-approximate legal.
-The authors provide a Java extension for the annotated type system, and many examples of code that can tolerate
-approximate regions demonstrating energy savings between 10-50\%.
+In \cite{wong2006soft} the authors examined the soft error masking effects of probabilistic
+inference applications. Such algorithms are designed to be robust against noisy incomplete input
+data and this paper aimed to explore if this increased their resilience to soft errors.
+Through using instruction level fault injection techniques they discovered that the algorithms
+studied had a natural ability to mask multiple data errors, however control flow errors were more
+severe and tended to result in premature program termination.
 
-RAISE \cite{rehman2012raise} is a recent project that aims to schedule instructions taking into account temporal and spatial
-vulnerabilities.
-They call the most likely time an instruction will receive and error the vulnerable period and this is calculated
-for every instruction.
-The tool then adjusts the instruction schedule so that the most vulnerable instructions have the least vulnerable period,
-minimising the overall likelihood of an error in the system.
-An example of this is when a multiply operation causes a pipeline stall which in turn causes a \emph{load} or a \emph{store} operation
-to get stuck at the decode stage of the processor pipline;
-the longer this operation is stuck in the decode stage, the more likely it's opcode or address could be corrupted.
+However partitioning programs into critical and non-critical sections is not just limited to 
+error detection but also is important for approximate computing.
+In \cite{liu2012flikker} DRAM refresh rate is varied to trade off data integrity for power consumption.
+A tool called Flikker is presented that allows user type annotations to specify whether a section of
+data should be stored in a critical (refreshed often) region of memory, or whether it is in a region that
+can tolerate errors and be stored in a faulty region.
+For a selection of mobile application benchmarks they find that large portions of code can stored in
+unreliable memory with little to no impact on the application performance and large savings on idling
+power consumption.
 
-A metric called the Instruction Criticality Factor (ICF) is determined for every instruction through analysing the total number
-of dependent instructions that would be effected if it experienced a fault.
-This metric is then used to rearrange the execution order of the most critical instructions in order to increase the
-overall reliability of the program.\\
 
-\textbf{Summarising}, the unreliable hardware field has also started looking towards high-level approaches to managing
-imprecise compute units. Either through a type system where users propose precise and imprecise regions of code,
- or through analysis of code and low level architecture models to influence scheduling decisions.
-
-\subsection{Software Soft-Error Protection}
-
-The hardware expense required for reliability has provided motivation for research into software fault tolerance.
-Many papers argue that with shrinking feature sizes and increasing use in power saving techniques such as DVFS
-reliability will be a concern for all processor markets, such as desktops, which might not be able to afford
-double or triple redundant execution cores \cite{reis2005swift}.
-
-Some software fault tolerance research requires modification to the underlying architecture especially when making
-use of multicore and multithreaded processors.
-One example of this is SRTR \cite{vijaykumar2002transient}, simultaneously and redundantly threaded processors with recovery,
-which achieved fault tolerance through using two simultaneously running identical threads.
-However instead of running both threads in lock step one of them is executed slightly before the other.
-The trailing thread is responsible for checking that the execution of the leading thread is valid and
-completed before the leading thread commits it's results.
-To achieve this a new architecture is proposed which uses queued access to the register file in for checking results and to prevent it from
-becoming a bottle neck.
-
-In an attempt to reduce architecture dependence research into software only fault tolerance techniques became popular in the mid 2000's.
-Early notable work include EDDI (Error Detection by Duplicating Instructions) by Oh et al \cite{oh2002error} which is a compiler
-tool for super-scalar processors that attempts to duplicate instructions using different registers and variables.
-It tries to schedule operations to make use of instruction level parallelism while still preserving its fault tolerant properties.
-
-In an attempt to further reduce the overhead introduced by software fault tolerance Oh et al, \cite{oh2002control} used signatures
-to ensure the correctness of the control flow graph (CFG) of a program.
-A static signature is assigned to every block and compared against a runtime signature during execution, flagging an error
-if there is a mismatch.
-This ensures that a transition between two basic blocks after a branch operation is a valid one according to the CFG.
-This method protects against transient faults in the program counter, and is often used as a method to detect malicious activity
-trying to alter the execution path of a particular program.
-
-SWIFT \cite{reis2005swift}, is another popular software only fault tolerance tool that aims to combine the methods
-presented in \cite{oh2002error} and \cite{oh2002control} for a single threaded application.
-Through transforming the code it is able to reclaim unused instruction level resources
-for duplicating instructions and inserting comparison points to check the replications.
-By combining these various techniques SWIFT is able to achieve a 14\% speedup to other single threaded techniques
-which can achieve full fault tolerance coverage.
-
-\textbf{Summarising}, software fault tolerance techniques tend to either fall into two broad categories; techniques that
-require small architecture changes, such as modifying the pipeline to allow efficient checking between multiple redundant
-threads \cite{vijaykumar2002transient}; and techniques that are purely software requiring no architecture changes.
-In a similar fashion to reliable HLS various approaches have been modified to trade off reliability and fault coverage
-for overhead.
-Compiler techniques such as static analysis of the code play an important role, especially in the scheduling of redundant
-operations and in deciding which portions of the program should be protected.
+%\textbf{Summarising}, previous work on reliable HLS has generally revolved around the idea of adding a
+%reliability metric to component libraries and using that information to build more reliable circuits.
+%However, these approaches make no guarantees about reliability and only aim to improve overall
+%systems reliability without paying much attention to how the reliability metric is derived.
+%More recent work by Chen et al \cite{chen2014reliability} is different in that a static analysis of
+%the program is used to selectively duplicate sensitive variables.
+%
+%\subsection{Unreliable Hardware}
+%Research into  the use of unreliable hardware is slightly different to that of
+%fault tolerance, since we can knowingly schedule instructions to execute on
+%hardware that we don't trust.
+%One tool that aims to aide the use of unreliable hardware is EnerJ \cite{sampson2011enerj} where type qualifiers are used to annotate
+%whether a data type is approximate or precise.
+%This tool takes an \emph{all-or-nothing} approach to approximate computing, where precise annotated types are computed exactly, but
+%imprecise ones have zero guarantees.
+%Strict constraints on how data flow occurs insure that the precise and approximate code regions are segregated; with
+%approximate-to-precise data flow illegal, and precise-to-approximate legal.
+%The authors provide a Java extension for the annotated type system, and many examples of code that can tolerate
+%approximate regions demonstrating energy savings between 10-50\%.
+%
+%RAISE \cite{rehman2012raise} is a recent project that aims to schedule instructions taking into account temporal and spatial
+%vulnerabilities.
+%They call the most likely time an instruction will receive and error the vulnerable period and this is calculated
+%for every instruction.
+%The tool then adjusts the instruction schedule so that the most vulnerable instructions have the least vulnerable period,
+%minimising the overall likelihood of an error in the system.
+%An example of this is when a multiply operation causes a pipeline stall which in turn causes a \emph{load} or a \emph{store} operation
+%to get stuck at the decode stage of the processor pipline;
+%the longer this operation is stuck in the decode stage, the more likely it's opcode or address could be corrupted.
+%
+%A metric called the Instruction Criticality Factor (ICF) is determined for every instruction through analysing the total number
+%of dependent instructions that would be effected if it experienced a fault.
+%This metric is then used to rearrange the execution order of the most critical instructions in order to increase the
+%overall reliability of the program.\\
+%
+%\textbf{Summarising}, the unreliable hardware field has also started looking towards high-level approaches to managing
+%imprecise compute units. Either through a type system where users propose precise and imprecise regions of code,
+% or through analysis of code and low level architecture models to influence scheduling decisions.
+%
+%\subsection{Software Soft-Error Protection}
+%
+%The hardware expense required for reliability has provided motivation for research into software fault tolerance.
+%Many papers argue that with shrinking feature sizes and increasing use in power saving techniques such as DVFS
+%reliability will be a concern for all processor markets, such as desktops, which might not be able to afford
+%double or triple redundant execution cores \cite{reis2005swift}.
+%
+%Some software fault tolerance research requires modification to the underlying architecture especially when making
+%use of multicore and multithreaded processors.
+%One example of this is SRTR \cite{vijaykumar2002transient}, simultaneously and redundantly threaded processors with recovery,
+%which achieved fault tolerance through using two simultaneously running identical threads.
+%However instead of running both threads in lock step one of them is executed slightly before the other.
+%The trailing thread is responsible for checking that the execution of the leading thread is valid and
+%completed before the leading thread commits it's results.
+%To achieve this a new architecture is proposed which uses queued access to the register file in for checking results and to prevent it from
+%becoming a bottle neck.
+%
+%In an attempt to reduce architecture dependence research into software only fault tolerance techniques became popular in the mid 2000's.
+%Early notable work include EDDI (Error Detection by Duplicating Instructions) by Oh et al \cite{oh2002error} which is a compiler
+%tool for super-scalar processors that attempts to duplicate instructions using different registers and variables.
+%It tries to schedule operations to make use of instruction level parallelism while still preserving its fault tolerant properties.
+%
+%In an attempt to further reduce the overhead introduced by software fault tolerance Oh et al, \cite{oh2002control} used signatures
+%to ensure the correctness of the control flow graph (CFG) of a program.
+%A static signature is assigned to every block and compared against a runtime signature during execution, flagging an error
+%if there is a mismatch.
+%This ensures that a transition between two basic blocks after a branch operation is a valid one according to the CFG.
+%This method protects against transient faults in the program counter, and is often used as a method to detect malicious activity
+%trying to alter the execution path of a particular program.
+%
+%SWIFT \cite{reis2005swift}, is another popular software only fault tolerance tool that aims to combine the methods
+%presented in \cite{oh2002error} and \cite{oh2002control} for a single threaded application.
+%Through transforming the code it is able to reclaim unused instruction level resources
+%for duplicating instructions and inserting comparison points to check the replications.
+%By combining these various techniques SWIFT is able to achieve a 14\% speedup to other single threaded techniques
+%which can achieve full fault tolerance coverage.
+%
+%\textbf{Summarising}, software fault tolerance techniques tend to either fall into two broad categories; techniques that
+%require small architecture changes, such as modifying the pipeline to allow efficient checking between multiple redundant
+%threads \cite{vijaykumar2002transient}; and techniques that are purely software requiring no architecture changes.
+%In a similar fashion to reliable HLS various approaches have been modified to trade off reliability and fault coverage
+%for overhead.
+%Compiler techniques such as static analysis of the code play an important role, especially in the scheduling of redundant
+%operations and in deciding which portions of the program should be protected.
 
 \subsection{How StitchUp addresses gaps in current approaches.}
 It is fully automated, nothing more than a compiler flag. It can guarantee under certain assumptions that the
