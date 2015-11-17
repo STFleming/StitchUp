@@ -1,14 +1,8 @@
 
 \subsection{Formal Analysis Pass}
 
-In order to selectively duplicate only the control structure it must
-first be extracted from the target source. Our approach is to use a 
-static analysis which 
-
-The analysis pass to determine only the instructions which effect the
-control flow of the program can be computed as followed. 
-Once this set has been determined a control shadow version of the input
-program can then be generated. 
+This section contains the CSIS extraction algorithm used to separate the control structure
+from the CDFG.
 
 
 \noindent $B$: basic block\\
@@ -16,11 +10,41 @@ $b_B$: branch statment of $B$\\
 $i \in B$ : SSA statment within $B$\\
 $operand_i$ : Set of SSA statements used in assigning $i\in B$\\
 
-\noindent$used_B(i)$ = $\{i|\forall j \in B, i \in operand_j : i \ne b_B\}$ \\% Set of non-branch statements where $i$ is used as an operand in $B$ 
-$gen_B = \{j|\forall x \in OUT[B], j \in used_B(x) : i = j\}$
+\begin{algorithm}
+\caption{CSIS Extraction Static Analysis Algorithm
+\label{alg:CSIS-extraction}}
+    \begin{algorithmic}
+        \INPUT a program, $P$, which is a set of Basic Blocks, \{$BB_0$, ..., $BB_N$\}
+        \OUTPUT $P'$ a program containing only the instructions $I_c$ that are part of the control structure.
+        \Statex
+        \While{$C_{CSIS}$ != $P_{CSIS}$}
+            \State $P_{CSIS} \gets \{CSIS_{BB0}, \dots,  CSIS_{BBN}$\}
+            \For{\textbf{each} $B \in \{BB_{N},\dots,BB_{0}\}$}
+                \\\hrulefill
+                \For{\textbf{each} $S \in Successor(B)$}\Comment{Rule 1}
+                    \For{\textbf{each} $I_{c} \in CSIS_{S}$}
+                        \State $CSIS_B \cup \{I_{c}\}$
+                    \EndFor
+                \EndFor
+                \\\hrulefill
 
-%\[OUT[B] = \bigcup_{S \text{ a successor of } B} IN[S]\]
-%\[IN[B] = b_B \cap gen_B\]
+                \State $T = TerminatingInstruction(B)$\Comment{Rule 2}
+                \State $CSIS_{B} \cup \{T\}$
+                \For{\textbf{each} $op \in T$}
+                    \State $CSIS_{B} \cup \{op\}$
+                \EndFor
+                \\\hrulefill
 
-\subsection{Practical LLVM analysis pass}
-What does this mean in practice? What does the LLVM instance resemble.
+                \For{\textbf{each} $I \in reverse(B)$}\Comment{Rule 3}
+                    \For{\textbf{each} $I_c \in CSIS_{B}$}
+                        \For{\textbf{each} $op_c \in I_c$}
+                            \If{$I == op_{c}$}
+                                \State $CSIS_{B} \cup \{I\}$
+                            \EndIf
+                        \EndFor
+                    \EndFor
+                \EndFor
+            \EndFor
+        \EndWhile
+    \end{algorithmic}
+\end{algorithm}

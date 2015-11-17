@@ -26,7 +26,7 @@ In this paper we argue that it is often the case that instructions important to 
 than instructions that only effect data; for example, an image renderer which can tolerant errors within
 it's pixel values but errors in it's control flow could cause it to hang indefinitely \cite{sampson2011enerj}.
 
-\subsection{Matrix Multiplication Example}
+%\subsection{Matrix Multiplication Example}
 To demonstrate and highlight the potential saving that duplicating just
 the control flow can achieve we will use an example of HLS circuit generated from a
 matrix multiplication C function in \hyperref[lst:MMM]{Listing \ref{lst:MMM}}.
@@ -48,12 +48,11 @@ void MMM(float A[5][5],float B[5][5],float C[5][5])
 }
 \end{lstlisting}
 
-\begin{figure}[!t]
+\begin{figure}[h]
 \centering
 \includegraphics[width=3.5in]{./imgs/singleHLSArch.pdf}
 \caption{Diagram representing a HLS circuit for the Matrix Multiplication example}
 \label{fig:singleHLSArch}
-\vspace{-9mm}
 \end{figure}
 %The HLS generated circuit for this function can be divided into two main subsystems, a datapath, and a control FSM.
 %Within the datapath are all the functional units required to perform the computation, which in our example will contain:
