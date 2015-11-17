@@ -356,21 +356,14 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{StitchUp}
+\title{StitchUp: Automatic Control Flow Protection for High Level Synthesis Tools}
 
 
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Shane T Fleming}
-\IEEEauthorblockA{Department of Electrical and\\Electronic Engineering\\
-Imperial College London\\
-Email: shane.fleming06@imperial.ac.uk}
-\and
-\IEEEauthorblockN{David B Thomas}
-\IEEEauthorblockA{Department of Electrical and\\Electronic Engineering\\
-Imperial College London\\
-Email: d.thomas1@imperial.ac.uk}
+\author{\IEEEauthorblockN{Shane T. Fleming, David B. Thomas}
+\IEEEauthorblockA{Dept Electrical and Electronic Engineering, Imperial College London, email: \{sf306, dt1\}@ic.ac.uk}
 }
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
@@ -409,7 +402,7 @@ Email: d.thomas1@imperial.ac.uk}
 
 \begin{abstract}
 %\boldmath
-The abstract goes here.
+Soft error Detection in FPGA designs typically requires replication which often incurs unacceptable overheads. Our insight is to distinguish between errors caused by control flow faults like branch instructions, and data flow faults which have no effect on control. We present StitchUp, a high-level synthesis parameter which generates circuits that can detect control flow errors, but not data flow errors. Using exhaustive error injection we applied StitchUp to the CHStone benchmark suite finding that 99.99\% of control flow errors were detected and in the best case a 95\% reduction in area against full replication while the same in the worst.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
