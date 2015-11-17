@@ -402,7 +402,7 @@
 
 \begin{abstract}
 %\boldmath
-Soft error detection in FPGA designs typically requires replication which often incurs unacceptable overheads. Our insight is to distinguish between errors caused by control flow faults like branch instructions, and data flow faults which have no effect on control. We present StitchUp, a high-level synthesis parameter which generates circuits that can detect control flow errors, but not data flow errors. Using exhaustive error injection we applied StitchUp to the CHStone benchmark suite finding that 99.99\% of all control flow errors were detected and compared to full replication there was a 95\% reduction in area in the best case.
+Soft-error detection in FPGA designs typically requires replication which incurs unacceptable overheads. Our insight is to distinguish between errors affecting data-flow, like arithmetic instructions, and control-flow, like a branch instructions and its dependencies. We present StitchUp – a transformation pass for high-level synthesis designs that can perfectly extract the inherent control structure to selectively replicate and protect just the control-path. Using exhaustive hardware error injection we applied StitchUp to the CHStone benchmark suite finding that 99.99% of all control-flow errors were detected, and compared to full replication, resulted in a best-case 95% reduction in area overhead.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
