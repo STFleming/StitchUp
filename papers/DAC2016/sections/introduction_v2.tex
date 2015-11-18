@@ -37,6 +37,28 @@ calculation of the inner dot product.
 \label{fig:singleHLSArch}
 \end{figure}
 
+%Do we need to replicate everything?
+But what exactly do we mean when we say \emph{reliable} execution, what if some faults
+are tolerable and what if it is possible to only selctively reliability portions of our application?
+Various studies have shown that for a number of applications there exist critical regions
+of code, more sensitive to soft errors, and non-critical regions, which are less sensitive.  
+This is especially true in applications in applications involving media processing or machine
+learning\cite{wong2006soft} \cite{liu2012flikker}.
+
+%What about just the control flow?
+
+
+The contribution of this paper are:
+\begin{itemize}[leftmargin=*]
+	\setlength{\itemsep}{1pt}
+	\setlength{\parskip}{0pt}
+	\setlength{\parsep}{0pt}
+	\item StitchUp, a tool which can automatically extract and protect the control flow structure of a circuit generated with a HLS tool.
+	\item Detailed results of the CHStone benchmark, where exhaustive fault injection is performed on the majority of circuits.
+	\item Results exploring the reliability of StitchUp protected circuits as the control to data ratio is varied through
+	loop unrolling in the matrix multiplication example.
+\end{itemize}
+
 %Reliability and productivity are challenging issues
 %currently effecting the design of VLSI/FPGA systems as
 %device density increases.
@@ -107,13 +129,5 @@ calculation of the inner dot product.
 %StitchUp fully automates this process through using a static analysis technique, known as program slicing, to extract
 %and duplicate any instructions that may influence control.
 %
-%The contribution of this paper are:
-%\begin{itemize}
-%\item StitchUp, a tool which can automatically extract and protect the control flow structure of a circuit generated with a HLS tool.
-%\item Detailed results of the CHStone benchmark, where exhaustive fault injection is performed on the majority of circuits.
-%\item Results exploring the reliability of StitchUp protected circuits as the control to data ratio is varied through
-%loop unrolling in the matrix multiplication example.
-%
-%\end{itemize}
 
 
