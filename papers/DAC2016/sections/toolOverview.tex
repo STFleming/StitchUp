@@ -1,4 +1,14 @@
+
 \subsection{Tool-Flow}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=7in]{./imgs/HLSArch.pdf}
+\caption{StitchUp Replication for the Matrix Multiplication example, with Trust Boundary}
+\label{fig:HLSArch}
+\end{figure*}
+
 
 \begin{figure}[h]
 \centering
@@ -22,6 +32,14 @@ The LegUp frontend outputs some LLVM-IR which is passed into both the backend of
 original version of the circuit, and the frontend of StitchUp which will generate a control structure only version
 of the original circuit.
 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=3.5in]{./imgs/mmm_cdfg.pdf}
+\caption{Control-Data-Flow Diagram for Matrix Multiplication example}
+\label{fig:mmm_cdfg}
+\end{figure}
+
 \subsection{Extracting the Control Instruction Set}
 The LLVM-IR which is passed into the frontend of StitchUp is naturally arranged into a Control and Dataflow graph (CDFG) format,
 where each node of the graph is a basic block and edges are the branches between them.
@@ -42,13 +60,6 @@ Constructing the $CSIS_i$ for each node $i$ requires the following three steps:
     \item All branch instructions and operands are added to $CSIS_i$
     \item Any instruction within $i$ that is used as an operand by an element of $CSIS_i$ is added to $CSIS_i$
 \end{enumerate}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=3.5in]{./imgs/mmm_cdfg.pdf}
-\caption{Control-Data-Flow Diagram for Matrix Multiplication example}
-\label{fig:mmm_cdfg}
-\end{figure}
 
 Following through the example in \ref{fig:mmm_cdfg}:
 \begin{itemize}
@@ -88,12 +99,6 @@ the FSM for the StitchUp circuit could be generated missing these extra scheduli
 For this reason the scheduling report is used to detect instances of where this situation has occurred,
 and include these lost states into the StitchUp FSM.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=7in]{./imgs/HLSArch.pdf}
-\caption{StitchUp Replication for the Matrix Multiplication example, with Trust Boundary}
-\label{fig:HLSArch}
-\end{figure*}
 
 Finally the wrapper scripts take the original LegUp circuit and the StitchUp circuit and
 connect them together.
