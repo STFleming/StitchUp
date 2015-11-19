@@ -69,7 +69,8 @@
 % If IEEEtran.cls has not been installed into the LaTeX system files,
 % manually specify the path to it like:
 % \documentclass[conference]{../sty/IEEEtran}
-
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
 
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -197,6 +198,7 @@
 
 % *** SPECIALIZED LIST PACKAGES ***
 %
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{algorithmicx}
@@ -364,7 +366,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{StitchUp: Automatic Control Flow Protection for High Level Synthesis Tools}
+\title{StitchUp: Automatic Control Flow Protection for High Level Synthesis Tools\vspace{-10mm}}
 
 
 % author names and affiliations
@@ -450,8 +452,8 @@ in area overhead versus naive replication.
 \section{Introduction}
 \input{./sections/introduction_v2.tex}
 
-\section{Background}
-\input{./sections/background.tex}
+\section{FPGA device faults due to soft-errors}
+\input{./sections/background_v2.tex}
 
 \section{StitchUp Overview} %Talk generally about the tool and what we are aiming to protect (Formal stuff goes here)
 \input{./sections/toolOverview.tex}
