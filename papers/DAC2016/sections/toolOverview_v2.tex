@@ -116,11 +116,29 @@ following steps are required to extract the control-flow structure:
 \noindent
 \textbf{Iteration 1:}
 
+%-----------------------------------------------------
 \vspace{-2pt}
-$CSIS_{BB4}$: add I5.0:\emph{return} using rule 1
+\noindent
+$CSIS_{BB5}$: add I5.0:\textbf{return} using rule 2 
 
 \vspace{-2pt}
-$CSIS_{BB4}$ = \{I5.0:\emph{return}\}
+\noindent
+\textbf{$CSIS_{BB5}$ = \{I5.0\}}
+
+%-----------------------------------------------------
+\vspace{1mm}
+\noindent
+$CSIS_{BB4}$: add every element of $CSIS_{BB5}$ using rule 1
+
+\vspace{-2pt}
+\hspace{13mm}add I4.2:\textbf{br i<5 BB5} using rule 2 
+
+\vspace{-2pt}
+\hspace{13mm}add I4.1:\textbf{i++} using rule 3
+
+\vspace{-2pt}
+\noindent
+\textbf{$CSIS_{BB4}$ = \{I5.0, I4.2, I4.1\}}
 
 \vspace{1mm}
 \noindent
