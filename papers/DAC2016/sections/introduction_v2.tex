@@ -26,13 +26,6 @@ Replication in this fashion is expensive in both area and more importantly
 power, especially in this example as expensive floating point arithmetic
 units are required for the calculation of the inner dot product.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=3.5in]{./imgs/singleHLSArch_v2.pdf}
-\caption{Diagram representing a HLS circuit for the Matrix Multiplication example}
-\label{fig:singleHLSArch}
-\end{figure}
-
 If tight constraints prevent full replication then reliability can still be
 improved through selectively replicating "important" portions of the design.
 Various studies have shown that for a number of applications there exist critical regions
@@ -56,6 +49,13 @@ or even worse, cause the circuit to enter an infinite loop and never terminate.
 This paper presents an approach for automatically extracting the control flow structure
 for a HLS application so that this region of the design can be selectively
 replicated to protect control decisions.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=3.5in]{./imgs/singleHLSArch_v2.pdf}
+\caption{Diagram representing a HLS circuit for the Matrix Multiplication example}
+\label{fig:singleHLSArch}
+\end{figure}
 
 Figure \ref{fig:singleHLSArch} provides a diagram of the HLS generated
 circuit for our matrix multiplication example.

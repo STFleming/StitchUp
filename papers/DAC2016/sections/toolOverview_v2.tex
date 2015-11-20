@@ -6,7 +6,7 @@ transforming the input into a control and data flow graph (CDFG).
 StitchUp can automatically perform this extraction as a compiler flag
 for the LegUp HLS tool.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \includegraphics[width=3.5in]{./imgs/tool-flow.pdf}
 \caption{Tool Flow Overview diagram}
@@ -33,50 +33,36 @@ consisting of just the control-flow structure.
 Finally a wrapper script connects the original circuit to the duplicate control-flow circuit
 along with comparison logic to ensure that the state registers match.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \includegraphics[width=3.5in]{./imgs/mmm_cdfg.pdf}
 \caption{Control-Data-Flow Diagram for Matrix Multiplication example}
 \label{fig:mmm_cdfg}
 \end{figure}
 
-\subsection{Extracting the Control Structure Instruction Set}
-The LLVM-IR which is passed into the frontend of StitchUp is naturally arranged
-into a Control and Dataflow graph (CDFG) format,
-where each node of the graph is a basic block and edges are branches between them.
+\subsection{Extracting the Control Instruction Set}
+The LLVM-IR which is passed into the frontend of StitchUp is naturally arranged into a Control and Dataflow graph (CDFG) format,
+where each node of the graph is a basic block and edges are the branches between them.
 An example of the CDFG for the matrix multiplication in listing \ref{lst:MMM}
 is shown on the left side of Figure \ref{fig:mmm_cdfg}.
 
-The aim of the StitchUp frontend is to extract all SSA instructions that influence
-any branch decisions within this CDFG and generate LLVM-IR containing just these
-instructions but with the same structure.
-To achieve this a control structure instruction set (CSIS) is generated for every basic
-block of the input program.
+The aim of the StitchUp frontend is to extract all SSA instructions that influence any branch decision and collect them into what
+we refer to as a Control Structure Instruction Set (CSIS), which can then be used to generate a control structure only circuit.
+In Figure \ref{fig:mmm_cdfg} the original CDFG and StitchUp CDFG can be seen side by side, the CSIS for this example
+is every instruction within the StitchUp CDFG and it can be seen that the floating point inner dot product calculation
+is not there since it has no impact on any control decision.
 
-For a basic block, $B$, $CSIS_{B}$ is a set of all SSA instructions in $B$ and
-all successors of $B$ that may effect future branch decisions.
-Every $CSIS_{B}$ is a complete program and creating a circuit from it would
-enable the protection of every control-flow decision from $B$ onwards in the
-original programs execution.
-If we want to protect the control-flow structure for the entire circuit then
-we need to use $CSIS_{E}$, where $E$ is the first basic block in the input program
-to generate the error detection hardware.
-
-To calculate every $CSIS$ a fixed point algorithm is used iterating over the CDFG
-in a backwards fashion until the $CSIS$ for each basic block is stable.
-In each iteration the $CSIS_{i}$ for basic block $i$ is
-updated using the following rules:
+In order to automatically extract the $CSIS$ a backwards analysis walks up from the final node of the CDFG to the starting node, analysing
+the code as it goes and creating a $CSIS_{i}$ where $i$ is the current node.
+The overall $CSIS$ for the input is $CSIS_s$ where $s$ is the starting node of the CDFG.
+Constructing the $CSIS_i$ for each node $i$ requires the following three steps:
 \begin{enumerate}
     \item For all successor nodes, $j$, of $i$ add every element of $CSIS_j$ to $CSIS_i$.
     \item All branch instructions and operands are added to $CSIS_i$
     \item Any instruction within $i$ that is used as an operand by an element of $CSIS_i$ is added to $CSIS_i$
 \end{enumerate}
 
-Figure \ref{fig:mmm_cdfg} on the left shows the CDFG for the original matrix
-multiplication function in Listing \ref{lst:MMM}, while the right shows
-the control structure shadow version constructed from $CSIS_{BB0}$ where the
-inner dot product floating point operations have been discarded.
-Using this example we can step through demonstrating the $CSIS$ construction:
+Following through the example in \ref{fig:mmm_cdfg}:
 \begin{itemize}
 \item initially start at $BB4$ attempting to build $CSIS_{BB4}$:
 since $BB4$ has no successor nodes the first step is skipped, however for the second step the \lstinline{return}
@@ -97,6 +83,45 @@ The instruction \lstinline{C[i][j] += A[i][k]*B[k][j]} is not added to $CSIS_{BB
 within $CSIS_{BB2}$ depends on it. This leaves 
 
 \end{itemize}
+
+\begin{algorithm}[t]
+\caption{CSIS Extraction Static Analysis Algorithm
+\label{alg:CSIS-extraction}}
+    \begin{algorithmic}
+        \INPUT a program, $P$, which is a set of Basic Blocks, \{$BB_0$, ..., $BB_N$\}
+        \OUTPUT $P'$ a program containing only the instructions $I_c$ that are part of the control structure.
+        \Statex
+        \While{$C_{CSIS}$ != $P_{CSIS}$}
+            \State $P_{CSIS} \gets \{CSIS_{BB0}, \dots,  CSIS_{BBN}$\}
+            \For{\textbf{each} $B \in \{BB_{N},\dots,BB_{0}\}$}
+                \\\hrulefill
+                \For{\textbf{each} $S \in Successor(B)$}\Comment{Rule 1}
+                    \For{\textbf{each} $I_{c} \in CSIS_{S}$}
+                        \State $CSIS_B \cup \{I_{c}\}$
+                    \EndFor
+                \EndFor
+                \\\hrulefill
+
+                \State $T = TerminatingInstruction(B)$\Comment{Rule 2}
+                \State $CSIS_{B} \cup \{T\}$
+                \For{\textbf{each} $op \in T$}
+                    \State $CSIS_{B} \cup \{op\}$
+                \EndFor
+                \\\hrulefill
+
+                \For{\textbf{each} $I \in reverse(B)$}\Comment{Rule 3}
+                    \For{\textbf{each} $I_c \in CSIS_{B}$}
+                        \For{\textbf{each} $op_c \in I_c$}
+                            \If{$I == op_{c}$}
+                                \State $CSIS_{B} \cup \{I\}$
+                            \EndIf
+                        \EndFor
+                    \EndFor
+                \EndFor
+            \EndFor
+        \EndWhile
+    \end{algorithmic}
+\end{algorithm}
 
 The analysis will continue in this fashion looping over all the Basic Blocks until a fixed
 point on every $CSIS$ is obtained.
