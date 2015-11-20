@@ -56,11 +56,17 @@ In order to automatically extract the $CSIS$ a backwards analysis walks up from 
 the code as it goes and creating a $CSIS_{i}$ where $i$ is the current node.
 The overall $CSIS$ for the input is $CSIS_s$ where $s$ is the starting node of the CDFG.
 Constructing the $CSIS_i$ for each node $i$ requires the following three steps:
+
+\vspace{-8pt}
 \begin{enumerate}
+    \setlength{\itemsep}{1pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
     \item For all successor nodes, $j$, of $i$ add every element of $CSIS_j$ to $CSIS_i$.
     \item All branch instructions and operands are added to $CSIS_i$
     \item Any instruction within $i$ that is used as an operand by an element of $CSIS_i$ is added to $CSIS_i$
 \end{enumerate}
+\vspace{-4pt}
 
 \begin{algorithm}[t]
 \caption{CSIS Extraction Static Analysis Algorithm
