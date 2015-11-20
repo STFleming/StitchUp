@@ -34,18 +34,7 @@ indicating an error.
          %backgroundcolor=\color{lightgray},
          showstringspaces=false      % Leerzeichen in Strings anzeigen ?        
  }
-\begin{lstlisting}[label={lst:MMM}, captionpos=b, caption={Matrix Multiplication Example}]
-void MMM(float A[5][5],float B[5][5],float C[5][5])
-{ int i=0, j=0, k=0;
-  for(i=0, i<5, i++){
-    for(j=0, j<5; j++){
-      C[i][j] = 0;
-      for(k=0, k<5; k++){
-        C[i][j] += A[i][k]*B[k][j]; }
-    }
-  }
-}
-\end{lstlisting}
+
 
 Replication in this fashion is expensive in both area and more importantly
 power, especially in this example as expensive floating point arithmetic
@@ -82,6 +71,23 @@ replicated to protect control decisions.
 %\label{fig:singleHLSArch}
 %\end{figure}
 
+
+\begin{figure}[t]
+\begin{lstlisting}[label={lst:MMM}, captionpos=b, caption={Matrix Multiplication Example}]
+void MMM(float A[5][5],float B[5][5],float C[5][5])
+{ int i=0, j=0, k=0;
+  for(i=0, i<5, i++){
+    for(j=0, j<5; j++){
+      C[i][j] = 0;
+      for(k=0, k<5; k++){
+        C[i][j] += A[i][k]*B[k][j]; }
+    }
+  }
+}
+\end{lstlisting}
+\vspace{-7mm}
+\end{figure}
+
 Figure \ref{fig:singleHLSArch} provides a diagram of the HLS generated
 circuit for our matrix multiplication example.
 Two clear partitions can be seen, a data path where functional units reside, and a
@@ -103,6 +109,7 @@ the engineering effort required in both analysing the input source and a generat
 significant.
 StitchUp fully automates this process through using a static analysis technique, known as program slicing, to extract
 and duplicate any instructions that may influence control. The contribution of this paper are:
+
 \vspace{-4pt}
 \begin{itemize}
 	\setlength{\itemsep}{1pt}
@@ -113,4 +120,14 @@ and duplicate any instructions that may influence control. The contribution of t
 	\item Results exploring the reliability of StitchUp protected circuits as the control to data ratio is varied through
 	loop unrolling in the matrix multiplication example.
 \end{itemize}
-
+%\vspace{1mm}
+%\noindent
+%$\bullet$ StitchUp, a tool which can automatically extract and protect the control flow structure of a circuit generated with a HLS tool.
+%
+%\vspace{1mm}
+%\noindent
+%$\bullet$ Detailed results of StitchUp on the CHStone benchmark, where exhaustive hardware fault injection is performed on the majority of cases.
+%
+%\vspace{1mm}
+%\noindent
+%$\bullet$ Results exploring the reliability of StitchUp protected circuits as the control to data ratio is varied through loop unrolling in the matrix multiplication example.
