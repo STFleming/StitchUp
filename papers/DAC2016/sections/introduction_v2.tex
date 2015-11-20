@@ -8,15 +8,40 @@ The naive approach would be to instantiate multiple copies of the circuit and ru
 them in lock-step on the same input data with any deviations between them
 indicating an error.
 
-\lstset{language=C}
-\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single, label={lst:MMM}, captionpos=b, caption={Matrix Multiplication Example},numbers=left,escapeinside={@}{@}]
+ \lstset{
+         basicstyle=\footnotesize\ttfamily, % Standardschrift
+         numbers=left,               % Ort der Zeilennummern
+         numberstyle=\tiny,          % Stil der Zeilennummern
+	 language=C,
+         %stepnumber=2,               % Abstand zwischen den Zeilennummern
+         numbersep=5pt,              % Abstand der Nummern zum Text
+         tabsize=2,                  % Groesse von Tabs
+         extendedchars=true,         %
+         breaklines=true,            % Zeilen werden Umgebrochen
+         keywordstyle=\color{red},
+         %frame=b,         
+ %        keywordstyle=[1]\textbf,    % Stil der Keywords
+ %        keywordstyle=[2]\textbf,    %
+ %        keywordstyle=[3]\textbf,    %
+ %        keywordstyle=[4]\textbf,   \sqrt{\sqrt{}} %
+         stringstyle=\color{white}\ttfamily, % Farbe der String
+         showspaces=false,           % Leerzeichen anzeigen ?
+         showtabs=false,             % Tabs anzeigen ?
+         %xleftmargin=10pt,
+         %framexleftmargin=17pt,
+         %framexrightmargin=5pt,
+         %framexbottommargin=4pt,
+         %backgroundcolor=\color{lightgray},
+         showstringspaces=false      % Leerzeichen in Strings anzeigen ?        
+ }
+\begin{lstlisting}[label={lst:MMM}, captionpos=b, caption={Matrix Multiplication Example}]
 void MMM(float A[5][5],float B[5][5],float C[5][5])
 { int i=0, j=0, k=0;
   for(i=0, i<5, i++){
     for(j=0, j<5; j++){
       C[i][j] = 0;
       for(k=0, k<5; k++){
-        @\label{lst:MMM_2}@C[i][j] += A[i][k]*B[k][j]; }
+        C[i][j] += A[i][k]*B[k][j]; }
     }
   }
 }
@@ -50,12 +75,12 @@ This paper presents an approach for automatically extracting the control flow st
 for a HLS application so that this region of the design can be selectively
 replicated to protect control decisions.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=3.5in]{./imgs/singleHLSArch_v2.pdf}
-\caption{Diagram representing a HLS circuit for the Matrix Multiplication example}
-\label{fig:singleHLSArch}
-\end{figure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=3.5in]{./imgs/singleHLSArch_v2.pdf}
+%\caption{Diagram representing a HLS circuit for the Matrix Multiplication example}
+%\label{fig:singleHLSArch}
+%\end{figure}
 
 Figure \ref{fig:singleHLSArch} provides a diagram of the HLS generated
 circuit for our matrix multiplication example.

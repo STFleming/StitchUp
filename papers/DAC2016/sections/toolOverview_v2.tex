@@ -35,7 +35,7 @@ along with comparison logic to ensure that the state registers match.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=3.5in]{./imgs/mmm_cdfg.pdf}
+\includegraphics[width=3.5in]{./imgs/mmm_cdfg_v2.pdf}
 \caption{Control-Data-Flow Diagram for Matrix Multiplication example}
 \label{fig:mmm_cdfg}
 \end{figure}
@@ -61,28 +61,6 @@ Constructing the $CSIS_i$ for each node $i$ requires the following three steps:
     \item All branch instructions and operands are added to $CSIS_i$
     \item Any instruction within $i$ that is used as an operand by an element of $CSIS_i$ is added to $CSIS_i$
 \end{enumerate}
-
-Following through the example in \ref{fig:mmm_cdfg}:
-\begin{itemize}
-\item initially start at $BB4$ attempting to build $CSIS_{BB4}$:
-since $BB4$ has no successor nodes the first step is skipped, however for the second step the \lstinline{return}
-instruction is added to $CSIS_{BB4}$, and the third step is skipped since no other instructions exist.
-
-\item Moving backwards to $BB3$ the first step adds every element of $CSIS_{BB4}$ to $CSIS_{BB3}$ to give 
-$CSIS_{BB3}=$ \{\lstinline{return}\}, then since $CSIS_{BB1}$ is currently empty nothing is added from here; the second step then adds the conditional branch and it's operand
-instruction to the current set to give $CSIS_{BB3}= $\{\lstinline{return}, \lstinline{br j<5}\} ;
-finally for step 3 \lstinline{j} is used in a member of $CSIS_{BB3}$ in \lstinline{br j<5} so the instruction
-\lstinline{j++} is added to $CSIS_{BB3}$. This means that at this point $CSIS_{BB3} =$
-\{\lstinline{return},\lstinline{br j<5}, \lstinline{j++}\}
-
-\item For $BB2$ in the first step we take all the elements from the successor node $BB3$, and ignore the fact
-that it has itself as a successor, so that we get $CSIS_{BB2} =$ \{\lstinline{return},\lstinline{br j<5}, \lstinline{j++}\}.
-Then just like before we can add the branch instruction, \lstinline{br k<5}, using rule 2 and the incrementor for the branch
-conditional variable \lstinline{k} using rule 3. 
-The instruction \lstinline{C[i][j] += A[i][k]*B[k][j]} is not added to $CSIS_{BB2}$ since no instruction
-within $CSIS_{BB2}$ depends on it. This leaves 
-
-\end{itemize}
 
 \begin{algorithm}[t]
 \caption{CSIS Extraction Static Analysis Algorithm
@@ -122,6 +100,30 @@ within $CSIS_{BB2}$ depends on it. This leaves
         \EndWhile
     \end{algorithmic}
 \end{algorithm}
+
+Applying the anaysis to the matrix multiplication example in Figure \ref{fig:mmm_cdfg} the
+following steps are required to extract the control-flow structure:
+
+\vspace{1mm}
+\noindent
+\textbf{Initially} $CSIS_{i} = \emptyset$ for all basic blocks $i$
+
+\vspace{1pt}
+\noindent
+\hrulefill
+
+\vspace{1mm}
+\noindent
+\textbf{Iteration 1:}
+
+\vspace{-2pt}
+$CSIS_{BB4}$: add I5.0:\emph{return} using rule 1
+
+\vspace{-2pt}
+$CSIS_{BB4}$ = \{I5.0:\emph{return}\}
+
+\vspace{1mm}
+\noindent
 
 The analysis will continue in this fashion looping over all the Basic Blocks until a fixed
 point on every $CSIS$ is obtained.
