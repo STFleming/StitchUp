@@ -73,16 +73,14 @@ replicated to protect control decisions.
 
 
 \begin{figure}[t]
-\begin{lstlisting}[label={lst:MMM}, captionpos=b, caption={Matrix Multiplication Example}]
-void MMM(float A[5][5],float B[5][5],float C[5][5])
-{ int i=0, j=0, k=0;
-  for(i=0, i<5, i++){
-    for(j=0, j<5; j++){
-      C[i][j] = 0;
-      for(k=0, k<5; k++){
-        C[i][j] += A[i][k]*B[k][j]; }
-    }
+\begin{lstlisting}[label={lst:DotProduct}, captionpos=b, caption={Dot Product Example}]
+void DotProduct(float A[20],float B[20])
+{ int i=0;
+  for(i=0, i<20, i++)
+  {
+   int c += A[i]*B[i];
   }
+  return c;
 }
 \end{lstlisting}
 \vspace{-7mm}

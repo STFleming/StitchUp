@@ -1,3 +1,9 @@
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6in]{./imgs/ExperimentFlow.pdf}
+\caption{The experiment flow}
+\label{fig:ExperimentFlow}
+\end{figure*}
 
 To test the error mitigation abilities of the circuits generation we are adopting the
 gold standard of hardware fault injection, where configuration bits on the 
@@ -25,13 +31,6 @@ ARM processing system via AXI interconnects.
 Software running under Linux on each of the ARM cores was then responsible, for sending the
 address and injection command to the SEM core, starting the circuit under test, and
 collecting the result from that circuit. 
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=2.5in]{./imgs/ExperimentFlowVert.pdf}
-\caption{The experiment flow}
-\label{fig:ExperimentFlow}
-\end{figure}
 
 Figure \ref{fig:ExperimentFlow} shows an overview of the experiment setup.
 Each circuit at the top is fed into three different flows:

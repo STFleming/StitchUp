@@ -71,6 +71,27 @@
 
 \usepackage{lipsum}
 
+%-----------CSIS cmds-------------------
+\newcommand{\CSISState}[2]{
+\vspace{-2pt}
+\noindent
+\textbf{$CSIS_{#1}$ = {\small{\{#2\}}}}
+
+}
+\newcommand{\FirstAnalysisTraceRule}[3]{
+\vspace{1mm}
+\noindent
+$CSIS_{#1}$: add {\small #2} using rule #3
+
+}
+
+\newcommand{\AnalysisTraceRule}[2]{
+\vspace{-2pt}
+\hspace{13mm}add {\small #1} using rule #2
+
+}
+%-----------------------------------------
+
 \begin{document}
 
 % Copyright

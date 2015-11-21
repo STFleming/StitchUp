@@ -35,7 +35,7 @@ along with comparison logic to ensure that the state registers match.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=3.5in]{./imgs/mmm_cdfg_v2.pdf}
+\includegraphics[width=3.5in]{./imgs/dot_product_cdfg.pdf}
 \caption{Control-Data-Flow Diagram for Matrix Multiplication example}
 \label{fig:mmm_cdfg}
 \end{figure}
@@ -110,44 +110,39 @@ Constructing the $CSIS_i$ for each node $i$ requires the following three steps:
 Applying the anaysis to the matrix multiplication example in Figure \ref{fig:mmm_cdfg} the
 following steps are required to extract the control-flow structure:
 
+%-------------------------------------------------------
 \vspace{1mm}
 \noindent
 \textbf{Initially} $CSIS_{i} = \emptyset$ for all basic blocks $i$
 
-\vspace{1pt}
+\vspace{-2mm}
 \noindent
 \hrulefill
 
-\vspace{1mm}
+\vspace{-1mm}
 \noindent
 \textbf{Iteration 1:}
 
-%-----------------------------------------------------
-\vspace{-2pt}
-\noindent
-$CSIS_{BB5}$: add I5.0:\textbf{return} using rule 2 
-
-\vspace{-2pt}
-\noindent
-\textbf{$CSIS_{BB5}$ = \{I5.0\}}
-
-%-----------------------------------------------------
-\vspace{1mm}
-\noindent
-$CSIS_{BB4}$: add every element of $CSIS_{BB5}$ using rule 1
-
-\vspace{-2pt}
-\hspace{13mm}add I4.2:\textbf{br i<5 BB5} using rule 2 
-
-\vspace{-2pt}
-\hspace{13mm}add I4.1:\textbf{i++} using rule 3
-
-\vspace{-2pt}
-\noindent
-\textbf{$CSIS_{BB4}$ = \{I5.0, I4.2, I4.1\}}
+%----BB2----
+\FirstAnalysisTraceRule{BB2}{I2.0:\textbf{return}}{2}
+\CSISState{BB2}{I2.0}
+%----BB1----
+\FirstAnalysisTraceRule{BB1}{every element in $CSIS_{BB2}$}{1}
+\AnalysisTraceRule{I1.2:\textbf{br i<20 BB2}}{2}
+\AnalysisTraceRule{I1.1:\textbf{i++}}{3}
+\CSISState{BB1}{I2.0,I1.2,I1.1}
+%----BB0----
+\FirstAnalysisTraceRule{BB0}{every element in $CSIS_{BB1}$}{1}
+\AnalysisTraceRule{I0.1:\textbf{br BB1}}{2}
+\AnalysisTraceRule{I0.0:\textbf{i=0}}{3}
+\CSISState{BB0}{I2.0,I1.2,I1.1,I0.1,I0.0}
 
 \vspace{1mm}
 \noindent
+\textbf{Iteration 2:}\hspace{3mm} No Change, fixed point reached
+%-----------------------------------------------------
+
+\vspace{1mm}
 
 The analysis will continue in this fashion looping over all the Basic Blocks until a fixed
 point on every $CSIS$ is obtained.
