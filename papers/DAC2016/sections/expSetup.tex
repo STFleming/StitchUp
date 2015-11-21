@@ -66,6 +66,9 @@ and moves onto the next essential bit address.
 The results are then analysed and each run is classified into three separate categories:
 
 \begin{enumerate}
+\setlength{\itemsep}{1pt}
+\setlength{\parskip}{0pt}
+\setlength{\parsep}{0pt}
 \item Execution Time Error - This is where the execution of the circuit either took
 an incorrect number of cycles to complete or timed out. Errors of these type are almost
 always control flow related since any deviation from the correct execution path will cause
@@ -76,10 +79,3 @@ by a non-control structure functional unit.
 \item Caught Errors - These are errors that were detected by the protection method, which is
 either DMR or StitchUp.
 \end{enumerate}
-
-
-\subsection{Fault Injection Rig}
-Multiple Zynq systems. Essential bits generation of Partially reconfigurable regions.
-Error Injection with the SEM core. Reconfiguration every injection vs Reconfiguration just
-on stuck bits. Experiment run times.
-

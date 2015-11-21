@@ -1,3 +1,10 @@
+\begin{figure}[t]
+\centering
+\includegraphics[width=3.5in]{./imgs/StitchUpReplication.pdf}
+\caption{StitchUp Replication for the Matrix Multiplication example, with Trust Boundary}
+\label{fig:HLSArch}
+\end{figure}
+
 A Soft Error or Single Event Upset is a random, non-catastrophic error, where radiation causes
 a perturbation to a circuit by temporarily altering a single signal or datum.
 Detecting and mitigating such errors is highly important in some fields, such as satellite design, 
@@ -16,7 +23,7 @@ and soft errors in these regions can alter the state of the circuit but not the
 circuits functionality.
 
 %How this changes the protection strategy compared to software and VLSI
-For VLSI/ASIC designs registers are the most vulnerable to soft-errors, with
+For ASIC designs registers are the most vulnerable to soft-errors, with
 combinational logic contributing very little \cite{baumann2005soft} this makes
 approaches which asses and protect vulnerable registers promising \cite{chen2014reliability}.
 However in FPGA devices the most vulnerable region is the configuration memory
@@ -30,12 +37,6 @@ Replication uses extra area and power however error detection latency is low,
 while ECC/CRC checks consume less area and power but detection latency is higher and
 it is limited to only protecting configuration memory.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=3.5in]{./imgs/StitchUpReplication.pdf}
-\caption{StitchUp Replication for the Matrix Multiplication example, with Trust Boundary}
-\label{fig:HLSArch}
-\end{figure}
 
 For this paper our \emph{fault model} assumes that a single soft error
 can occur at most every clock cycle, and that this error can effect block memory,
