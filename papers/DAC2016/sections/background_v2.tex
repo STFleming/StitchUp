@@ -43,8 +43,8 @@ can occur at most every clock cycle, and that this error can effect block memory
 configuration memory, or flip-flops.
 Since errors are not solely within the configuration memory replication must be used
 instead of ECC/CRC codes to fully protect our control structure.
-Figure \ref{fig:HLSArch} shows a StitchUp generated circuit for the matrix multiplication
-example in Listing \ref{lst:MMM}, with the original circuit on top and the
+Figure \ref{fig:HLSArch} shows a StitchUp generated circuit for the dot product 
+example in Listing \ref{lst:DotProduct}, with the original circuit on top and the
 control-flow structure shadow beneath it.
 StitchUp aims to protect all configuration, block, and Flip-flop bits within the
 trust boundary (grey box) as everything outside, such as routing to
