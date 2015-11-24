@@ -54,67 +54,67 @@ is shown on the left side of Figure \ref{fig:mmm_cdfg}.
 The StitchUp frontend performs a backwards analysis walking the CDFG from bottom to top, collecting any control flow
 related instructions that may influence whether an edge transition is taken.
 
-All instructions deemed to be control related are collected into what we refer to as a Control Structure Instruction Set ($CSIS$),
+All instructions deemed to be control related are collected into what we refer to as a Control Structure Instruction Set ($\mathit{CSIS}$),
 which can be used to generate a control replicant.
-Each basic block, $i$, in the input CDFG will have it's own associated $CSIS_{i}$ containing all instructions that may effect
+Each basic block, $i$, in the input CDFG will have it's own associated $\mathit{CSIS}_{i}$ containing all instructions that may effect
 control-flow after this point in the program.
-The overall $CSIS$ for the input is $CSIS_s$ where $s$ is the initial basic block of the input program.
+The overall $\mathit{CSIS}$ for the input is $\mathit{CSIS}_s$ where $s$ is the initial basic block of the input program.
 
-Algorithm \ref{alg:CSIS-extraction} is used to construct the $CSIS$ for all nodes in the CDFG.
-It requires a fixed point iteration until the set of all $CSIS$, $C_{CSIS}$ has reached a stable state
+Algorithm \ref{alg:CSIS-extraction} is used to construct the $\mathit{CSIS}$ for all nodes in the CDFG.
+It requires a fixed point iteration until the set of all $\mathit{CSIS}$, $C_{\mathit{CSIS}}$ has reached a stable state
 which can be seen in line 1-2.
 Each iteration walks backwards from the final basic block of the CDFG to the start basic block, as seen in
-line 3, and for each encountered the corresponding $CSIS$ is updated using the following rules:
+line 3, and for each encountered the corresponding $\mathit{CSIS}$ is updated using the following rules:
 
 %\vspace{-4pt}
 \begin{enumerate}
     \setlength{\itemsep}{3pt}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
-    \item $Sucessor(B)$ returns the set of all basic blocks in the CDFG that follow on from the basic block $B$.
-	  For all successor  $j$ of basic block $i$ this rule adds every element of $CSIS_j$ to $CSIS_i$.
-    \item This adds all branch instructions for the current basic block, $i$, to $CSIS_i$ using
-	  $TerminatingInstruction(i)$ a function which returns the final instruction from the basic block $i$.
-    \item Finally any instruction within the current basic block ($i$) that is used as an operand ($op_{c}$) by an element of $CSIS_i$ is added to $CSIS_i$
+    \item $\mathit{Sucessor(B)}$ returns the set of all basic blocks in the CDFG that follow on from the basic block $B$.
+	  For all successor  $j$ of basic block $i$ this rule adds every element of $\mathit{CSIS}_j$ to $\mathit{CSIS}_i$.
+    \item This adds all branch instructions for the current basic block, $i$, to $\mathit{CSIS}_i$ using
+	  $\mathit{TerminatingInstruction(i)}$ a function which returns the final instruction from the basic block $i$.
+    \item Finally any instruction within the current basic block ($i$) that is used as an operand ($\mathit{op_{c}}$) by an element of $\mathit{CSIS}_i$ is added to $\mathit{CSIS}_i$
 \end{enumerate}
 \vspace{-4pt}
 
 \begin{algorithm}[t]
-\caption{CSIS Extraction Static Analysis Algorithm
+\caption{$\mathit{CSIS}$ Extraction Static Analysis Algorithm
 \label{alg:CSIS-extraction}}
     \begin{algorithmic}[1]
-        \INPUT a program, $P$, which is a set of Basic Blocks, \{$BB_0$, ..., $BB_N$\}
-        \OUTPUT $P'$ a program containing only the instructions $I_c$ that are part of the control structure.
+        \INPUT a program, $P$, set of Basic Blocks, \{$\mathit{BB}_0$...$\mathit{BB}_N$\}
+        \OUTPUT $P'$ a program consisting of $I_c$ the set of control structure instructions.
         \Statex
-        \While{$C_{CSIS}$ != $P_{CSIS}$}
-            \State $P_{CSIS} \gets \{CSIS_{BB0}, \dots,  CSIS_{BBN}$\}
+        \While{$C_{\mathit{CSIS}}$ != $P_{\mathit{CSIS}}$}
+            \State $P_{\mathit{CSIS}} \gets \{\mathit{CSIS}_{\mathit{BB0}}, \dots,  \mathit{CSIS}_{BBN}$\}
             \For{\textbf{each} $B \in \{BB_{N},\dots,BB_{0}\}$}
                 \\\hrulefill
                 \For{\textbf{each} $S \in Successor(B)$}\Comment{Rule 1}
-                    \For{\textbf{each} $I_{c} \in CSIS_{S}$}
-                        \State $CSIS_B \cup \{I_{c}\}$
+                    \For{\textbf{each} $I_{c} \in \mathit{CSIS}_{S}$}
+                        \State $\mathit{CSIS}_B \cup \{I_{c}\}$
                     \EndFor
                 \EndFor
                 \\\hrulefill
 
                 \State $T \in TerminatingInstruction(B)$\Comment{Rule 2}
-                \State $CSIS_{B} \cup \{T\}$
+                \State $\mathit{CSIS}_{B} \cup \{T\}$
                 \For{\textbf{each} $op \in T$}
-                    \State $CSIS_{B} \cup \{op\}$
+                    \State $\mathit{CSIS}_{B} \cup \{op\}$
                 \EndFor
                 \\\hrulefill
 
                 \For{\textbf{each} $I \in B$}\Comment{Rule 3}
-                    \For{\textbf{each} $I_c \in CSIS_{B}$}
+                    \For{\textbf{each} $I_c \in \mathit{CSIS}_{B}$}
                         \For{\textbf{each} $op_c \in I_c$}
                             \If{$I = op_{c}$}
-                                \State $CSIS_{B} \cup \{I\}$
+                                \State $\mathit{CSIS}_{B} \cup \{I\}$
                             \EndIf
                         \EndFor
                     \EndFor
                 \EndFor
             \EndFor
-	\State $P' \gets CSIS_{BB0}$
+	\State $P' \gets \mathit{CSIS}_{\mathit{BB0}}$
         \EndWhile
     \end{algorithmic}
 \end{algorithm}
@@ -122,13 +122,13 @@ line 3, and for each encountered the corresponding $CSIS$ is updated using the f
 To demonstrate this we will apply Algorithm \ref{alg:CSIS-extraction} to the
 dot product example in \ref{lst:DotProduct} to extract the control-flow structure, 
 labelled StitchUp in \ref{fig:mmm_cdfg}. 
-For each update to a $CSIS$, the label for the instruction added from \ref{fig:mmm_cdfg} is given 
+For each update to a $\mathit{CSIS}$, the label for the instruction added from \ref{fig:mmm_cdfg} is given 
 along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it. 
 
 %-------------------------------------------------------
 \vspace{1mm}
 \noindent
-\textbf{Initially} $CSIS_{i} = \emptyset$ for all basic blocks $i$
+\textbf{Initially} $\mathit{CSIS}_{i} = \emptyset$ for all basic blocks $i$
 
 \vspace{-2mm}
 \noindent
@@ -142,15 +142,15 @@ along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it.
 \FirstAnalysisTraceRule{BB2}{I2.0:\textbf{return}}{2}
 \CSISState{BB2}{I2.0}
 %----BB1----
-\FirstAnalysisTraceRule{BB1}{every element in $CSIS_{BB2}$}{1}
+\FirstAnalysisTraceRule{BB1}{every element in $\mathit{CSIS}_{BB2}$}{1}
 \AnalysisTraceRule{I1.2:\textbf{br i<20 BB2}}{2}
 \AnalysisTraceRule{I1.1:\textbf{i++}}{3}
 \CSISState{BB1}{I2.0,I1.2,I1.1}
-%----BB0----
-\FirstAnalysisTraceRule{BB0}{every element in $CSIS_{BB1}$}{1}
+%----\mathit{BB0}----
+\FirstAnalysisTraceRule{\mathit{BB0}}{every element in $\mathit{CSIS}_{BB1}$}{1}
 \AnalysisTraceRule{I0.1:\textbf{br BB1}}{2}
 \AnalysisTraceRule{I0.0:\textbf{i=0}}{3}
-\CSISState{BB0}{I2.0,I1.2,I1.1,I0.1,I0.0}
+\CSISState{\mathit{BB0}}{I2.0,I1.2,I1.1,I0.1,I0.0}
 
 \vspace{1mm}
 \noindent
@@ -159,7 +159,7 @@ along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it.
 
 \vspace{1mm}
 
-Once the analysis is completed the final value of $CSIS_{BB0}$ is turned into LLVM-IR
+Once the analysis is completed the final value of $\mathit{CSIS}_{\mathit{BB0}}$ is turned into LLVM-IR
 and given to the StitchUp backend.
 Here scheduling information from the original unmodified LegUp flow is used to generate
 an identical control FSM to the original circuit and insert state lost scheduling states
