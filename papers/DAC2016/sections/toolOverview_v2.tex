@@ -49,7 +49,7 @@ where there is only one entry branch at the very start of the block, and one exi
 \subsection{Extracting the Control Instruction Set}
 LLVM-IR, which is passed into the frontend of StitchUp, is naturally arranged into a CDFG
 where each node is a basic block and edges are branch between them.
-An example of the CDFG from the dot product in listing \ref{lst:DotProduct}
+An example of the CDFG from the dot product in Listing \ref{lst:DotProduct}
 is shown on the left side of Figure \ref{fig:mmm_cdfg}.
 The StitchUp frontend performs a backwards analysis walking the CDFG from bottom to top, collecting any control flow
 related instructions that may influence whether an edge transition is taken.
@@ -120,8 +120,8 @@ line 3, and for each encountered the corresponding $\mathit{CSIS}$ is updated us
 \end{algorithm}
 
 To demonstrate this we will apply Algorithm \ref{alg:CSIS-extraction} to the
-dot product example in \ref{lst:DotProduct} to extract the control-flow structure, 
-labelled StitchUp in \ref{fig:mmm_cdfg}. 
+dot product example in Listing \ref{lst:DotProduct} to extract the control-flow structure, 
+labelled StitchUp in Figure \ref{fig:mmm_cdfg}. 
 For each update to a $\mathit{CSIS}$, the label for the instruction added from \ref{fig:mmm_cdfg} is given 
 along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it. 
 

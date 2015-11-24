@@ -5,8 +5,8 @@
 \label{fig:ExperimentFlow}
 \end{figure}
 
-To test the error mitigation abilities of StitchUp generated circuits we have adopting the
-gold standard of hardware fault injection, where configuration bits on the 
+To test the error mitigation abilities of StitchUp generated circuits we have adopted the
+FPGA gold standard of hardware fault injection, where configuration bits on the 
 FPGA device are flipped from their original state.
 Typical FPGA designs will require a large number of configuration bits often making
 full exhaustive testing infeasible, usually resulting in the adoption of random
@@ -17,7 +17,7 @@ for example reducing the time to exhaustively test the smallest CHStone circuit 
 to 8 hours.
 
 We make use of many low cost Xilinx FPGA SoC devices known as
-Zedboards all injecting on the same circuit in parallel.
+Zedboards all injecting faults on the same circuit in parallel.
 Each Zedboard runs a full Linux OS on its hardened ARM processor, and is arranged into
 a cluster managed by a single desktop\footnote{Called The SoC Drawer}.
 

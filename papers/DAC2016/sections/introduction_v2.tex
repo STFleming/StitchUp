@@ -99,10 +99,10 @@ influence over any branch decision and will not be replicated.
 
 Manually inspecting code and removing elements that don't influence control flow
 is simple in the case of our dot product example.
-However as the complexity of the input increases,
+However as the complexity of the input program increases,
 the engineering effort required to both analyse the input code and generate
 the replicated control FSM is significant.
-StitchUp fully automates this process through using a static analysis technique, known as program slicing, to extract
+StitchUp fully automates this process through the use of static analysis technique, known as program slicing, to extract
 and duplicate any instructions that may influence control. The contribution of this paper are:
 
 \vspace{-10pt}
@@ -110,10 +110,10 @@ and duplicate any instructions that may influence control. The contribution of t
 	\setlength{\itemsep}{1pt}
 	\setlength{\parskip}{0pt}
 	\setlength{\parsep}{0pt}
-	\item StitchUp, an approach for decoupling control-flow and data-flow to increase circuit relability which has been implemented as
+	\item StitchUp, an approach for decoupling control-flow and data-flow to increase circuit relability. Along with
           an open source LegUp HLS pass that can automatically extract and protect the control flow structure of a circuit.
 	\item Detailed resource and power results for StitchUp using the popular CHStone HLS benchmark.
-    \item Exhaustive hardware fault injection, where every essential configuration bit is flipped to assess how well StitchUp can catch errors.
+    \item Exhaustive single bit hardware fault injection, where every essential configuration bit is flipped to assess how well StitchUp can catch errors.
 \end{itemize}
 %\vspace{1mm}
 %\noindent
