@@ -2,7 +2,7 @@
 \small
 \singlespace
 \centering
-\caption{Resource Usage Results}
+\caption{Resource Usage Results - where missing power results mean that the circuit could not be implemented on our power measurement platform (Xilinx ZC702)}
 \label{tab:resources}
 \tabcolsep=0.11cm
 \begin{tabular}{@{}|l|l|l|l|l|l|l|l|l|l|l|l|l|@{}}
@@ -23,29 +23,29 @@
 \end{tabular}
 \end{table*}
 
-The performance of the StitchUp approach was evaluated in several ways:
-firstly the error resilience and area compared to DMR for the dot product example in Listing \ref{lst:DotProduct} was
-measured as the inner loop was unrolled to compute more of the computation in parallel;
-secondly area and power results were found for the CHStone benchmark; and finally the error
-resilience properties of CHStone benchmarks protected with StitchUp and DMR.
+To test the strengths and weaknesses of the StitchUp approach compared to DMR both techniques were evaluated on the CHStone benchmark suite.
+In order to explore the effects of varying control-to-data ratio, we also evaluate the example code from 
+Listing \ref{lst:DotProduct} while varying the degree of loop unrolling to increase data parallelism.
+In all cases the resources in terms of LUTs, registers (REG), and DSPs were compared; and where the circuits could be implemented
+on Zedboard/ZC702 devices, power results were obtained, and exhaustive error injection was performed.
 
 \subsection{Unrolling Results}
 \begin{figure}[h]
 \centering
 \includegraphics[width=3.5in]{./graphs/dp_unrolling_res.pdf}
-\caption{Data Only Errors and Caught Errors for a dot product loop unrolling with StitchUp along with \%LUT overhead against DMR}
+\caption{Data Only Errors (DOEs) and Caught Errors (CEs) for a dot product with increasing loop unroll factors with StitchUp along with \%LUT overhead against DMR}
 \label{fig:dp_unrolling_res}
 \end{figure}
 
-Figure \ref{fig:dp_unrolling_res} shows how the data only errors and caught errors vary as the loop in Listing \ref{lst:DotProduct}
+Figure \ref{fig:dp_unrolling_res} shows how the DOEs and CEs vary as the loop in Listing \ref{lst:DotProduct}
 is unrolled.
-Increasing the unroll factor reduces the control-to-data ratio as the amount of parallel (data-flow) only functional units is increased
-while the number of basic blocks remains the same.
-This can be observed in the graph as we increase the unroll factor the data only errors also increase while the number of caught errors
-stays constant.
-A similar trend can also be observed for the \%LUT overhead, where as the unroll factor increases the overhead for the DMR implementation
-tends towards 100\%, while the StitchUp overhead tends towards 0\%.
-This tells us that as more non-control-structure instructions are executed in parallel the overhead or
+Increasing the unroll factor reduces the control-to-data ratio since the number of basic blocks remains constant but the number of (data-flow)
+only functional units instantiated in parallel increases.
+This effect is observable in the results since the data only errors increase with the unroll factor but the number of caught errors
+remains constant.
+A similar trend can be observed for the percentage LUT overhead where the overhead for the DMR implementation
+tends towards 100\% as the unroll factor increases, while the StitchUp overhead tends towards 0\%.
+This tells us that as more non-control-structure instructions are executed in parallel, the overhead or
 protection provided by the StitchUp replication is unaffected.
 
 \subsection{Resource Overheads}
@@ -58,29 +58,35 @@ protection provided by the StitchUp replication is unaffected.
 \label{fig:lut_res}
 \end{figure}
 
-Table \ref{tab:resources} shows the resources and power required to implement each of the CHStone benchmark circuits\footnote{with the exception of JPEG, which could not be routed onto our largest device}
+Table \ref{tab:resources} shows the required resources and power to implement
+each of the CHStone benchmark circuits\footnote{with the exception of JPEG, which could not be routed onto our largest device}
 with, no protection (original), StitchUp protection, and DMR protection.
-Figure \ref{fig:lut_res} shows the \%LUT overhead for each circuit each protection strategy requires.
-In some cases the amount of overhead control-flow and data-flow are very decoupled therefore requiring little replication, this is especially true
-the encryption benchmarks (aes, blowfish, sha) where replication can be as little as \%1 of the original circuit.
-While other cases the control and data flow are inseparable, such as dfsin or dfdiv, resulting in StitchUp needing the replicate
-the entire circuit and performing the same as DMR.
+Figure \ref{fig:lut_res} shows the relative percentage LUT overhead for the protection strategies on each circuit.
+In cases where the control-flow and data-flow are decoupled, little replication is required - this effect can be seen in
+the encryption benchmarks (aes, blowfish, sha) where replication can be as little as 1\% of the original circuit.
+However there are other cases where protecting just the control flow structure results in essentially DMR, such as dfsin or dfdiv.
+The amount of replication required by StitchUp is application dependant, however from these results we can see
+that for a significant number of applications a low proportion of the original circuit needs to be replicated to
+protect the control-flow structure.
 
 %Power Results
 \subsection{Power Results}
 \begin{figure}[h]
 \centering
 \includegraphics[width=3.5in]{./graphs/power_results.pdf}
-\caption{Comparison of \% power overheads required for both StitchUp and DMR}
+\caption{Comparison of \% power overheads required for both StitchUp and DMR, where DMR power results for aes and adpcm could
+not be obtained because they are too large to implement on our power measurement platform.}
 \label{fig:power_res}
 \end{figure}
 
-Figure \ref{fig:power_res} shows the \% power overheads for all circuits small enough to be synthesised for the ZC702 device and match the
-resource overhead results, with circuits requiring more resources also requiring more power.
+Figure \ref{fig:power_res} shows the percentage power overheads for all circuits which can be implemented on the ZC702,
+and when compared to the resource overhead results there is a close correlation between resources required and power consumed.
 Along with some CHStone circuits the results for Listing \ref{lst:DotProduct} can be seen for an unroll factor 2 in dp2, unroll factor 4 in dp4,
-and unroll factor 8 in dp8. 
-Here we can see as the unrolling increases and the control-to-data ratio decreases the difference between the amount
-of power required for full DMR and StitchUp increases.
+and unroll factor 8 in dp8.
+As the unroll factor increases and the ratio between control and data decreases the difference between the amount of power required by DMR and StitchUp also
+increases, with StitchUp consuming less power as more work is performed in parallel.
+This shows that not only does StitchUp have the potential to save area but that this also translates into a
+saving in power.
 
 \subsection{Fault Injection Results}
 
@@ -91,12 +97,17 @@ of power required for full DMR and StitchUp increases.
 \label{fig:error_res}
 \end{figure}
 
-For all the benchmarks able to fit on the Zedboard device\footnote{Zedboard's have 55K Luts}
-exhaustive error injection was performed, and each error was categorised into ETE, DOE, or CE.
+For every benchmarks possible to implement on the Zedboard device
+exhaustive error injection was performed with each error categorised into either ETE, DOE, or CE.
 Figure \ref{fig:error_res} shows the different proportions of these errors for each circuit, and in
-all cases we can see that the ETE have been removed in the StitchUp and DMR cases.
-
-
+all cases we can see that the ETE have been removed for both StitchUp and DMR.
+Generally the proportion of the circuit that is replicated corresponds to the proportion of detected faults: for example aes
+requires little replication but detects only ETEs; or dfsin, which requires a high proportion
+of replication but also detects a high proportion of errors.
+However there are some circuits between these extremes where the amount of replication returns a greater
+proportion than expected of errors caught, such as adpcm where a 40\% replication results in 80\% of errors caught.
+From these results not only can we see that StitchUp has the ability to remove all ETEs, but also
+can catch a high proportion of errors relative to the amount of the original circuit that was replicated.
 %\begin{table*}[t]
 %\small
 %\singlespace

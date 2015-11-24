@@ -1,12 +1,11 @@
-Determining the high-level control-flow structure from a RTL description
-of a circuit would be difficult both automatically and manually.
-Extracting from a high level input source manually is easier but it would
-be challenging for larger designs, however it can be automated by
-transforming the input into a control and data flow graph (CDFG).
-StitchUp can automatically perform this extraction as a compiler flag
-for the LegUp HLS tool.
-This section discusses the analysis for the automatic extraction of the
-control-flow structure along with the generation of the protected circuit. 
+Finding and extracting the high-level control-flow structure from an RTL description
+of a large circuit is difficult, whether it is attempted automatically or manually.
+Finding the high-level control-flow in a high-level input source is easy, but manually
+extracting an equivalent circuit is still challenging for large designs.
+StitchUp can automatically perform this extraction as a compiler pass, which can be
+easily invoked by setting a compiler flag in the LegUp HLS tool.
+This section discusses how our analysis is implemented in StitchUp enabling the automatic extraction of the
+control-flow structure along with the generation of the .
 
 \begin{figure}[t]
 \centering
@@ -16,28 +15,28 @@ control-flow structure along with the generation of the protected circuit.
 \end{figure}
 
 %Flow Overview?
-Figure \ref{fig:tool_flow_diagram} shows the transformation process for a C program
+Figure \ref{fig:tool_flow_diagram} shows the transformation process from a C program
 to a control-flow protected
 Verilog hardware description, with StitchUp specific sections highlighted in grey.
-Initially the C input is passed into the LegUp frontend which is
+Initially the C input is passed into the standard LegUp frontend, which is
 a series of passes that
 perform various tasks, such as annotating instructions with pipelining information.
 This outputs an LLVM intermediate representation (LLVM-IR) which is passed both into the backend of LegUp,
 to generate the
-original unprotected circuit, and into the frontend of StitchUp to generate a circuit
-consisting of just the control-flow structure.
+original unprotected circuit and also into the frontend of StitchUp to generate the control replicant circuit.
 Finally an integration stage connects the original circuit to the duplicate control-flow circuit
 and generates comparison logic to ensure that the state registers match.
 
 %Why LegUp?
-Our motivation for integrating our tool with LegUp is primarily due to it being open source as
-the StitchUp backend requires modification to the generation of the scheduling control FSMs,
-which would not be possible in a closed source tool such as VivadoHLS.
+Our motivation for integrating our tool with LegUp is primarily due to it being open source, as
+the StitchUp backend requires modification to the generation of the scheduling control FSMs.
+However, the technique itself could be incorporated in VivadoHLS and all other HLS tools through modifying the
+generated control FSM in a different fashion, (such as modifying the output HDL directly).
 It is common for modern HLS tool to be constructed on top of LLVM-IR which has
 a similar level of abstraction to assembly code.
 It also has two important features for writing compiler optimisations:
-firstly all instructions are in single static assignment form (SSA) where every variable is only
-assigned once; and secondly instructions are grouped into straight-line sequences known as basic blocks (BB)
+first, all instructions are in single static assignment form (SSA) where every variable is only
+assigned once; and second, instructions are grouped into straight-line sequences known as basic blocks (BB)
 where there is only one entry branch at the very start of the block, and one exit branch at the very end.
 
 \begin{figure}[t]
@@ -50,34 +49,33 @@ where there is only one entry branch at the very start of the block, and one exi
 \subsection{Extracting the Control Instruction Set}
 LLVM-IR, which is passed into the frontend of StitchUp, is naturally arranged into a CDFG
 where each node is a basic block and edges are branch between them.
-An example of the CDFG for the dot product in listing \ref{lst:DotProduct}
+An example of the CDFG from the dot product in listing \ref{lst:DotProduct}
 is shown on the left side of Figure \ref{fig:mmm_cdfg}.
-The StitchUp frontend walks this CDFG in a backwards fashion collecting any control flow
-related instructions that may have any effect any edge transition.
+The StitchUp frontend performs a backwards analysis walking the CDFG from bottom to top, collecting any control flow
+related instructions that may influence whether an edge transition is taken.
 
 All instructions deemed to be control related are collected into what we refer to as a Control Structure Instruction Set ($CSIS$),
-which can be used to generate a control-flow structure only circuit.
+which can be used to generate a control replicant.
 Each basic block, $i$, in the input CDFG will have it's own associated $CSIS_{i}$ containing all instructions that may effect
 control-flow after this point in the program.
-The overall $CSIS$ for the input is $CSIS_s$ where $s$ is the initial basic block or the input, or starting node of the CDFG.
+The overall $CSIS$ for the input is $CSIS_s$ where $s$ is the initial basic block of the input program.
 
 Algorithm \ref{alg:CSIS-extraction} is used to construct the $CSIS$ for all nodes in the CDFG.
-It requires a fixed point iterating until the set of all $CSIS$, $C_{CSIS}$ has reached a stable state
+It requires a fixed point iteration until the set of all $CSIS$, $C_{CSIS}$ has reached a stable state
 which can be seen in line 1-2.
-Each iteration walks backwards from the final node of the CDFG to the starting one, as seen in
-line 3, and for each node the corresponding $CSIS$ is updated using the following that are
-labelled in the algorithm:
+Each iteration walks backwards from the final basic block of the CDFG to the start basic block, as seen in
+line 3, and for each encountered the corresponding $CSIS$ is updated using the following rules:
 
 %\vspace{-4pt}
 \begin{enumerate}
     \setlength{\itemsep}{3pt}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
-    \item $Sucessor(B)$ returns the set of all the nodes in the CDFG that follow on from the basic block $B$.
-	  For all successor nodes, $j$, of $i$ this rule adds every element of $CSIS_j$ to $CSIS_i$.
-    \item This adds all branch instructions for the current node, $i$, to $CSIS_i$ using the function
-	  $TerminatingInstruction(B)$ which returns the final instruction from the basic block $B$.
-    \item Finally any instruction within the current node, $i$, that is used as an operand, $op_{c}$, by an element of $CSIS_i$ is added to $CSIS_i$
+    \item $Sucessor(B)$ returns the set of all basic blocks in the CDFG that follow on from the basic block $B$.
+	  For all successor  $j$ of basic block $i$ this rule adds every element of $CSIS_j$ to $CSIS_i$.
+    \item This adds all branch instructions for the current basic block, $i$, to $CSIS_i$ using
+	  $TerminatingInstruction(i)$ a function which returns the final instruction from the basic block $i$.
+    \item Finally any instruction within the current basic block ($i$) that is used as an operand ($op_{c}$) by an element of $CSIS_i$ is added to $CSIS_i$
 \end{enumerate}
 \vspace{-4pt}
 
@@ -161,11 +159,11 @@ along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it.
 
 \vspace{1mm}
 
-
 Once the analysis is completed the final value of $CSIS_{BB0}$ is turned into LLVM-IR
 and given to the StitchUp backend.
 Here scheduling information from the original unmodified LegUp flow is used to generate
 an identical control FSM to the original circuit and insert state lost scheduling states
 due to instructions being removed. 
-Finally an integration stage take the original LegUp and StitchUp circuits expose their FSM state registers
-along with comparison logic to compare them every clock cycle, and generates a top level wrapper to connect them.
+Finally, an integration stage takes the original LegUp and StitchUp circuits,
+adds comparison logic to compare the state registers of the two circuits in each cycle,
+and generates a top level wrapper to connect them

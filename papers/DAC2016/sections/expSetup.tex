@@ -12,49 +12,48 @@ Typical FPGA designs will require a large number of configuration bits often mak
 full exhaustive testing infeasible, usually resulting in the adoption of random
 testing.
 However in our case we have developed an experiment
-platform allowing us to achieve full exhaustive fault injection in reasonable time
-and where possible we have used this to test StitchUp on the popular CHStone 
-HLS benchmarks.
+platform allowing us to achieve full exhaustive fault injection in reasonable time,
+for example reducing the time to exhaustively test the smallest CHStone circuit dfmul from 4 days
+to 8 hours.
 
 We make use of many low cost Xilinx FPGA SoC devices known as
 Zedboards all injecting on the same circuit in parallel.
-Each Zedboard runs a full Linux OS on its hardened ARM processor and is arranged into
-a cluster managed by a single desktop\footnote{called The SoC Drawer}.
+Each Zedboard runs a full Linux OS on its hardened ARM processor, and is arranged into
+a cluster managed by a single desktop\footnote{Called The SoC Drawer}.
 
 To flip individual configuration bits a Xilinx Soft Error Mitigation (SEM) IP Core
-connected to the FPGA internal configuration port (ICAP) was used and
+connected to the FPGA internal configuration port (ICAP) was used --
 targeting Xilinx devices was possible due to the latest release of LegUp
 (v4.0) which has the ability to generate generic Verilog circuits.
 For each experiment the SEM core and the test circuit were instantiated and connected to the
 ARM processing system via AXI interconnects.
-Software running under Linux on each of the ARM cores marshaled each test by, sending the
-address and injection command to the SEM core, starting the circuit under test, and
-collecting the results.
+%Software running under Linux on each ARM core managed each test by first sending an error
+%address and injection command to the SEM core, then starting the circuit under test,
+%and finally collecting the error (if any) associated with that address.
 
 Figure \ref{fig:ExperimentFlow} shows an overview of the experiment setup.
 The top flow generates a standard LegUp circuit with no protection;
-as the middle uses StitchUp to generate a control-flow structure protected circuit;
+the middle uses StitchUp to generate a control-flow structure protected circuit;
 and the bottom generates a full DMR protected circuit duplicating the original LegUp
 circuit and generating comparison logic on the control FSM state register;
 
 Each different version is then passed through the Xilinx FPGA circuit tool flow to produce
-two files, an essential bits file (.EBD), and a configuration binary (.BIN).
+two files: an essential bits file (.EBD), and a configuration binary (.BIN).
 The essential bits file is a list of configuration memory bits that have any
 influence on our generated circuit and is used to reduce the number of injections
-required to fully test our design.\footnote{essential bits do not contain BRAM data,
+required to fully test our design.\footnote{Essential bits do not contain BRAM data,
 since these are considered transient data not essential}
-For each experiment the EBD files are divided up into smaller chunks and each chunk is
+For each experiment the EBD files are divided up into smaller chunks, and each chunk is
 processed in parallel on a different Zedboard device.
 
-\subsection{Performing the error injection}
 Software running on the ARM of each Zedboard marshals each test by, injecting a fault,
 running the circuit, and storing the result.
 The injected fault is then repaired by re-injecting an error into the
 same configuration memory location (i.e. flipping the bit back to it's original state).
-Some fault may cause the circuit to never terminate so if no response is seen within three orders
-of magnitude of it's expected time a timeout halts its execution and keeps a record of it.
+Some faults may cause the circuit to never terminate, so if no response is seen within three orders
+of magnitude of its expected time a, timeout halts its execution.
 
-The results are then analysed and each outcome is classified into three separate categories:
+The results are then analysed and each test outcome is classified into three distinct categories:
 
 \begin{enumerate}
 \setlength{\itemsep}{1pt}
@@ -62,7 +61,7 @@ The results are then analysed and each outcome is classified into three separate
 \setlength{\parsep}{0pt}
 \item Execution Time Error \textbf{ETE} - This is where the execution of the circuit either took
 an incorrect number of cycles to complete or timed out. Errors of these type are
-control flow related since any deviation from the correct execution path will cause
+control flow related, since any deviation from the correct execution path will cause
 an incorrect number of cycles.
 \item Data-Flow Only Errors \textbf{DOE} - These are errors where the circuit has returned an incorrect
 data result but has executed in the correct number of cycles, such as error caused
@@ -70,3 +69,8 @@ by faults in a non-control structure functional unit.
 \item Caught Errors \textbf{CE} - These are errors in the state register that were detected by the protection method, which is
 either DMR or StitchUp.
 \end{enumerate}
+
+For each test the proportion of ETE, DOE, and CE error results should sum to 100\%.
+ETEs are the most critical since they are control related and may runtime guarantees and timeouts;
+DOEs are the next critical category since there is an error in data, but no damaging effect on control;
+and CEs are the least critical, where the circuit has failed but at least it has been detected.
