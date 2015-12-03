@@ -14,6 +14,9 @@
 ///
 //===----------------------------------------------------------------------===//
 
+//#ifdef CONTROLFLOWANALYSIS_LIB
+//#define CONTROLFLOWANALYSIS_LIB
+
 #include <vector>
 #include <sstream>
 #include "llvm/IR/InstrTypes.h"
@@ -298,3 +301,5 @@ void ControlFlowAnalysis::finalSanityCheck()
 } 
 
 } //namespace StitchUp
+
+//#endif

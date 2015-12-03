@@ -17,6 +17,7 @@
 #include "llvm/Pass.h"
 #include "llvm/Support/raw_ostream.h"
 #include "ControlFlowAnalysis.h"
+#include "BranchErrorImpactAnalysis.h"
 using namespace llvm;
 
 namespace {
@@ -25,8 +26,21 @@ namespace {
     StitchUp() : FunctionPass(ID) {}
 
     bool runOnFunction(Function &F) override {
-	StchUp::ControlFlowAnalysis CFGbones (&F);	
+		
+	for(Function::iterator i=F.begin(), e=F.end(); i != e; ++i){
+		BasicBlock *blk = i;
+		TerminatorInst *TInst = blk->getTerminator();
+		if(BranchInst *BInst = dyn_cast<BranchInst>(TInst)){
+			if(BInst->isConditional()){
+				StchUp::BranchSlice currBranch(&F,BInst);
+				currBranch.testPrint();
+			}	
+		}
+	}
+	
+	StchUp::ControlFlowAnalysis CFGbones(&F);	
 	CFGbones.createControlShadow();
+
       return true;
     }
 

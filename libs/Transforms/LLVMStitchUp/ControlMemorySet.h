@@ -14,6 +14,9 @@
 ///
 //===----------------------------------------------------------------------===//
 
+#ifndef CONTROLMEMORYSET_LIB
+#define CONTROLMEMORYSET_LIB
+
 #include <vector>
 #include <exception>
 #include "llvm/IR/InstrTypes.h"
@@ -113,3 +116,4 @@ namespace StchUp{
 
 } //namespace StchUp
 
+#endif

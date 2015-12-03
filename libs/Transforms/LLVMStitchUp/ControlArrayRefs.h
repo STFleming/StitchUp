@@ -13,6 +13,9 @@
 /// when making control flow decisions.
 //===----------------------------------------------------------------------===//
 
+#ifndef CONTROLARRAYREF_LIB 
+#define CONTROLARRAYREF_LIB
+
 #include <vector>
 #include <exception>
 #include "llvm/IR/InstrTypes.h"
@@ -126,3 +129,4 @@ namespace StchUp{
 
 } //namespace StchUp
 
+#endif

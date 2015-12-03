@@ -1,4 +1,4 @@
-//===-- ControlDependenceSet.h - ControlDependenceSet class definition -------*- C++ -*-===//
+//===-- CondBranchSet.h - CondBranchSet class definition -------*- C++ -*-===//
 //
 //                    StitchUp: Fault Tolerant High Level Synthesis 
 //
@@ -14,8 +14,8 @@
 ///
 //===----------------------------------------------------------------------===//
 
-#ifndef CONTROLDEPENDENCESET_LIB
-#define CONTROLDEPENDENCESET_LIB
+#ifndef CONDBRANCHSET_LIB
+#define CONDBRANCHSET_LIB 
 
 #include <vector>
 #include <exception>
@@ -27,11 +27,11 @@ using namespace llvm;
 
 namespace StchUp{
 
-	typedef std::vector<Value *>::iterator cds_iterator;
-	class ControlDependenceSet {
+	typedef std::vector<Value *>::iterator iterator;
+	class CondBranchSet {
 		public:
-			ControlDependenceSet(); //Default Constructor
-			~ControlDependenceSet(); //Default Deconstructor
+			CondBranchSet(); //Default Constructor
+			~CondBranchSet(); //Default Deconstructor
 			bool checkIfExists(Value *v); //returns true if the Value is in the CDS
 			void add(Value* v); //Adds a value to the CDS
 			bool addIfNotPresent(Value *v); //Checks if a value is in the CDS and adds it to the set
@@ -42,38 +42,39 @@ namespace StchUp{
 			bool addMemIfNotPresent(Value *p); //adds only if not present in Cmem
 			bool addArrayRefIfNotPresent(GetElementPtrInst *v); //Adds a reference to an array if it doesn't exist
 			bool checkIfArrayExists(GetElementPtrInst *v); 
-			cds_iterator begin(); //Returns the begining of a CDS iterator	
-			cds_iterator end(); //Returns the end of a CDS iterator
+			int size(); //Returns the size of the set
+			iterator begin(); //Returns the begining of a CDS iterator	
+			iterator end(); //Returns the end of a CDS iterator
 		private:
 			std::vector<Value *>* CDS; //Set of LLVM values that influence control
 			ControlMemorySet Cmem; //Data structure of memory locations which influence the CFG 	
 			ControlArrayRef Carray; //Keeps track of array references that may influence the CFG
-	}; //Class ControlDependenceSet
+	}; //Class CondBranchSet
 
 	//constructor
-	ControlDependenceSet::ControlDependenceSet()
+	CondBranchSet::CondBranchSet()
 	{
 		CDS = new std::vector<Value *>;
 	}
 
 	//deconstructor
-	ControlDependenceSet::~ControlDependenceSet()
+	CondBranchSet::~CondBranchSet()
 	{
 		delete CDS;	
 	}
 
-	cds_iterator ControlDependenceSet::begin()
+	iterator CondBranchSet::begin()
 	{
 		return CDS->begin();
 	}
 
-	cds_iterator ControlDependenceSet::end()
+	iterator CondBranchSet::end()
 	{
 		return CDS->end();
 	}
 
 	//Iterates through the CDS and returns true if value is found
-	bool ControlDependenceSet::checkIfExists(Value *v)
+	bool CondBranchSet::checkIfExists(Value *v)
 	{
 		for(std::vector<Value *>::iterator cdsIter = CDS->begin(), Final=CDS->end(); cdsIter != Final; ++cdsIter)
 		{
@@ -84,13 +85,13 @@ namespace StchUp{
 	}
 
 
-	void ControlDependenceSet::add(Value *v)
+	void CondBranchSet::add(Value *v)
 	{
 		CDS->push_back(v); 
 	}
 
 	//returns true if it could sucessfully add the item
-	bool ControlDependenceSet::addIfNotPresent(Value *v)
+	bool CondBranchSet::addIfNotPresent(Value *v)
 	{
 		if(!checkIfExists(v)){
 			add(v);
@@ -99,7 +100,7 @@ namespace StchUp{
 		return false;
 	}	
 
-	void ControlDependenceSet::remove(Value *v)
+	void CondBranchSet::remove(Value *v)
 	{
 		for(std::vector<Value *>::iterator cdsIter = CDS->begin(), Final=CDS->end(); cdsIter != Final; ++cdsIter)
 		{
@@ -109,7 +110,7 @@ namespace StchUp{
 	}
 	
 	//used for debugging
-	void ControlDependenceSet::print()
+	void CondBranchSet::print()
 	{
 		errs() << "{";
 		for(cds_iterator it = this->begin(), itend=this->end(); it != itend; ++it)
@@ -120,20 +121,22 @@ namespace StchUp{
 		errs() << "}\n";
 	}
 
+	int CondBranchSet::size() {return CDS->size();}
+
 	//returns true if the memory location is tracked
-	bool ControlDependenceSet::checkMemLocation(Value *p){ return Cmem.checkIfExists(p); } 
+	bool CondBranchSet::checkMemLocation(Value *p){ return Cmem.checkIfExists(p); } 
 	
 	//Adds the memory location to Cmem
-	void ControlDependenceSet::addMem(Value *p){ Cmem.add(p); }
+	void CondBranchSet::addMem(Value *p){ Cmem.add(p); }
 
 	//adds only if not present in Cmem  
-	bool ControlDependenceSet::addMemIfNotPresent(Value *p){ return Cmem.addIfNotPresent(p); }
+	bool CondBranchSet::addMemIfNotPresent(Value *p){ return Cmem.addIfNotPresent(p); }
 
 	//Adds a reference to an array if it doesn't exist
-	bool ControlDependenceSet::addArrayRefIfNotPresent(GetElementPtrInst *v) { return Carray.addIfNotPresent(v); } 
+	bool CondBranchSet::addArrayRefIfNotPresent(GetElementPtrInst *v) { return Carray.addIfNotPresent(v); } 
 
 	//checks if array reference is flagged
-	bool ControlDependenceSet::checkIfArrayExists(GetElementPtrInst *v) { return Carray.checkIfExists(v); }
+	bool CondBranchSet::checkIfArrayExists(GetElementPtrInst *v) { return Carray.checkIfExists(v); }
 } //namespace StchUp
 
 #endif
