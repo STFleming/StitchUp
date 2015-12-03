@@ -38,5 +38,5 @@ namespace {
 }
 
 char StitchUp::ID = 0;
-static RegisterPass<StitchUp> X("StitchUp", "StitchUp World Pass");
+static RegisterPass<StitchUp> X("StitchUp", "StitchUp LLVM frontend Pass");
 
