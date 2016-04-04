@@ -32,7 +32,7 @@ on Zedboard/ZC702 devices, power results were obtained, and exhaustive error inj
 \subsection{Unrolling Results}
 \begin{figure}[t]
 \centering
-\includegraphics[width=3.25in]{./graphs/dp_unrolling_res.pdf}
+\includegraphics[width=3.25in]{./graphs/dp_unrolling_res_v1_1.pdf}
 \caption{Data Only Errors (DOEs) and Caught Errors (CEs) for a dot product with increasing loop unroll factors with StitchUp along with \%LUT overhead against DMR}
 \label{fig:dp_unrolling_res}
 \end{figure}
@@ -43,11 +43,10 @@ Increasing the unroll factor reduces the control-to-data ratio since the number 
 only functional units instantiated in parallel increases.
 This effect is observable in the results since the data only errors increase with the unroll factor but the number of caught errors
 remains constant.
-A similar trend can be observed for the percentage LUT overhead where the overhead for the DMR implementation
+A similar trend can be observed for the percentage LUT overhead where the DMR overhead 
 tends towards 100\% as the unroll factor increases, while the StitchUp overhead tends towards 0\%.
-This tells us that as more non-control-structure instructions are executed in parallel, the overhead or
-protection provided by the StitchUp replication is unaffected.
-
+This tells us that as more non-control-structure instructions are executed in parallel, the overhead required for 
+StitchUp protection remains unaffected.
 \subsection{Resource Overheads}
 \renewcommand{\arraystretch}{0.8}
 
@@ -64,14 +63,14 @@ with, no protection (original), StitchUp protection, and DMR protection.
 Figure \ref{fig:lut_res} shows the relative percentage LUT overhead for the protection strategies on each circuit.
 In cases where the control-flow and data-flow are decoupled, little replication is required - this effect can be seen in
 the encryption benchmarks (aes, blowfish, sha) where replication can be as little as 1\% of the original circuit.
-However there are other cases where protecting just the control flow structure essentially results in DMR, such as dfsin or dfdiv.
+However there are other cases where protecting just the control flow structure results in DMR, such as dfsin or dfdiv.
 The amount of replication required by StitchUp is application dependant, however, from these results we can see
 that for a significant number of applications a low proportion of the original circuit needs to be replicated to
-protect the control-flow structure.
+protect the control-flow structure. \footnote{For the smaller circuits the overhead for DMR is often less than 100\%, this is due to the overhead of instantiating
+the AXI infrastructure and SEM core.} 
 
 %Power Results
-\subsection{Power Results}
-\begin{figure}[h]
+\begin{figure}[t]
 \centering
 \includegraphics[width=3.5in]{./graphs/power_results.pdf}
 \caption{Comparison of \% power overheads required for both StitchUp and DMR, where DMR power results for aes and adpcm could
@@ -79,6 +78,7 @@ not be obtained because they are too large to implement on our power measurement
 \label{fig:power_res}
 \end{figure}
 
+\subsection{Power Results}
 Figure \ref{fig:power_res} shows the percentage power overheads for all circuits which can be implemented on the ZC702.
 When compared to the resource overhead results there is a close correlation between resources required and power consumed.
 Along with some CHStone circuits the results for Listing \ref{lst:DotProduct} can be seen for an unroll factor 2 in dp2, 4 in dp4,
@@ -92,7 +92,7 @@ saving in power.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=3.5in]{./graphs/errors_res.pdf}
+\includegraphics[width=3.5in]{./graphs/errors_res_corrected.pdf}
 \caption{Error results for the CHStone benchmarks}
 \label{fig:error_res}
 \end{figure}

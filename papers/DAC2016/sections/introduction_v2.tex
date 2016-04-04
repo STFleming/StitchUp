@@ -4,7 +4,7 @@ High-level Synthesis (HLS) tools, such as LegUp \cite{canis2011legup} and Vivado
 can automatically generate FPGA circuits from C code.
 Listing 1 gives a simple example of a synthesisable dot-product, which combines
 data-dependent control-flow in the for loop (line 3), and pure data-flow
-in the body of the for loop (line 5).
+in the body of the for loop (line 4).
 HLS tools will generate a circuit which executes correctly in a reliable FPGA, but what if
 this circuit is required to execute in the presence of soft errors?
 The naive approach would be to instantiate two or more copies of the circuit and run
@@ -12,7 +12,7 @@ them in lock-step on the same input data, with any deviations between their stat
 indicating an error.
 Naive replication is expensive in both area and more importantly
 power, especially in this example as expensive floating point arithmetic
-units are required for the multiply accumulate computation (line 5).
+units are required for the multiply accumulate computation (line 4).
 
  \lstset{
          basicstyle=\footnotesize\ttfamily, % Standardschrift
@@ -43,7 +43,7 @@ units are required for the multiply accumulate computation (line 5).
 
 When tight area and power constraints prevent full replication, then reliability can still be
 improved through selectively replicating ``important" portions of the design.
-Studies has shown that some applications, such as media processing
+Studies have shown that some applications, such as media processing
 \cite{liu2012flikker} and machine learning \cite{wong2006soft}, contain critical regions
 of code that are sensitive to soft errors,
 and non critical regions that can tolerate soft errors.

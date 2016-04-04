@@ -5,7 +5,9 @@ extracting an equivalent circuit is still challenging for large designs.
 StitchUp can automatically perform this extraction as a compiler pass, which can be
 easily invoked by setting a compiler flag in the LegUp HLS tool.
 This section discusses how our analysis is implemented in StitchUp enabling the automatic extraction of the
-control-flow structure along with the generation of the .
+control-flow structure along with the generation of the control replicant.
+An open source version of our tool described in this paper can be found at
+\emph{https://github.com/STFleming/StitchUp}.
 
 \begin{figure}[t]
 \centering
@@ -67,15 +69,15 @@ Each iteration walks backwards from the final basic block of the CDFG to the sta
 line 3, and for each encountered the corresponding $\mathit{CSIS}$ is updated using the following rules:
 
 %\vspace{-4pt}
-\begin{enumerate}
+\begin{enumerate}[label=Rule \arabic*]
     \setlength{\itemsep}{3pt}
     \setlength{\parskip}{0pt}
     \setlength{\parsep}{0pt}
     \item $\mathit{Sucessor(B)}$ returns the set of all basic blocks in the CDFG that follow on from the basic block $B$.
 	  For all successor  $j$ of basic block $i$ this rule adds every element of $\mathit{CSIS}_j$ to $\mathit{CSIS}_i$.
-    \item This adds all branch instructions for the current basic block, $i$, to $\mathit{CSIS}_i$ using
+    \item Adds all branch instructions for the current basic block, $i$, to $\mathit{CSIS}_i$ using
 	  $\mathit{TerminatingInstruction(i)}$ a function which returns the final instruction from the basic block $i$.
-    \item Finally any instruction within the current basic block ($i$) that is used as an operand ($\mathit{op_{c}}$) by an element of $\mathit{CSIS}_i$ is added to $\mathit{CSIS}_i$
+    \item Any instruction within the current basic block ($i$) that is used as an operand ($\mathit{op_{c}}$) by an element of $\mathit{CSIS}_i$ is added to $\mathit{CSIS}_i$ \footnote{For the current version of the tools the worst case is assumed for memory operations.}
 \end{enumerate}
 \vspace{-4pt}
 
@@ -162,8 +164,8 @@ along with the rule from Algorithm \ref{alg:CSIS-extraction} used to add it.
 Once the analysis is completed the final value of $\mathit{CSIS}_{\mathit{BB0}}$ is turned into LLVM-IR
 and given to the StitchUp backend.
 Here scheduling information from the original unmodified LegUp flow is used to generate
-an identical control FSM to the original circuit and insert state lost scheduling states
-due to instructions being removed. 
+an identical control FSM to the original circuit, often requirng the insertion of blank states
+used to schedule instructions that have not been included in the control replicant. 
 Finally, an integration stage takes the original LegUp and StitchUp circuits,
 adds comparison logic to compare the state registers of the two circuits in each cycle,
 and generates a top level wrapper to connect them

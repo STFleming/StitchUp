@@ -1,6 +1,3 @@
-% This is "sig-alternate.tex" V2.1 April 2013
-% This file should be compiled with V2.5 of "sig-alternate.cls" May 2012
-%
 % This example file demonstrates the use of the 'sig-alternate.cls'
 % V2.5 LaTeX2e document class file. It is for those submitting
 % articles to ACM Conference Proceedings WHO DO NOT WISH TO
@@ -52,9 +49,11 @@
 \usepackage[table,xcdraw]{xcolor}
 
 \usepackage{graphicx}
-\usepackage{hyperref}
+%\usepackage{hyperref}
 \usepackage{listings}
 \usepackage{setspace}
+
+\usepackage{enumitem}
 
 \setlength{\parskip}{3pt}
 
@@ -93,6 +92,15 @@ $CSIS_{#1}$: add {\small #2} using rule #3
 }
 %-----------------------------------------
 
+% --- Author Metadata here ---
+\CopyrightYear{2016} 
+\setcopyright{acmcopyright}
+\conferenceinfo{DAC '16,}{June 05-09, 2016, Austin, TX, USA}
+\isbn{978-1-4503-4236-0/16/06}\acmPrice{\$15.00}
+\doi{http://dx.doi.org/10.1145/2897937.2898097}
+% --- End of Author Metadata ---
+
+
 \begin{document}
 
 % Copyright
@@ -106,23 +114,6 @@ $CSIS_{#1}$: add {\small #2} using rule #3
 %\setcopyright{cagovmixed}
 
 
-% DOI
-\doi{10.475/123_4}
-
-% ISBN
-%\isbn{123-4567-24-567/08/06}
-
-%Conference
-\conferenceinfo{DAC '2016}{June 01--05, 2016, Austin, Texas, USA}
-
-\acmPrice{\$15.00}
-
-%
-% --- Author Metadata here ---
-\conferenceinfo{DAC}{2016 Austin, Texas USA}
-\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
-\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
-% --- End of Author Metadata ---
 
 \title{StitchUp: Automatic Control Flow Protection\\ for High Level Synthesis Tools\vspace{-5mm}}
 %\title{Alternate {\ttlit ACM} SIG Proceedings Paper in LaTeX
@@ -163,7 +154,7 @@ $CSIS_{#1}$: add {\small #2} using rule #3
 % of EIGHT authors. SIX appear on the 'first-page' (for formatting
 % reasons) and the remaining two appear in the \additionalauthors section.
 %
-\author{
+\author{ \tiny
 % You can go ahead and credit any number of authors here,
 % e.g. one 'row of three' or two rows (consisting of one row of three
 % and a second row of one, two or three).
@@ -175,10 +166,10 @@ $CSIS_{#1}$: add {\small #2} using rule #3
 % e-mail address with \email.
 %
 % 1st. author
-\alignauthor
-%Shane T. Fleming and David B. Thomas\\
+\alignauthor 
+Shane T. Fleming and David B. Thomas\\
 %Author Removed for Blind\\
-%       \affaddr{Electrical and Electronic Engingeering Dept, Imperial College London, United Kingdom\\ \{sf306 | dt10\}@ic.ac.uk}
+       \affaddr{Electrical and Electronic Engingeering Dept, Imperial College London, U.K. \\ \{sf306 | dt10\}@ic.ac.uk}
 %       \affaddr{address}
 }
 
@@ -194,8 +185,8 @@ compiler pass
 called StitchUp, which precisely identifies the control critical
 parts of the design, then automatically replicates only that part.
 We applied StitchUp to the CHStone benchmark suite and performed
-exhaustive error injection in hardware finding that all control-flow errors were detected with the best-case only required
-1\% circuit area overhead.
+exhaustive hardware fault injection in each case, finding that all control-flow errors were detected while only requiring
+1\% circuit area overhead in the best case.
 \end{abstract}
 
 

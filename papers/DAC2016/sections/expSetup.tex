@@ -1,9 +1,3 @@
-\begin{figure}[t]
-\centering
-\includegraphics[width=3.5in]{./imgs/ExperimentFlow.pdf}
-\caption{The experiment flow}
-\label{fig:ExperimentFlow}
-\end{figure}
 
 To test the error mitigation abilities of StitchUp generated circuits we have adopted the
 FPGA gold standard of hardware fault injection, where configuration bits on the 
@@ -16,10 +10,17 @@ platform allowing us to achieve full exhaustive fault injection in reasonable ti
 for example reducing the time to exhaustively test the smallest CHStone circuit dfmul from 4 days
 to 8 hours.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=3.5in]{./imgs/ExperimentFlow.pdf}
+\caption{The experiment flow}
+\label{fig:ExperimentFlow}
+\end{figure}
+
 We make use of many low cost Xilinx FPGA SoC devices known as
 Zedboards all injecting faults on the same circuit in parallel.
 Each Zedboard runs a full Linux OS on its hardened ARM processor, and is arranged into
-a cluster managed by a single desktop\footnote{Called The SoC Drawer}.
+a cluster managed by a single desktop.%\footnote{Called The SoC Drawer}.
 
 To flip individual configuration bits a Xilinx Soft Error Mitigation (SEM) IP Core
 connected to the FPGA internal configuration port (ICAP) was used --
@@ -71,6 +72,6 @@ either DMR or StitchUp.
 \end{enumerate}
 
 For each test the proportion of ETE, DOE, and CE error results should sum to 100\%.
-ETEs are the most critical since they are control related and may runtime guarantees and timeouts;
+ETEs are the most critical since they are control related and may affect runtime guarantees or cause timeouts;
 DOEs are the next critical category since there is an error in data, but no damaging effect on control;
 and CEs are the least critical, where the circuit has failed but at least it has been detected.
