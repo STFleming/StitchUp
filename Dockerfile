@@ -15,7 +15,6 @@ RUN dpkg --add-architecture i386
 
 RUN apt-get -y update
 
-
 RUN echo 'mysql-server mysql-server/root_password password shiny' | debconf-set-selections 
 RUN echo 'mysql-server mysql-server/root_password_again password shiny' | debconf-set-selections 
 
@@ -52,9 +51,9 @@ RUN chown -R stitchup:stitchup /home/stitchup/*
 USER stitchup
 WORKDIR /home/stitchup
 
-RUN sed -i -r -e "s/CONFIG\s+\+= debug_and_release display_graphs/CONFIG \+= debug_and_release #display_graphs/g" legup-4.0/gui/scheduleviewer/scheduleviewer.pro
+#RUN sed -i -r -e "s/CONFIG\s+\+= debug_and_release display_graphs/CONFIG \+= debug_and_release #display_graphs/g" legup-4.0/gui/scheduleviewer/scheduleviewer.pro
 
-RUN ./patch /home/stitchup/legup-4.0
+RUN (cd /home/stitchup/legup-4.0 && make)
 
 #Edit the startup message that is displayed
 RUN echo "echo \" ________  _________  ___  _________  ________  ___  ___  ___  ___  ________    \"" >> /home/stitchup/.bashrc
@@ -66,3 +65,10 @@ RUN echo "echo \"    ____\_\  \   \ \__\ \ \__\   \ \__\ \ \_______\ \__\ \__\ \
 RUN echo "echo \"   |\_________\   \|__|  \|__|    \|__|  \|_______|\|__|\|__|\|_______|\|__|    \"" >> /home/stitchup/.bashrc
 RUN echo "echo \"   \|_________|                                                                 \"" >> /home/stitchup/.bashrc
 
+RUN apt-get install software-properties-common
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN apt-get -y update
+RUN apt-get -y install gcc-4.9 g++-4.9
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+
+RUN ./patch /home/stitchup/legup-4.0
