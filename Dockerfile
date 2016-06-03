@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Shane Fleming <sf306@ic.ac.uk>
+MAINTAINER Shane T. Fleming <sf306@ic.ac.uk>
 
 #	 ________  _________  ___  _________  ________  ___  ___  ___  ___  ________   
 #	|\   ____\|\___   ___\\  \|\___   ___\\   ____\|\  \|\  \|\  \|\  \|\   __  \  
@@ -53,6 +53,10 @@ WORKDIR /home/stitchup
 
 #RUN sed -i -r -e "s/CONFIG\s+\+= debug_and_release display_graphs/CONFIG \+= debug_and_release #display_graphs/g" legup-4.0/gui/scheduleviewer/scheduleviewer.pro
 
+#TODO: Temp fix, remove some things that were causing problems in build flow
+RUN sed -i '/pcie/d' /home/stitchup/legup-4.0/Makefile
+RUN sed -i '/gui/d' /home/stitchup/legup-4.0/Makefile
+
 RUN (cd /home/stitchup/legup-4.0 && make)
 
 #Edit the startup message that is displayed
@@ -65,10 +69,12 @@ RUN echo "echo \"    ____\_\  \   \ \__\ \ \__\   \ \__\ \ \_______\ \__\ \__\ \
 RUN echo "echo \"   |\_________\   \|__|  \|__|    \|__|  \|_______|\|__|\|__|\|_______|\|__|    \"" >> /home/stitchup/.bashrc
 RUN echo "echo \"   \|_________|                                                                 \"" >> /home/stitchup/.bashrc
 
-RUN apt-get install software-properties-common
-RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+USER root
+RUN apt-get -y install software-properties-common
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get -y update
 RUN apt-get -y install gcc-4.9 g++-4.9
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+USER stitchup
 
 RUN ./patch /home/stitchup/legup-4.0
