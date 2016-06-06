@@ -12,4 +12,4 @@ rm bf.renamed.stitchedup.v
 make bf.wrapper.v
 make bf_tb.v
 #./runVsim
-make bf.ipcore
+#make bf.ipcore

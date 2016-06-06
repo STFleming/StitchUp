@@ -13,4 +13,4 @@ rm main.renamed.stitchedup.v
 make main.wrapper.v
 make main_tb.v
 #./runVsim
-make main.ipcore
+#make main.ipcore

@@ -12,5 +12,5 @@ rm aes.renamed.stitchedup.v
 make aes.wrapper.v
 make aes_tb.v
 #./runVsim
-make aes.ipcore
+#make aes.ipcore
 #make aes.system.bit

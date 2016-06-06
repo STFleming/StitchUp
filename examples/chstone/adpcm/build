@@ -12,5 +12,5 @@ rm adpcm.renamed.stitchedup.v
 make adpcm.wrapper.v
 make adpcm_tb.v
 #./runVsim
-make adpcm.ipcore
+#make adpcm.ipcore
 #make adpcm.system.bit

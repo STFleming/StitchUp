@@ -70,6 +70,7 @@ RUN echo "echo \"   |\_________\   \|__|  \|__|    \|__|  \|_______|\|__|\|__|\|
 RUN echo "echo \"   \|_________|                                                                 \"" >> /home/stitchup/.bashrc
 
 USER root
+RUN apt-get -y install doxygen
 RUN apt-get -y install software-properties-common
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt-get -y update

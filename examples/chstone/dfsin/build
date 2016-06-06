@@ -12,4 +12,4 @@ rm dfsin.renamed.stitchedup.v
 make dfsin.wrapper.v
 make dfsin_tb.v
 #./runVsim
-make dfsin.ipcore
+#make dfsin.ipcore

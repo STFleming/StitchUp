@@ -12,4 +12,4 @@ rm mips.renamed.stitchedup.v
 make mips.wrapper.v
 make mips_tb.v
 ./runVsim
-make mips.ipcore
+#make mips.ipcore

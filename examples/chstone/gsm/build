@@ -12,4 +12,4 @@ rm gsm.renamed.stitchedup.v
 make gsm.wrapper.v
 make gsm_tb.v
 #./runVsim
-make gsm.ipcore
+#make gsm.ipcore
