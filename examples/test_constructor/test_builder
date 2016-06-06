@@ -1,9 +1,0 @@
-
-make input.stitchedup.bc
-make input.stitchedup.ll
-
-cp input.stitchedup.bc ../ControlFlowAnalysis/$1/golden.bc
-cp input.stitchedup.ll ../ControlFlowAnalysis/$1/golden.ll
-cp input.bc ../ControlFlowAnalysis/$1/input.bc
-cp input.ll ../ControlFlowAnalysis/$1/input.ll
-

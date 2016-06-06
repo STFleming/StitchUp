@@ -124,3 +124,5 @@ cp config/legup.tcl $LEGUP_HOME/examples/
 
 (cd $LLVMSTITCHUP_BACKEND; make; cd $CURR_DIR; )
 (cd $LLVM_DIR/tools/llc; make; cd $CURR_DIR; )
+mkdir doxy
+(cd libs/Transforms/LLVMStitchUp/ && doxygen stitchup_doxy )
